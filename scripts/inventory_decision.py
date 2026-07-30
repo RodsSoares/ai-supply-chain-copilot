@@ -65,7 +65,7 @@ def gerar_grupo_gerencial(df: pd.DataFrame) -> None:
     utilizada em filtros, dashboards e tabelas dinâmicas.
     """
 
-    def grupo(linha):
+    def classificar_grupo_gerencial(linha):
 
         if linha["acao_recomendada"] == "REPOR":
 
@@ -92,6 +92,6 @@ def gerar_grupo_gerencial(df: pd.DataFrame) -> None:
         return "6 - SEM AÇÃO"
 
     df["grupo_gerencial"] = df.apply(
-        grupo,
+        classificar_grupo_gerencial,
         axis=1
     )

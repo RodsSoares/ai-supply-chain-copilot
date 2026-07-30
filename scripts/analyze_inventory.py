@@ -9,6 +9,10 @@ from inventory_export import exportar_resultados
 
 
 def main() -> None:
+    """
+    Executa o pipeline completo de análise de inventário.
+    """
+
     df = pd.read_csv(
         "sample_data/erp_inventory.csv",
         sep=";",
