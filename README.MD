@@ -1,380 +1,272 @@
-# 🤖 AI Supply Chain Copilot
-
-> End-to-end Supply Chain automation and decision-support project built with Python and Artificial Intelligence.
-
-# ==========================================
 # AI Supply Chain Copilot
-#
-# Version: v0.2.0
-#
-# Inventory Analytics MVP
-# ==========================================
 
-## 📌 About the Project
-
-The **AI Supply Chain Copilot** is a portfolio project that simulates a corporate Supply Chain environment and progressively transforms operational ERP data into actionable business recommendations.
-
-The project is inspired by real Supply Chain challenges, especially inventory planning, demand variability, operational risk and decision support.
-
-All datasets used in this repository are **fictional and synthetically generated**. No confidential corporate information is included.
-
-Rather than using isolated programming exercises, the project applies Python and AI concepts directly to realistic business processes involving:
-
-- Inventory management
-- Procurement
-- Logistics
-- Demand planning
-- Operational analytics
-- Decision automation
+> Um projeto de automação de Supply Chain desenvolvido em Python para demonstrar como análise de dados, regras de negócio e Inteligência Artificial podem apoiar decisões de gestão de estoque.
 
 ---
 
-## 🎯 Project Goals
+# Objetivo
 
-The project will progressively evolve into an AI-powered Supply Chain assistant capable of:
+O **AI Supply Chain Copilot** é um projeto de portfólio desenvolvido para simular um sistema corporativo de apoio à decisão em Supply Chain.
 
-- Reading operational ERP files
-- Validating and cleaning business data
-- Calculating inventory and Supply Chain KPIs
-- Identifying stock shortages and excess inventory
-- Estimating the financial impact of recommended actions
-- Detecting stockout risks
-- Prioritizing operational decisions
-- Forecasting demand
-- Detecting anomalies
-- Answering business questions using natural language
-- Generating automated operational recommendations
+O objetivo é demonstrar a aplicação prática de Python, Pandas, arquitetura de software e, futuramente, Inteligência Artificial, em problemas reais de gestão de estoques.
+
+Todo o projeto utiliza **dados sintéticos**, preservando integralmente a confidencialidade de informações corporativas.
 
 ---
 
-## ✅ Current Capabilities
+# Problema de Negócio
 
-The current version already provides a functional inventory analytics pipeline.
+Uma empresa precisa responder diariamente perguntas como:
 
-### Data ingestion
+- Quais produtos precisam ser repostos?
+- Quais produtos possuem excesso de estoque?
+- Qual o impacto financeiro de cada decisão?
+- Quais itens possuem maior prioridade?
+- Como priorizar ações quando existem centenas de SKUs?
 
-- Reads synthetic ERP inventory data from CSV
-- Handles Brazilian-compatible CSV exports
-- Produces a consolidated enriched dataset
+Responder essas perguntas manualmente é lento e sujeito a erros.
 
-### Data validation
+Este projeto automatiza todo esse processo.
 
-- Counts total records
-- Identifies missing SKU values
-- Identifies duplicated SKUs
-- Checks missing values in critical fields
-- Displays problematic records for investigation
+---
 
-### Inventory analytics
+# Funcionalidades
 
-- Calculates total inventory value
-- Calculates stock coverage in months
-- Converts supplier lead time from days to months
-- Identifies potential stockout risk
-- Calculates replenishment quantities
-- Calculates excess inventory quantities
+Atualmente o sistema realiza automaticamente:
 
-### Financial analysis
+- Importação de dados do ERP (CSV)
+- Validação da qualidade dos dados
+- Cálculo do valor do estoque
+- Cálculo da cobertura de estoque
+- Identificação de risco de ruptura
+- Identificação de excesso de estoque
+- Cálculo do impacto financeiro
+- Score multicritério de priorização
+- Classificação automática das prioridades
+- Agrupamento gerencial
+- Relatório executivo
+- Exportação dos resultados
 
-- Estimates replenishment cost
-- Estimates the financial value of excess inventory
-- Consolidates the financial impact of each recommended action
+---
 
-### Decision support
+# Arquitetura
 
-Each SKU receives two independent classifications:
+O projeto foi estruturado em módulos independentes, seguindo o princípio de **Responsabilidade Única (Single Responsibility Principle)**.
 
-- `acao_recomendada`: what should be done
-- `prioridade`: how important the action is
-
-Current actions:
-
-- `REPOR`
-- `TRATAR EXCESSO`
-- `SEM AÇÃO`
-
-Current priority levels:
-
-- `ALTA`
-- `MÉDIA`
-- `BAIXA`
-- `SEM AÇÃO`
-
-### Output
-
-The pipeline exports a single consolidated file:
-
-```text
-output/inventory_analysis.csv
+```
+                 ERP CSV
+                    │
+                    ▼
+        inventory_validation
+                    │
+                    ▼
+         inventory_metrics
+                    │
+                    ▼
+         inventory_scoring
+                    │
+                    ▼
+         inventory_decision
+                    │
+                    ▼
+        inventory_reporting
+                    │
+                    ▼
+          inventory_export
+                    │
+                    ▼
+             CSV Final
 ```
 
-This dataset can be consumed by:
-
-- Microsoft Excel
-- Power Query
-- Power BI
-- Python
-- Databases
-- Future application interfaces
+Cada módulo possui uma única responsabilidade, tornando o projeto mais organizado, reutilizável e fácil de evoluir.
 
 ---
 
-## 🔄 Current Data Pipeline
+# Estrutura do Projeto
 
-```text
-Synthetic ERP Inventory CSV
-            │
-            ▼
-      Pandas DataFrame
-            │
-            ▼
-   Data Quality Validation
-            │
-            ▼
- Inventory KPI Calculation
-            │
-            ▼
- Coverage and Stockout Risk
-            │
-            ▼
- Recommended Business Action
-            │
-            ▼
- Financial Impact and Priority
-            │
-            ▼
- Consolidated Analytical CSV
+```
+AI-Supply-Chain-Copilot/
+
+│
+├── sample_data/
+│
+├── output/
+│
+├── scripts/
+│   ├── analyze_inventory.py
+│   ├── inventory_validation.py
+│   ├── inventory_metrics.py
+│   ├── inventory_scoring.py
+│   ├── inventory_decision.py
+│   ├── inventory_reporting.py
+│   └── inventory_export.py
+│
+├── requirements.txt
+│
+└── README.md
 ```
 
 ---
 
-## 🏗 Target Architecture
-
-```text
-       ERP Files / Invoices / Operational Data
-                        │
-                        ▼
-             Data Extraction and Validation
-                        │
-                        ▼
-                 Structured Database
-                        │
-                        ▼
-              Business Rules and KPIs
-                        │
-                        ▼
-           Decision and Prioritization Engine
-                        │
-                        ▼
-              Dashboard / Web Interface
-                        │
-                        ▼
-             AI Supply Chain Copilot
-                        │
-                        ▼
-       Natural-Language Business Recommendations
-```
-
----
-
-## 🚀 Technologies
-
-### Currently in use
+# Tecnologias Utilizadas
 
 - Python
 - Pandas
+- NumPy
+- CSV
 - Git
 - GitHub
 - Visual Studio Code
-- CSV
-- Microsoft Excel
 
-### Planned evolution
+Planejado para as próximas versões:
 
-- NumPy
 - SQLite
-- Streamlit
 - FastAPI
-- Power BI
-- Machine Learning
-- Azure AI
-- Azure OpenAI or OpenAI API
-- Microsoft Semantic Kernel
-
-The final technology stack may evolve according to the needs identified during development.
+- Streamlit
+- OpenAI API
+- Azure AI Foundry
 
 ---
 
-## 📂 Project Structure
+# Como Executar
 
-```text
-ai-supply-chain-copilot/
-│
-├── assets/          # Images and visual project assets
-├── backend/         # Future application and API logic
-├── database/        # Future database files and scripts
-├── docs/            # Technical and business documentation
-├── frontend/        # Future user interface
-├── notebooks/       # Exploratory analysis and experiments
-├── output/          # Consolidated analytical outputs
-├── sample_data/     # Fictional ERP datasets
-├── scripts/         # Data-processing and analytical scripts
-├── tests/           # Future automated tests
-│
-├── .gitignore
-├── README.md
-└── requirements.txt
+Clone o repositório:
+
+```bash
+git clone <URL_DO_REPOSITORIO>
 ```
 
-Current main files:
+Instale as dependências:
 
-```text
-sample_data/erp_inventory.csv
-scripts/analyze_inventory.py
-output/inventory_analysis.csv
+```bash
+pip install -r requirements.txt
 ```
 
----
-
-## ▶️ Running the Current Pipeline
-
-From the project root directory, activate the virtual environment and run:
+Execute:
 
 ```bash
 python scripts/analyze_inventory.py
 ```
 
-The script will:
-
-1. Read the synthetic ERP dataset
-2. Explore and validate the data
-3. Calculate inventory indicators
-4. Identify recommended actions
-5. Classify priorities
-6. Display an executive summary
-7. Export the consolidated analytical dataset
-
-Generated output:
-
-```text
-output/inventory_analysis.csv
-```
-
-> The output CSV must be closed in Excel before rerunning the script, otherwise Windows may prevent Python from replacing the file.
+Os resultados serão exportados automaticamente para a pasta de saída do projeto.
 
 ---
 
-## 🗺 Roadmap
+# Roadmap
 
-### Phase 1 — Project Foundations
+## Sprint 1 — Fundamentos
 
-- [x] Create the project structure
-- [x] Configure the Python virtual environment
-- [x] Configure Git
-- [x] Publish the GitHub repository
-- [x] Create the initial documentation
-- [x] Configure project dependencies
+- Leitura do CSV
+- Exploração dos dados
+- Estrutura inicial
 
-### Phase 2 — Synthetic ERP Simulation
-
-- [x] Create the synthetic inventory dataset
-- [x] Read ERP data with Pandas
-- [x] Explore dataset structure and data types
-- [x] Validate missing and duplicated SKUs
-- [x] Export an enriched consolidated dataset
-- [ ] Add inventory movement history
-- [ ] Add purchase-order data
-- [ ] Add demand forecast data
-- [ ] Add synthetic invoice extraction
-
-### Phase 3 — Supply Chain Analytics
-
-- [x] Calculate inventory value
-- [x] Identify replenishment requirements
-- [x] Identify excess inventory
-- [x] Calculate replenishment financial impact
-- [x] Calculate excess inventory financial impact
-- [x] Calculate stock coverage
-- [x] Compare coverage against supplier lead time
-- [x] Identify potential stockout risk
-- [x] Generate recommended actions
-- [x] Generate financial priority levels
-- [ ] Develop a multicriteria priority score
-- [ ] Include ABC classification in prioritization
-- [ ] Calculate inventory turnover
-- [ ] Calculate safety stock
-- [ ] Calculate forecast accuracy
-
-### Phase 4 — Decision Engine
-
-- [ ] Combine financial impact, ABC class, coverage and lead time
-- [ ] Generate explainable SKU recommendations
-- [ ] Detect operational exceptions and anomalies
-- [ ] Produce automated management summaries
-- [ ] Add business rules configuration
-
-### Phase 5 — Artificial Intelligence
-
-- [ ] Create natural-language queries
-- [ ] Connect an LLM to the analytical dataset
-- [ ] Generate contextual business explanations
-- [ ] Create an AI Supply Chain assistant
-- [ ] Add demand forecasting models
-- [ ] Add recommendation traceability
-
-### Phase 6 — Application and Deployment
-
-- [ ] Build a web interface
-- [ ] Create interactive dashboards
-- [ ] Develop a backend API
-- [ ] Add automated tests
-- [ ] Deploy the application
-- [ ] Publish the final portfolio case
+**Status:** ✅ Concluída
 
 ---
 
-## 📈 Current Status
+## Sprint 2 — Motor de Análise
 
-```text
-Version: v0.2.0
-Milestone: Inventory Analytics MVP
-Status: Functional
-```
+- Indicadores
+- Cobertura
+- Valor financeiro
+- Reposição
+- Excesso
+- Score
+- Priorização
 
-Current workflow:
-
-```text
-ERP data
-→ validation
-→ inventory analytics
-→ operational risk
-→ recommended action
-→ financial priority
-→ consolidated export
-```
-
-The project has moved beyond its initial setup and now contains a functional analytical module capable of transforming raw inventory data into operational decision-support information.
+**Status:** ✅ Concluída
 
 ---
 
-## 🔐 Data Confidentiality
+## Sprint 2.5 — Arquitetura Modular
 
-This project is inspired by realistic Supply Chain processes, but all data, companies, suppliers, products and operational scenarios are fictional.
+- Separação por módulos
+- Pipeline de processamento
+- Organização do projeto
+- Exportação automatizada
+- Relatórios
 
-No proprietary or confidential corporate information is used or published.
-
----
-
-## 👨‍💻 Author
-
-**Rodrigo Soares**
-
-- Mechanical Engineer
-- Supply Chain and Operational Planning Professional
-- AI Automation Specialist in development
+**Status:** ✅ Concluída
 
 ---
 
-## 📄 License
+## Sprint 3
 
-This project is intended for educational and portfolio purposes.
+- Banco de Dados SQLite
+- Persistência dos dados
+- Camada de acesso aos dados
+
+**Status:** 🔜 Planejada
+
+---
+
+## Sprint 4
+
+- Testes automatizados
+- Pytest
+
+**Status:** 🔜 Planejada
+
+---
+
+## Sprint 5
+
+- Dashboard interativo
+- Streamlit
+
+**Status:** 🔜 Planejada
+
+---
+
+## Sprint 6
+
+- IA Generativa
+- Assistente para Supply Chain
+- Consultas em linguagem natural
+- Recomendações inteligentes
+
+**Status:** 🔜 Planejada
+
+---
+
+# Aprendizados Aplicados
+
+Durante o desenvolvimento deste projeto foram praticados conceitos de:
+
+- Programação em Python
+- Pandas
+- Estruturas de Dados
+- Modularização
+- Organização em camadas
+- Single Responsibility Principle
+- Regras de Negócio
+- Análise de Dados
+- Automação
+- Engenharia de Software
+- Versionamento com Git
+
+---
+
+# Próximos Objetivos
+
+O objetivo final deste projeto é evoluir de um motor de análise de estoque para um **Copilot de Supply Chain**, capaz de:
+
+- interpretar indicadores automaticamente;
+- responder perguntas em linguagem natural;
+- sugerir ações para o gestor;
+- gerar relatórios executivos;
+- apoiar decisões utilizando Inteligência Artificial.
+
+---
+
+# Autor
+
+Desenvolvido por **Rodrigo Soares** como projeto de portfólio para transição de carreira para **IA, Automação e Data Analytics**, aplicando experiência em Supply Chain, Planejamento Operacional e Inteligência de Negócios.
+
+---
+
+## Versão
+
+**v0.3.0**
+
+**Sprint 2.5 concluída** ✅
