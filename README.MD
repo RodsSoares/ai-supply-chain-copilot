@@ -1,272 +1,187 @@
-# AI Supply Chain Copilot
+# AI Supply Chain Engineering Portfolio
 
-> Um projeto de automação de Supply Chain desenvolvido em Python para demonstrar como análise de dados, regras de negócio e Inteligência Artificial podem apoiar decisões de gestão de estoque.
+An end-to-end AI and Data Engineering portfolio project inspired by real-world Supply Chain operations.
 
----
+The project demonstrates how operational business data can be transformed into actionable insights through ETL pipelines, relational databases, SQL analytics and Artificial Intelligence, following modern Software Engineering practices.
 
-# Objetivo
-
-O **AI Supply Chain Copilot** é um projeto de portfólio desenvolvido para simular um sistema corporativo de apoio à decisão em Supply Chain.
-
-O objetivo é demonstrar a aplicação prática de Python, Pandas, arquitetura de software e, futuramente, Inteligência Artificial, em problemas reais de gestão de estoques.
-
-Todo o projeto utiliza **dados sintéticos**, preservando integralmente a confidencialidade de informações corporativas.
+> **Status:** 🚧 Active Development
 
 ---
 
-# Problema de Negócio
+# Project Goals
 
-Uma empresa precisa responder diariamente perguntas como:
-
-- Quais produtos precisam ser repostos?
-- Quais produtos possuem excesso de estoque?
-- Qual o impacto financeiro de cada decisão?
-- Quais itens possuem maior prioridade?
-- Como priorizar ações quando existem centenas de SKUs?
-
-Responder essas perguntas manualmente é lento e sujeito a erros.
-
-Este projeto automatiza todo esse processo.
-
----
-
-# Funcionalidades
-
-Atualmente o sistema realiza automaticamente:
-
-- Importação de dados do ERP (CSV)
-- Validação da qualidade dos dados
-- Cálculo do valor do estoque
-- Cálculo da cobertura de estoque
-- Identificação de risco de ruptura
-- Identificação de excesso de estoque
-- Cálculo do impacto financeiro
-- Score multicritério de priorização
-- Classificação automática das prioridades
-- Agrupamento gerencial
-- Relatório executivo
-- Exportação dos resultados
-
----
-
-# Arquitetura
-
-O projeto foi estruturado em módulos independentes, seguindo o princípio de **Responsabilidade Única (Single Responsibility Principle)**.
-
-```
-                 ERP CSV
-                    │
-                    ▼
-        inventory_validation
-                    │
-                    ▼
-         inventory_metrics
-                    │
-                    ▼
-         inventory_scoring
-                    │
-                    ▼
-         inventory_decision
-                    │
-                    ▼
-        inventory_reporting
-                    │
-                    ▼
-          inventory_export
-                    │
-                    ▼
-             CSV Final
-```
-
-Cada módulo possui uma única responsabilidade, tornando o projeto mais organizado, reutilizável e fácil de evoluir.
-
----
-
-# Estrutura do Projeto
-
-```
-AI-Supply-Chain-Copilot/
-
-│
-├── sample_data/
-│
-├── output/
-│
-├── scripts/
-│   ├── analyze_inventory.py
-│   ├── inventory_validation.py
-│   ├── inventory_metrics.py
-│   ├── inventory_scoring.py
-│   ├── inventory_decision.py
-│   ├── inventory_reporting.py
-│   └── inventory_export.py
-│
-├── requirements.txt
-│
-└── README.md
-```
-
----
-
-# Tecnologias Utilizadas
+The main objective of this repository is to build a complete business application while demonstrating practical skills in:
 
 - Python
-- Pandas
-- NumPy
-- CSV
-- Git
-- GitHub
-- Visual Studio Code
+- Data Engineering
+- SQL
+- Database Design
+- Software Engineering
+- Artificial Intelligence
+- Supply Chain Analytics
 
-Planejado para as próximas versões:
-
-- SQLite
-- FastAPI
-- Streamlit
-- OpenAI API
-- Azure AI Foundry
+Instead of isolated programming exercises, the project evolves as a realistic enterprise application through incremental milestones.
 
 ---
 
-# Como Executar
+# Current Features
 
-Clone o repositório:
+Current implementation includes:
 
-```bash
-git clone <URL_DO_REPOSITORIO>
+- ✅ Modular Python project structure
+- ✅ SQLite database
+- ✅ Database initialization
+- ✅ ETL pipeline
+- ✅ CSV ingestion
+- ✅ Data persistence
+- ✅ Technical documentation
+
+Planned features include:
+
+- SQL analytics
+- KPI engine
+- Inventory analysis
+- Transportation analysis
+- AI-powered recommendations
+- REST API
+- Dashboard
+- Cloud deployment
+
+---
+
+# Technology Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Language | Python |
+| Database | SQLite |
+| Data Processing | Pandas |
+| Version Control | Git / GitHub |
+| Development | VS Code |
+| Documentation | Markdown |
+
+Future technologies:
+
+- PostgreSQL
+- FastAPI
+- Docker
+- Power BI
+- Azure AI Services
+- Large Language Models (LLMs)
+
+---
+
+# Project Structure
+
+```text
+AI-SUPPLY-CHAIN-PORTFOLIO/
+
+├── data/
+├── database/
+├── docs/
+├── frontend/
+├── notebooks/
+├── output/
+├── sample_data/
+├── scripts/
+├── src/
+├── tests/
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
 ```
 
-Instale as dependências:
+---
+
+# Getting Started
+
+Clone the repository:
+
+```bash
+git clone <repository-url>
+```
+
+Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Execute:
+Create the database:
 
 ```bash
-python scripts/analyze_inventory.py
+python -m src.database.create_tables
 ```
 
-Os resultados serão exportados automaticamente para a pasta de saída do projeto.
+Load the sample dataset:
+
+```bash
+python -m src.database.load_orders
+```
+
+---
+
+# Documentation
+
+Project documentation is organized under the `docs/` directory.
+
+## Architecture
+
+- **System Overview**
+- **Current Architecture**
+- **Data Model**
+- **Architecture Decision Log**
+
+## Roadmap
+
+- Project Roadmap
+- Development milestones
 
 ---
 
 # Roadmap
 
-## Sprint 1 — Fundamentos
-
-- Leitura do CSV
-- Exploração dos dados
-- Estrutura inicial
-
-**Status:** ✅ Concluída
-
----
-
-## Sprint 2 — Motor de Análise
-
-- Indicadores
-- Cobertura
-- Valor financeiro
-- Reposição
-- Excesso
-- Score
-- Priorização
-
-**Status:** ✅ Concluída
+| Milestone | Status |
+|-----------|--------|
+| Project Setup | ✅ |
+| Database Foundation | ✅ |
+| First ETL Pipeline | ✅ |
+| SQL Analytics | ⏳ |
+| KPI Engine | ⏳ |
+| Business Intelligence | ⏳ |
+| AI Integration | ⏳ |
+| REST API | ⏳ |
+| Dashboard | ⏳ |
+| Deployment | ⏳ |
 
 ---
 
-## Sprint 2.5 — Arquitetura Modular
+# Engineering Principles
 
-- Separação por módulos
-- Pipeline de processamento
-- Organização do projeto
-- Exportação automatizada
-- Relatórios
+The project follows a few simple engineering principles:
 
-**Status:** ✅ Concluída
+- Business-driven development
+- Incremental delivery
+- Modular architecture
+- Clean code
+- Separation of responsibilities
+- Continuous documentation
 
----
-
-## Sprint 3
-
-- Banco de Dados SQLite
-- Persistência dos dados
-- Camada de acesso aos dados
-
-**Status:** 🔜 Planejada
+The primary goal is to build a functional software product while documenting only the architectural decisions that add long-term value.
 
 ---
 
-## Sprint 4
+# Repository Purpose
 
-- Testes automatizados
-- Pytest
+This repository serves as a technical portfolio demonstrating practical software engineering applied to Supply Chain business problems.
 
-**Status:** 🔜 Planejada
-
----
-
-## Sprint 5
-
-- Dashboard interativo
-- Streamlit
-
-**Status:** 🔜 Planejada
+Every feature is implemented as part of a coherent enterprise application rather than isolated coding exercises.
 
 ---
 
-## Sprint 6
+# License
 
-- IA Generativa
-- Assistente para Supply Chain
-- Consultas em linguagem natural
-- Recomendações inteligentes
+This project is intended for educational and portfolio purposes.
 
-**Status:** 🔜 Planejada
-
----
-
-# Aprendizados Aplicados
-
-Durante o desenvolvimento deste projeto foram praticados conceitos de:
-
-- Programação em Python
-- Pandas
-- Estruturas de Dados
-- Modularização
-- Organização em camadas
-- Single Responsibility Principle
-- Regras de Negócio
-- Análise de Dados
-- Automação
-- Engenharia de Software
-- Versionamento com Git
-
----
-
-# Próximos Objetivos
-
-O objetivo final deste projeto é evoluir de um motor de análise de estoque para um **Copilot de Supply Chain**, capaz de:
-
-- interpretar indicadores automaticamente;
-- responder perguntas em linguagem natural;
-- sugerir ações para o gestor;
-- gerar relatórios executivos;
-- apoiar decisões utilizando Inteligência Artificial.
-
----
-
-# Autor
-
-Desenvolvido por **Rodrigo Soares** como projeto de portfólio para transição de carreira para **IA, Automação e Data Analytics**, aplicando experiência em Supply Chain, Planejamento Operacional e Inteligência de Negócios.
-
----
-
-## Versão
-
-**v0.3.0**
-
-**Sprint 2.5 concluída** ✅
+All business scenarios and datasets are fictional or synthetic and do not contain confidential corporate information.

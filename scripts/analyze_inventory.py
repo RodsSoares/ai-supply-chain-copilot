@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 
 from inventory_validation import validar_dados
@@ -8,13 +10,17 @@ from inventory_reporting import exibir_relatorio
 from inventory_export import exportar_resultados
 
 
+RAIZ_PROJETO = Path(__file__).resolve().parent.parent
+ARQUIVO_ENTRADA = RAIZ_PROJETO / "sample_data" / "erp_inventory.csv"
+
+
 def main() -> None:
     """
     Executa o pipeline completo de análise de inventário.
     """
 
     df = pd.read_csv(
-        "sample_data/erp_inventory.csv",
+        ARQUIVO_ENTRADA,
         sep=";",
         decimal="."
     )
