@@ -1,19 +1,19 @@
 # Project Audit
 
-Gerado em: 02/08/2026 02:16:52
+Gerado em: 02/08/2026 03:28:12
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **13**
-- Linhas totais: **1124**
-- Linhas efetivas de código: **844**
-- Funções: **39**
+- Arquivos Python: **14**
+- Linhas totais: **1215**
+- Linhas efetivas de código: **911**
+- Funções: **41**
 - Classes: **0**
-- Imports internos: **9**
+- Imports internos: **12**
 - Imports externos: **9**
-- Imports da biblioteca padrão: **8**
+- Imports da biblioteca padrão: **11**
 - TODOs/FIXMEs em comentários: **0**
 - Funções sem docstring: **0**
 - Arquivos com erro de sintaxe: **0**
@@ -76,6 +76,8 @@ ai-supply-chain-copilot/
 │       └── .gitkeep
 ├── backend/
 │   └── .gitkeep
+├── config/
+│   └── business_rules.json
 ├── data/
 │   ├── processed/
 │   │   └── .gitkeep
@@ -114,6 +116,7 @@ ai-supply-chain-copilot/
 │   └── erp_inventory.csv
 ├── scripts/
 │   ├── analyze_inventory.py
+│   ├── business_rules.py
 │   ├── database_setup.py
 │   ├── inventory_decision.py
 │   ├── inventory_export.py
@@ -142,12 +145,13 @@ ai-supply-chain-copilot/
 | Arquivo | Linhas | Funções | Classes | TODOs |
 |---|---:|---:|---:|---:|
 | `scripts/analyze_inventory.py` | 39 | 1 | 0 | 0 |
+| `scripts/business_rules.py` | 63 | 2 | 0 | 0 |
 | `scripts/database_setup.py` | 12 | 0 | 0 | 0 |
-| `scripts/inventory_decision.py` | 100 | 5 | 0 | 0 |
+| `scripts/inventory_decision.py` | 121 | 5 | 0 | 0 |
 | `scripts/inventory_export.py` | 40 | 1 | 0 | 0 |
-| `scripts/inventory_metrics.py` | 106 | 5 | 0 | 0 |
+| `scripts/inventory_metrics.py` | 119 | 5 | 0 | 0 |
 | `scripts/inventory_reporting.py` | 228 | 5 | 0 | 0 |
-| `scripts/inventory_scoring.py` | 129 | 6 | 0 | 0 |
+| `scripts/inventory_scoring.py` | 123 | 6 | 0 | 0 |
 | `scripts/inventory_validation.py` | 78 | 2 | 0 | 0 |
 | `src/database/connection.py` | 18 | 1 | 0 | 0 |
 | `src/database/create_tables.py` | 121 | 5 | 0 | 0 |
@@ -163,6 +167,13 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `main` | 17–35 | `—` | SIM |
 
+### `scripts/business_rules.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `carregar_regras` | 15–33 | `—` | SIM |
+| `validar_regras` | 36–55 | `regras` | SIM |
+
 ### `scripts/database_setup.py`
 
 - Nenhuma função ou classe encontrada.
@@ -171,11 +182,11 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `aplicar_decisoes` | 4–13 | `df` | SIM |
-| `calcular_acao_recomendada` | 16–31 | `df` | SIM |
-| `calcular_prioridade` | 34–59 | `df` | SIM |
-| `gerar_grupo_gerencial` | 62–100 | `df` | SIM |
-| `classificar_grupo_gerencial` | 68–95 | `linha` | SIM |
+| `aplicar_decisoes` | 9–21 | `df` | SIM |
+| `calcular_acao_recomendada` | 24–40 | `df` | SIM |
+| `calcular_prioridade` | 43–75 | `df` | SIM |
+| `gerar_grupo_gerencial` | 78–121 | `df` | SIM |
+| `classificar_grupo_gerencial` | 84–116 | `linha` | SIM |
 
 ### `scripts/inventory_export.py`
 
@@ -187,11 +198,11 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `calcular_metricas` | 4–17 | `df` | SIM |
-| `calcular_valor_estoque` | 20–28 | `df` | SIM |
-| `calcular_cobertura_e_risco` | 31–64 | `df` | SIM |
-| `calcular_quantidades_e_valores` | 67–93 | `df` | SIM |
-| `calcular_valor_acao` | 96–106 | `df` | SIM |
+| `calcular_metricas` | 9–23 | `df` | SIM |
+| `calcular_valor_estoque` | 26–34 | `df` | SIM |
+| `calcular_cobertura_e_risco` | 37–76 | `df` | SIM |
+| `calcular_quantidades_e_valores` | 79–105 | `df` | SIM |
+| `calcular_valor_acao` | 108–119 | `df` | SIM |
 
 ### `scripts/inventory_reporting.py`
 
@@ -207,12 +218,12 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `calcular_scores` | 4–19 | `df` | SIM |
-| `calcular_score_financeiro` | 22–49 | `df` | SIM |
-| `calcular_score_classe_abc` | 52–73 | `df` | SIM |
-| `calcular_score_risco_ruptura` | 76–89 | `df` | SIM |
-| `calcular_score_lead_time` | 92–114 | `df` | SIM |
-| `calcular_score_prioridade` | 117–129 | `df` | SIM |
+| `calcular_scores` | 9–24 | `df` | SIM |
+| `calcular_score_financeiro` | 27–52 | `df` | SIM |
+| `calcular_score_classe_abc` | 55–69 | `df` | SIM |
+| `calcular_score_risco_ruptura` | 72–86 | `df` | SIM |
+| `calcular_score_lead_time` | 89–108 | `df` | SIM |
+| `calcular_score_prioridade` | 111–123 | `df` | SIM |
 
 ### `scripts/inventory_validation.py`
 
@@ -271,6 +282,9 @@ ai-supply-chain-copilot/
 | `scripts.analyze_inventory` | `scripts.inventory_decision` |
 | `scripts.analyze_inventory` | `scripts.inventory_reporting` |
 | `scripts.analyze_inventory` | `scripts.inventory_export` |
+| `scripts.inventory_decision` | `scripts.business_rules` |
+| `scripts.inventory_metrics` | `scripts.business_rules` |
+| `scripts.inventory_scoring` | `scripts.business_rules` |
 | `src.database.create_tables` | `src.database.connection` |
 | `src.etl.load_products` | `src.database.connection` |
 | `src.etl.load_warehouses` | `src.database.connection` |
@@ -289,6 +303,9 @@ flowchart LR
     scripts_analyze_inventory["scripts.analyze_inventory"] --> scripts_inventory_reporting["scripts.inventory_reporting"]
     scripts_analyze_inventory["scripts.analyze_inventory"] --> scripts_inventory_scoring["scripts.inventory_scoring"]
     scripts_analyze_inventory["scripts.analyze_inventory"] --> scripts_inventory_validation["scripts.inventory_validation"]
+    scripts_inventory_decision["scripts.inventory_decision"] --> scripts_business_rules["scripts.business_rules"]
+    scripts_inventory_metrics["scripts.inventory_metrics"] --> scripts_business_rules["scripts.business_rules"]
+    scripts_inventory_scoring["scripts.inventory_scoring"] --> scripts_business_rules["scripts.business_rules"]
     src_database_create_tables["src.database.create_tables"] --> src_database_connection["src.database.connection"]
     src_etl_load_products["src.etl.load_products"] --> src_database_connection["src.database.connection"]
     src_etl_load_warehouses["src.etl.load_warehouses"] --> src_database_connection["src.database.connection"]

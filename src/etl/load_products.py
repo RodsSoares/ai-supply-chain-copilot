@@ -8,7 +8,7 @@ from src.database.connection import conectar_banco
 CAMINHO_PRODUTOS = Path("data/raw/produtos.csv")
 
 
-def extrair_produtos():
+def extrair_produtos() -> pd.DataFrame:
     """
     Lê o arquivo CSV de produtos.
     """
@@ -21,7 +21,7 @@ def extrair_produtos():
     return pd.read_csv(CAMINHO_PRODUTOS)
 
 
-def transformar_produtos(df):
+def transformar_produtos(df: pd.DataFrame) -> pd.DataFrame:
     """
     Valida e padroniza os dados mestres de produtos.
     """
@@ -93,14 +93,28 @@ def transformar_produtos(df):
     return df[colunas_esperadas]
 
 
-def carregar_produtos(df):
+def carregar_produtos(df: pd.DataFrame) -> int:
     """
-    Carrega os produtos na tabela produtos.
+    Carrega no banco apenas os produtos que ainda não existem.
     """
 
     conexao = conectar_banco()
 
     try:
+        produtos_existentes = pd.read_sql_query(
+            "SELECT sku FROM produtos",
+            conexao,
+        )
+
+        if not produtos_existentes.empty:
+            df = df[
+                ~df["sku"].isin(produtos_existentes["sku"])
+            ].copy()
+
+        if df.empty:
+            print("Nenhum produto novo para carregar.")
+            return 0
+
         df.to_sql(
             "produtos",
             conexao,
@@ -110,19 +124,25 @@ def carregar_produtos(df):
 
         conexao.commit()
 
+        return len(df)
+
     finally:
         conexao.close()
 
 
-def main():
+def main() -> None:
     """
     Executa o pipeline ETL de produtos.
     """
+
     produtos = extrair_produtos()
     produtos = transformar_produtos(produtos)
-    carregar_produtos(produtos)
 
-    print(f"{len(produtos)} produtos carregados com sucesso.")
+    quantidade = carregar_produtos(produtos)
+
+    print(
+        f"{quantidade} produto(s) carregado(s) com sucesso."
+    )
 
 
 if __name__ == "__main__":

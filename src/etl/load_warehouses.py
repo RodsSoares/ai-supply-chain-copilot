@@ -8,7 +8,7 @@ from src.database.connection import conectar_banco
 CAMINHO_DEPOSITOS = Path("data/raw/depositos.csv")
 
 
-def extrair_depositos():
+def extrair_depositos() -> pd.DataFrame:
     """
     Lê o arquivo CSV de depósitos.
     """
@@ -21,7 +21,7 @@ def extrair_depositos():
     return pd.read_csv(CAMINHO_DEPOSITOS)
 
 
-def transformar_depositos(df):
+def transformar_depositos(df: pd.DataFrame) -> pd.DataFrame:
     """
     Valida e padroniza os dados mestres de depósitos.
     """
@@ -88,14 +88,30 @@ def transformar_depositos(df):
     return df[colunas_esperadas]
 
 
-def carregar_depositos(df):
+def carregar_depositos(df: pd.DataFrame) -> int:
     """
-    Carrega os depósitos na tabela depositos.
+    Carrega no banco apenas os depósitos que ainda não existem.
     """
 
     conexao = conectar_banco()
 
     try:
+        depositos_existentes = pd.read_sql_query(
+            "SELECT codigo_deposito FROM depositos",
+            conexao,
+        )
+
+        if not depositos_existentes.empty:
+            df = df[
+                ~df["codigo_deposito"].isin(
+                    depositos_existentes["codigo_deposito"]
+                )
+            ].copy()
+
+        if df.empty:
+            print("Nenhum depósito novo para carregar.")
+            return 0
+
         df.to_sql(
             "depositos",
             conexao,
@@ -105,19 +121,25 @@ def carregar_depositos(df):
 
         conexao.commit()
 
+        return len(df)
+
     finally:
         conexao.close()
 
 
-def main():
+def main() -> None:
     """
-    Executa o pipeline ETL de produtos.
+    Executa o pipeline ETL de depósitos.
     """
-    produtos = extrair_produtos()
-    produtos = transformar_produtos(produtos)
-    carregar_produtos(produtos)
 
-    print(f"{len(produtos)} produtos carregados com sucesso.")
+    depositos = extrair_depositos()
+    depositos = transformar_depositos(depositos)
+
+    quantidade = carregar_depositos(depositos)
+
+    print(
+        f"{quantidade} depósito(s) carregado(s) com sucesso."
+    )
 
 
 if __name__ == "__main__":

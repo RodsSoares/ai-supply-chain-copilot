@@ -1,9 +1,14 @@
 import pandas as pd
 
+from business_rules import carregar_regras
+
+
+REGRAS = carregar_regras()
+
 
 def calcular_scores(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calcula os componentes do score multicritério
+    Calcula todos os componentes do score multicritério
     e o score total de prioridade.
 
     A função altera o DataFrame recebido
@@ -21,104 +26,93 @@ def calcular_scores(df: pd.DataFrame) -> pd.DataFrame:
 
 def calcular_score_financeiro(df: pd.DataFrame) -> None:
     """
-    Calcula o score baseado no valor financeiro da ação.
-
-    Faixas:
-    - Até R$ 999,99: 10 pontos
-    - De R$ 1.000 a R$ 4.999,99: 25 pontos
-    - A partir de R$ 5.000: 40 pontos
+    Calcula o score baseado no valor financeiro da ação,
+    utilizando os parâmetros definidos no arquivo JSON.
     """
+
+    regras = REGRAS["financial"]
 
     df["score_financeiro"] = 0
 
     df.loc[
         (df["valor_acao"] > 0)
-        & (df["valor_acao"] < 1000),
-        "score_financeiro"
-    ] = 10
+        & (df["valor_acao"] < regras["low_limit"]),
+        "score_financeiro",
+    ] = regras["low_points"]
 
     df.loc[
-        (df["valor_acao"] >= 1000)
-        & (df["valor_acao"] < 5000),
-        "score_financeiro"
-    ] = 25
+        (df["valor_acao"] >= regras["low_limit"])
+        & (df["valor_acao"] < regras["high_limit"]),
+        "score_financeiro",
+    ] = regras["medium_points"]
 
     df.loc[
-        df["valor_acao"] >= 5000,
-        "score_financeiro"
-    ] = 40
+        df["valor_acao"] >= regras["high_limit"],
+        "score_financeiro",
+    ] = regras["high_points"]
 
 
 def calcular_score_classe_abc(df: pd.DataFrame) -> None:
     """
-    Calcula o score de criticidade com base
-    na classificação ABC.
+    Calcula o score baseado na classificação ABC,
+    utilizando os pesos definidos no arquivo JSON.
     """
+
+    regras = REGRAS["abc"]
 
     df["score_classe_abc"] = 0
 
-    df.loc[
-        df["classe_abc"] == "C",
-        "score_classe_abc"
-    ] = 5
-
-    df.loc[
-        df["classe_abc"] == "B",
-        "score_classe_abc"
-    ] = 15
-
-    df.loc[
-        df["classe_abc"] == "A",
-        "score_classe_abc"
-    ] = 25
+    for classe, pontos in regras.items():
+        df.loc[
+            df["classe_abc"] == classe,
+            "score_classe_abc",
+        ] = pontos
 
 
 def calcular_score_risco_ruptura(
-    df: pd.DataFrame
+    df: pd.DataFrame,
 ) -> None:
     """
-    Adiciona pontuação quando o produto
-    apresenta risco de ruptura.
+    Adiciona pontuação quando existe risco de ruptura.
     """
+
+    regras = REGRAS["stockout"]
 
     df["score_risco_ruptura"] = 0
 
     df.loc[
         df["risco_ruptura"] == "SIM",
-        "score_risco_ruptura"
-    ] = 25
+        "score_risco_ruptura",
+    ] = regras["points"]
 
 
 def calcular_score_lead_time(df: pd.DataFrame) -> None:
     """
-    Calcula o score relacionado ao prazo
-    de reposição do produto.
-
-    Faixas:
-    - Menos de 15 dias: 0 pontos
-    - De 15 a 29 dias: 5 pontos
-    - A partir de 30 dias: 10 pontos
+    Calcula o score baseado no prazo de reposição,
+    utilizando as faixas definidas no arquivo JSON.
     """
+
+    regras = REGRAS["lead_time"]
 
     df["score_lead_time"] = 0
 
     df.loc[
-        (df["lead_time_dias"] >= 15)
-        & (df["lead_time_dias"] < 30),
-        "score_lead_time"
-    ] = 5
+        (df["lead_time_dias"] >= regras["medium_days"])
+        & (df["lead_time_dias"] < regras["high_days"]),
+        "score_lead_time",
+    ] = regras["medium_points"]
 
     df.loc[
-        df["lead_time_dias"] >= 30,
-        "score_lead_time"
-    ] = 10
+        df["lead_time_dias"] >= regras["high_days"],
+        "score_lead_time",
+    ] = regras["high_points"]
 
 
 def calcular_score_prioridade(
-    df: pd.DataFrame
+    df: pd.DataFrame,
 ) -> None:
     """
-    Soma todos os componentes do score multicritério.
+    Calcula o score multicritério total.
     """
 
     df["score_prioridade"] = (

@@ -1,12 +1,18 @@
 import pandas as pd
 
+from business_rules import carregar_regras
+
+
+REGRAS = carregar_regras()
+
 
 def calcular_metricas(df: pd.DataFrame) -> pd.DataFrame:
     """
     Calcula os principais indicadores operacionais e financeiros
     relacionados ao estoque.
 
-    A função altera o DataFrame recebido e o devolve atualizado.
+    A função altera o DataFrame recebido
+    e devolve o DataFrame atualizado.
     """
 
     calcular_valor_estoque(df)
@@ -30,22 +36,28 @@ def calcular_valor_estoque(df: pd.DataFrame) -> None:
 
 def calcular_cobertura_e_risco(df: pd.DataFrame) -> None:
     """
-    Calcula cobertura de estoque, lead time em meses
-    e risco de ruptura.
+    Calcula a cobertura de estoque, o lead time em meses
+    e o risco de ruptura.
+
+    A conversão de dias para meses utiliza o parâmetro
+    definido em config/business_rules.json.
     """
+
+    dias_por_mes = REGRAS["inventory"]["days_per_month"]
 
     df["cobertura_meses"] = 0.0
 
     df.loc[
         df["consumo_medio_mensal"] > 0,
-        "cobertura_meses"
+        "cobertura_meses",
     ] = (
         df["estoque_atual"]
         / df["consumo_medio_mensal"]
     )
 
     df["lead_time_meses"] = (
-        df["lead_time_dias"] / 30
+        df["lead_time_dias"]
+        / dias_por_mes
     )
 
     df["cobertura_meses"] = (
@@ -60,12 +72,12 @@ def calcular_cobertura_e_risco(df: pd.DataFrame) -> None:
 
     df.loc[
         df["cobertura_meses"] < df["lead_time_meses"],
-        "risco_ruptura"
+        "risco_ruptura",
     ] = "SIM"
 
 
 def calcular_quantidades_e_valores(
-    df: pd.DataFrame
+    df: pd.DataFrame,
 ) -> None:
     """
     Calcula necessidades de reposição, excessos
@@ -95,12 +107,13 @@ def calcular_quantidades_e_valores(
 
 def calcular_valor_acao(df: pd.DataFrame) -> None:
     """
-    Define o impacto financeiro principal da ação recomendada.
+    Define o principal impacto financeiro
+    associado à ação recomendada.
     """
 
     df["valor_acao"] = df[
         [
             "valor_reposicao",
-            "valor_excesso"
+            "valor_excesso",
         ]
     ].max(axis=1)

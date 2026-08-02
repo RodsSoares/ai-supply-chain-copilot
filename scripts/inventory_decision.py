@@ -1,9 +1,17 @@
 import pandas as pd
 
+from business_rules import carregar_regras
+
+
+REGRAS = carregar_regras()
+
 
 def aplicar_decisoes(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Aplica todas as regras de negócio do sistema.
+    Aplica as regras de decisão do sistema.
+
+    A função define a ação recomendada, a prioridade
+    e o grupo gerencial de cada produto.
     """
 
     calcular_acao_recomendada(df)
@@ -15,47 +23,55 @@ def aplicar_decisoes(df: pd.DataFrame) -> pd.DataFrame:
 
 def calcular_acao_recomendada(df: pd.DataFrame) -> None:
     """
-    Define a ação recomendada para cada produto.
+    Define a ação recomendada de acordo com os limites
+    mínimo e máximo de estoque de cada produto.
     """
 
     df["acao_recomendada"] = "SEM AÇÃO"
 
     df.loc[
         df["estoque_atual"] < df["estoque_minimo"],
-        "acao_recomendada"
+        "acao_recomendada",
     ] = "REPOR"
 
     df.loc[
         df["estoque_atual"] > df["estoque_maximo"],
-        "acao_recomendada"
+        "acao_recomendada",
     ] = "TRATAR EXCESSO"
 
 
 def calcular_prioridade(df: pd.DataFrame) -> None:
     """
-    Converte o score multicritério
-    em níveis de prioridade.
+    Converte o score multicritério em níveis de prioridade,
+    utilizando os limites definidos em business_rules.json.
     """
+
+    regras = REGRAS["priority"]
+
+    limite_medio = regras["medium_threshold"]
+    limite_alto = regras["high_threshold"]
+
+    possui_acao = df["acao_recomendada"] != "SEM AÇÃO"
 
     df["prioridade"] = "SEM AÇÃO"
 
     df.loc[
-        (df["acao_recomendada"] != "SEM AÇÃO")
-        & (df["score_prioridade"] < 40),
-        "prioridade"
+        possui_acao
+        & (df["score_prioridade"] < limite_medio),
+        "prioridade",
     ] = "BAIXA"
 
     df.loc[
-        (df["acao_recomendada"] != "SEM AÇÃO")
-        & (df["score_prioridade"] >= 40)
-        & (df["score_prioridade"] < 70),
-        "prioridade"
+        possui_acao
+        & (df["score_prioridade"] >= limite_medio)
+        & (df["score_prioridade"] < limite_alto),
+        "prioridade",
     ] = "MÉDIA"
 
     df.loc[
-        (df["acao_recomendada"] != "SEM AÇÃO")
-        & (df["score_prioridade"] >= 70),
-        "prioridade"
+        possui_acao
+        & (df["score_prioridade"] >= limite_alto),
+        "prioridade",
     ] = "ALTA"
 
 
@@ -65,36 +81,41 @@ def gerar_grupo_gerencial(df: pd.DataFrame) -> None:
     utilizada em filtros, dashboards e tabelas dinâmicas.
     """
 
-    def classificar_grupo_gerencial(linha):
+    def classificar_grupo_gerencial(linha: pd.Series) -> str:
         """
-        Classifica uma linha conforme a ação e a prioridade.
+        Classifica uma linha conforme a ação recomendada
+        e o nível de prioridade.
         """
 
-        if linha["acao_recomendada"] == "REPOR":
+        grupos = {
+            ("REPOR", "ALTA"): "0 - REPOSIÇÃO — ALTA PRIORIDADE",
+            (
+                "TRATAR EXCESSO",
+                "ALTA",
+            ): "1 - EXCESSO — ALTA PRIORIDADE",
+            ("REPOR", "MÉDIA"): "2 - REPOSIÇÃO — MÉDIA PRIORIDADE",
+            (
+                "TRATAR EXCESSO",
+                "MÉDIA",
+            ): "3 - EXCESSO — MÉDIA PRIORIDADE",
+            ("REPOR", "BAIXA"): "4 - REPOSIÇÃO — BAIXA PRIORIDADE",
+            (
+                "TRATAR EXCESSO",
+                "BAIXA",
+            ): "5 - EXCESSO — BAIXA PRIORIDADE",
+        }
 
-            if linha["prioridade"] == "ALTA":
-                return "0 - REPOSIÇÃO — ALTA PRIORIDADE"
+        chave = (
+            linha["acao_recomendada"],
+            linha["prioridade"],
+        )
 
-            if linha["prioridade"] == "MÉDIA":
-                return "2 - REPOSIÇÃO — MÉDIA PRIORIDADE"
-
-            if linha["prioridade"] == "BAIXA":
-                return "4 - REPOSIÇÃO — BAIXA PRIORIDADE"
-
-        elif linha["acao_recomendada"] == "TRATAR EXCESSO":
-
-            if linha["prioridade"] == "ALTA":
-                return "1 - EXCESSO — ALTA PRIORIDADE"
-
-            if linha["prioridade"] == "MÉDIA":
-                return "3 - EXCESSO — MÉDIA PRIORIDADE"
-
-            if linha["prioridade"] == "BAIXA":
-                return "5 - EXCESSO — BAIXA PRIORIDADE"
-
-        return "6 - SEM AÇÃO"
+        return grupos.get(
+            chave,
+            "6 - SEM AÇÃO",
+        )
 
     df["grupo_gerencial"] = df.apply(
         classificar_grupo_gerencial,
-        axis=1
+        axis=1,
     )

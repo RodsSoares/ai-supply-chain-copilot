@@ -37,6 +37,7 @@ All datasets are synthetic and inspired by real business processes, ensuring com
 | ETL Pipeline | ✅ |
 | SQLite Database | ✅ |
 | Automated Project Audit | ✅ |
+Configurable Business Rules | ✅ |
 | SQL Analytics | 🚧 |
 | KPI Engine | 🚧 |
 | REST API | ⏳ |
@@ -67,6 +68,7 @@ The focus is not simply learning programming syntax, but designing maintainable 
 |----------|--------------|
 | Language | Python |
 | Data Processing | Pandas |
+| Configuration | JSON |
 | Database | SQLite |
 | Version Control | Git / GitHub |
 | IDE | Visual Studio Code |
@@ -85,38 +87,28 @@ Future planned technologies include:
 
 # High-Level Architecture
 
-```text
-Synthetic ERP Dataset
-        │
-        ▼
-CSV Ingestion
-        │
-        ▼
-Validation
-        │
-        ▼
-Inventory Metrics
-        │
-        ▼
-Business Scoring
-        │
-        ▼
-Decision Engine
-        │
-        ▼
-Reporting
-        │
-        ▼
-Export
-        │
-        ▼
-SQLite
-        │
-        ▼
-Future REST API
-        │
-        ▼
-AI Supply Chain Copilot
+                     business_rules.json
+                              │
+                              ▼
+Synthetic ERP Dataset → Validation → Metrics
+                               │
+                               ▼
+                         Business Scoring
+                               │
+                               ▼
+                         Decision Engine
+                               │
+                               ▼
+                      Reporting / Export
+                               │
+                               ▼
+                            SQLite
+                               │
+                               ▼
+                         Future REST API
+                               │
+                               ▼
+                      AI Supply Chain Copilot
 ```
 
 ---
@@ -126,12 +118,12 @@ AI Supply Chain Copilot
 ```text
 AI-SUPPLY-CHAIN-COPILOT/
 
-├── docs/
-│   ├── architecture/
-│   ├── diagrams/
-│   ├── project_audit/
-│   └── roadmap/
+├── config/
+│   └── business_rules.json
 │
+├── data/
+├── database/
+├── docs/
 ├── output/
 ├── sample_data/
 ├── scripts/
@@ -220,6 +212,23 @@ This project follows a set of engineering principles intended to support long-te
 - Technical Documentation
 - Version Control
 - AI-ready Design
+
+## Business Rules Configuration
+
+Business parameters are centralized in a dedicated configuration layer (`config/business_rules.json`).
+
+This approach separates business rules from application logic, allowing thresholds, scoring weights and operational parameters to evolve without modifying the Python implementation.
+
+Current configurable parameters include:
+
+- Inventory conversion parameters
+- Financial scoring thresholds
+- ABC classification weights
+- Stockout risk scoring
+- Lead time scoring
+- Priority thresholds
+
+This design prepares the application for future administrative interfaces and REST APIs while keeping the core business logic modular and maintainable.
 
 ---
 

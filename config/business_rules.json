@@ -1,0 +1,37 @@
+{
+    "inventory": {
+        "days_per_month": 30
+    },
+
+    "financial": {
+        "low_limit": 1000,
+        "high_limit": 5000,
+
+        "low_points": 10,
+        "medium_points": 25,
+        "high_points": 40
+    },
+
+    "abc": {
+        "A": 25,
+        "B": 15,
+        "C": 5
+    },
+
+    "stockout": {
+        "points": 25
+    },
+
+    "lead_time": {
+        "medium_days": 15,
+        "high_days": 30,
+
+        "medium_points": 5,
+        "high_points": 10
+    },
+
+    "priority": {
+        "medium_threshold": 40,
+        "high_threshold": 70
+    }
+}
