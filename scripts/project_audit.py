@@ -56,6 +56,19 @@ PIPELINE_PRINCIPAL = [
 ]
 
 
+ARTEFATOS_PROJETO = {
+    "Banco SQLite": "database/inventory.db",
+    "Arquivo analítico": "output/inventory_analysis.csv",
+    "Relatório Excel": "reports/excel/indicadores_r1.xlsx",
+    "Dashboard Power BI": (
+        "reports/powerbi/AI_Supply_Chain_Copilot.pbix"
+    ),
+    "Screenshot do dashboard": (
+        "reports/powerbi/screenshots/dashboard.png"
+    ),
+}
+
+
 def deve_ignorar(caminho: Path) -> bool:
     """
     Verifica se um caminho pertence a uma pasta ou arquivo ignorado.
@@ -542,6 +555,31 @@ def gerar_secao_pipeline() -> list[str]:
     return linhas
 
 
+
+def gerar_secao_entregas() -> list[str]:
+    """
+    Exibe os principais artefatos entregues pelo projeto.
+    """
+    linhas = [
+        "## 4. Entregas do projeto",
+        "",
+        "| Entrega | Caminho | Status |",
+        "|---|---|:---:|",
+    ]
+
+    for nome, caminho_relativo in ARTEFATOS_PROJETO.items():
+        caminho = RAIZ_PROJETO / caminho_relativo
+        status = "✅" if caminho.exists() else "❌"
+
+        linhas.append(
+            f"| {nome} | `{caminho_relativo}` | {status} |"
+        )
+
+    linhas.append("")
+
+    return linhas
+
+
 def gerar_secao_saude(
     resultados: list[dict[str, Any]],
     dependencias: list[dict[str, Any]],
@@ -599,7 +637,7 @@ def gerar_secao_saude(
     ) / 4
 
     return [
-        "## 4. Project Health",
+        "## 5. Project Health",
         "",
         "> Notas heurísticas calculadas automaticamente.",
         "",
@@ -619,7 +657,7 @@ def gerar_secao_estrutura(caminhos: list[Path]) -> list[str]:
     Gera a árvore visual do projeto.
     """
     linhas = [
-        "## 5. Estrutura do projeto",
+        "## 6. Estrutura do projeto",
         "",
         "```text",
     ]
@@ -635,7 +673,7 @@ def gerar_secao_arquivos(resultados: list[dict[str, Any]]) -> list[str]:
     Gera a tabela dos arquivos Python analisados.
     """
     linhas = [
-        "## 6. Arquivos Python",
+        "## 7. Arquivos Python",
         "",
         "| Arquivo | Linhas | Funções | Classes | TODOs |",
         "|---|---:|---:|---:|---:|",
@@ -660,7 +698,7 @@ def gerar_secao_funcoes(resultados: list[dict[str, Any]]) -> list[str]:
     Gera a relação de funções, assinaturas e docstrings.
     """
     linhas = [
-        "## 7. Funções e classes",
+        "## 8. Funções e classes",
         "",
     ]
 
@@ -743,7 +781,7 @@ def gerar_secao_dependencias(
     arestas: set[tuple[str, str]] = set()
 
     linhas = [
-        "## 8. Dependências",
+        "## 9. Dependências",
         "",
         "### Dependências internas",
         "",
@@ -854,7 +892,7 @@ def gerar_secao_observacoes_repositorio() -> list[str]:
         )
 
     linhas = [
-        "## 9. Observações automáticas do repositório",
+        "## 10. Observações automáticas do repositório",
         "",
     ]
 
@@ -872,7 +910,7 @@ def gerar_secao_pendencias(resultados: list[dict[str, Any]]) -> list[str]:
     Gera a seção de TODOs, FIXMEs e erros de sintaxe.
     """
     linhas = [
-        "## 10. Pendências e erros",
+        "## 11. Pendências e erros",
         "",
         "### TODOs e FIXMEs",
         "",
@@ -924,7 +962,7 @@ def gerar_secao_codigo(resultados: list[dict[str, Any]]) -> list[str]:
     Consolida todo o código Python ao final do relatório.
     """
     linhas = [
-        "## 11. Código Python consolidado",
+        "## 12. Código Python consolidado",
         "",
     ]
 
@@ -966,6 +1004,7 @@ def gerar_relatorio_unico(
     linhas.extend(gerar_secao_resumo(resultados, dependencias))
     linhas.extend(gerar_secao_configuracao())
     linhas.extend(gerar_secao_pipeline())
+    linhas.extend(gerar_secao_entregas())
     linhas.extend(gerar_secao_saude(resultados, dependencias))
     linhas.extend(gerar_secao_estrutura(estrutura))
     linhas.extend(gerar_secao_arquivos(resultados))

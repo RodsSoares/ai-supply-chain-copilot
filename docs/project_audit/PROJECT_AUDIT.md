@@ -1,6 +1,6 @@
 # Project Audit
 
-Gerado em: 02/08/2026 20:40:15
+Gerado em: 02/08/2026 20:53:03
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
@@ -51,7 +51,17 @@ inventory_reporting.py
 inventory_export.py
 ```
 
-## 4. Project Health
+## 4. Entregas do projeto
+
+| Entrega | Caminho | Status |
+|---|---|:---:|
+| Banco SQLite | `database/inventory.db` | ✅ |
+| Arquivo analítico | `output/inventory_analysis.csv` | ✅ |
+| Relatório Excel | `reports/excel/indicadores_r1.xlsx` | ✅ |
+| Dashboard Power BI | `reports/powerbi/AI_Supply_Chain_Copilot.pbix` | ✅ |
+| Screenshot do dashboard | `reports/powerbi/screenshots/dashboard.png` | ✅ |
+
+## 5. Project Health
 
 > Notas heurísticas calculadas automaticamente.
 
@@ -63,7 +73,7 @@ inventory_export.py
 | Integridade sintática | 10.0/10 |
 | Saúde geral | **10.0/10** |
 
-## 5. Estrutura do projeto
+## 6. Estrutura do projeto
 
 ```text
 ai-supply-chain-copilot/
@@ -149,7 +159,7 @@ ai-supply-chain-copilot/
     └── .gitkeep
 ```
 
-## 6. Arquivos Python
+## 7. Arquivos Python
 
 | Arquivo | Linhas | Funções | Classes | TODOs |
 |---|---:|---:|---:|---:|
@@ -168,7 +178,7 @@ ai-supply-chain-copilot/
 | `src/etl/load_warehouses.py` | 146 | 4 | 0 | 0 |
 | `src/main.py` | 21 | 1 | 0 | 0 |
 
-## 7. Funções e classes
+## 8. Funções e classes
 
 ### `scripts/analyze_inventory.py`
 
@@ -281,7 +291,7 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `main` | 6–17 | `—` | SIM |
 
-## 8. Dependências
+## 9. Dependências
 
 ### Dependências internas
 
@@ -328,11 +338,11 @@ flowchart LR
     src_main["src.main"] --> src_etl_load_warehouses["src.etl.load_warehouses"]
 ```
 
-## 9. Observações automáticas do repositório
+## 10. Observações automáticas do repositório
 
 - Nenhuma observação de padronização encontrada.
 
-## 10. Pendências e erros
+## 11. Pendências e erros
 
 ### TODOs e FIXMEs
 
