@@ -110,11 +110,14 @@ def carregar_depositos(df):
 
 
 def main():
-    depositos = extrair_depositos()
-    depositos = transformar_depositos(depositos)
-    carregar_depositos(depositos)
+    """
+    Executa o pipeline ETL de produtos.
+    """
+    produtos = extrair_produtos()
+    produtos = transformar_produtos(produtos)
+    carregar_produtos(produtos)
 
-    print(f"{len(depositos)} depósitos carregados com sucesso.")
+    print(f"{len(produtos)} produtos carregados com sucesso.")
 
 
 if __name__ == "__main__":

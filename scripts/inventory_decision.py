@@ -66,6 +66,9 @@ def gerar_grupo_gerencial(df: pd.DataFrame) -> None:
     """
 
     def classificar_grupo_gerencial(linha):
+        """
+        Classifica uma linha conforme a ação e a prioridade.
+        """
 
         if linha["acao_recomendada"] == "REPOR":
 

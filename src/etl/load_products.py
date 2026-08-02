@@ -115,6 +115,9 @@ def carregar_produtos(df):
 
 
 def main():
+    """
+    Executa o pipeline ETL de produtos.
+    """
     produtos = extrair_produtos()
     produtos = transformar_produtos(produtos)
     carregar_produtos(produtos)
