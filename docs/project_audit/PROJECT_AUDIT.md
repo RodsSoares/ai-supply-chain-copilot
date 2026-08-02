@@ -1,17 +1,17 @@
 # Project Audit
 
-Gerado em: 02/08/2026 03:28:12
+Gerado em: 02/08/2026 20:40:15
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
 - Arquivos Python: **14**
-- Linhas totais: **1215**
-- Linhas efetivas de código: **911**
-- Funções: **41**
+- Linhas totais: **1278**
+- Linhas efetivas de código: **955**
+- Funções: **42**
 - Classes: **0**
-- Imports internos: **12**
+- Imports internos: **15**
 - Imports externos: **9**
 - Imports da biblioteca padrão: **11**
 - TODOs/FIXMEs em comentários: **0**
@@ -98,6 +98,8 @@ ai-supply-chain-copilot/
 │   │   └── .gitkeep
 │   ├── diagrams/
 │   │   └── .gitkeep
+│   ├── images/
+│   │   └── architecture-overview.png
 │   ├── milestones
 │   ├── project_audit/
 │   │   └── PROJECT_AUDIT.md
@@ -111,6 +113,13 @@ ai-supply-chain-copilot/
 ├── output/
 │   └── inventory_analysis.csv
 ├── README.md
+├── reports/
+│   ├── excel/
+│   │   └── indicadores_r1.xlsx
+│   └── powerbi/
+│       ├── AI_Supply_Chain_Copilot.pbix
+│       └── screenshots/
+│           └── dashboard.png
 ├── requirements.txt
 ├── sample_data/
 │   └── erp_inventory.csv
@@ -155,9 +164,9 @@ ai-supply-chain-copilot/
 | `scripts/inventory_validation.py` | 78 | 2 | 0 | 0 |
 | `src/database/connection.py` | 18 | 1 | 0 | 0 |
 | `src/database/create_tables.py` | 121 | 5 | 0 | 0 |
-| `src/etl/load_products.py` | 129 | 4 | 0 | 0 |
-| `src/etl/load_warehouses.py` | 124 | 4 | 0 | 0 |
-| `src/main.py` | 0 | 0 | 0 | 0 |
+| `src/etl/load_products.py` | 149 | 4 | 0 | 0 |
+| `src/etl/load_warehouses.py` | 146 | 4 | 0 | 0 |
+| `src/main.py` | 21 | 1 | 0 | 0 |
 
 ## 7. Funções e classes
 
@@ -254,8 +263,8 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `extrair_produtos` | 11–21 | `—` | SIM |
 | `transformar_produtos` | 24–93 | `df` | SIM |
-| `carregar_produtos` | 96–114 | `df` | SIM |
-| `main` | 117–125 | `—` | SIM |
+| `carregar_produtos` | 96–130 | `df` | SIM |
+| `main` | 133–145 | `—` | SIM |
 
 ### `src/etl/load_warehouses.py`
 
@@ -263,12 +272,14 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `extrair_depositos` | 11–21 | `—` | SIM |
 | `transformar_depositos` | 24–88 | `df` | SIM |
-| `carregar_depositos` | 91–109 | `df` | SIM |
-| `main` | 112–120 | `—` | SIM |
+| `carregar_depositos` | 91–127 | `df` | SIM |
+| `main` | 130–142 | `—` | SIM |
 
 ### `src/main.py`
 
-- Nenhuma função ou classe encontrada.
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `main` | 6–17 | `—` | SIM |
 
 ## 8. Dependências
 
@@ -288,6 +299,9 @@ ai-supply-chain-copilot/
 | `src.database.create_tables` | `src.database.connection` |
 | `src.etl.load_products` | `src.database.connection` |
 | `src.etl.load_warehouses` | `src.database.connection` |
+| `src.main` | `src.database.create_tables` |
+| `src.main` | `src.etl.load_products` |
+| `src.main` | `src.etl.load_warehouses` |
 
 ### Dependências externas
 
@@ -309,6 +323,9 @@ flowchart LR
     src_database_create_tables["src.database.create_tables"] --> src_database_connection["src.database.connection"]
     src_etl_load_products["src.etl.load_products"] --> src_database_connection["src.database.connection"]
     src_etl_load_warehouses["src.etl.load_warehouses"] --> src_database_connection["src.database.connection"]
+    src_main["src.main"] --> src_database_create_tables["src.database.create_tables"]
+    src_main["src.main"] --> src_etl_load_products["src.etl.load_products"]
+    src_main["src.main"] --> src_etl_load_warehouses["src.etl.load_warehouses"]
 ```
 
 ## 9. Observações automáticas do repositório
