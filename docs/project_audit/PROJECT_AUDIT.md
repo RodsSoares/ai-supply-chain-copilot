@@ -1,19 +1,19 @@
 # Project Audit
 
-Gerado em: 02/08/2026 20:53:03
+Gerado em: 04/08/2026 23:18:07
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **14**
-- Linhas totais: **1278**
-- Linhas efetivas de código: **955**
-- Funções: **42**
+- Arquivos Python: **15**
+- Linhas totais: **1446**
+- Linhas efetivas de código: **1088**
+- Funções: **49**
 - Classes: **0**
-- Imports internos: **15**
-- Imports externos: **9**
-- Imports da biblioteca padrão: **11**
+- Imports internos: **16**
+- Imports externos: **12**
+- Imports da biblioteca padrão: **12**
 - TODOs/FIXMEs em comentários: **0**
 - Funções sem docstring: **0**
 - Arquivos com erro de sintaxe: **0**
@@ -78,14 +78,6 @@ inventory_export.py
 ```text
 ai-supply-chain-copilot/
 ├── .gitignore
-├── assets/
-│   ├── .gitkeep
-│   ├── images/
-│   │   └── .gitkeep
-│   └── screenshots/
-│       └── .gitkeep
-├── backend/
-│   └── .gitkeep
 ├── config/
 │   └── business_rules.json
 ├── data/
@@ -104,22 +96,16 @@ ai-supply-chain-copilot/
 │   │   ├── 02_current_architecture.md
 │   │   ├── 03_data_model.md
 │   │   └── 04_decision_log.md
-│   ├── decisions/
-│   │   └── .gitkeep
-│   ├── diagrams/
-│   │   └── .gitkeep
 │   ├── images/
 │   │   └── architecture-overview.png
-│   ├── milestones
+│   ├── presentations/
+│   │   ├── AI-Supply-Chain-Copilot.pdf
+│   │   └── AI-Supply-Chain-Copilot.pptx
 │   ├── project_audit/
 │   │   └── PROJECT_AUDIT.md
 │   └── roadmap/
 │       ├── AI_Supply_Chain_Copilot_Gantt_v0.2.0.xlsx
 │       └── roadmap.md
-├── frontend/
-│   └── .gitkeep
-├── notebooks/
-│   └── .gitkeep
 ├── output/
 │   └── inventory_analysis.csv
 ├── README.md
@@ -145,16 +131,15 @@ ai-supply-chain-copilot/
 │   ├── inventory_validation.py
 │   └── project_audit.py
 ├── src/
-│   ├── analysis
+│   ├── api/
+│   │   └── main.py
 │   ├── database/
 │   │   ├── connection.py
 │   │   └── create_tables.py
 │   ├── etl/
 │   │   ├── load_products.py
 │   │   └── load_warehouses.py
-│   ├── main.py
-│   └── utils/
-│       └── .gitkeep
+│   └── main.py
 └── tests/
     └── .gitkeep
 ```
@@ -172,7 +157,8 @@ ai-supply-chain-copilot/
 | `scripts/inventory_reporting.py` | 228 | 5 | 0 | 0 |
 | `scripts/inventory_scoring.py` | 123 | 6 | 0 | 0 |
 | `scripts/inventory_validation.py` | 78 | 2 | 0 | 0 |
-| `src/database/connection.py` | 18 | 1 | 0 | 0 |
+| `src/api/main.py` | 169 | 7 | 0 | 0 |
+| `src/database/connection.py` | 17 | 1 | 0 | 0 |
 | `src/database/create_tables.py` | 121 | 5 | 0 | 0 |
 | `src/etl/load_products.py` | 149 | 4 | 0 | 0 |
 | `src/etl/load_warehouses.py` | 146 | 4 | 0 | 0 |
@@ -251,11 +237,23 @@ ai-supply-chain-copilot/
 | `validar_dados` | 17–41 | `df` | SIM |
 | `detalhar_problemas` | 44–78 | `df` | SIM |
 
+### `src/api/main.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `carregar_inventario` | 12–26 | `—` | SIM |
+| `raiz` | 40–47 | `—` | SIM |
+| `verificar_saude` | 51–57 | `—` | SIM |
+| `listar_produtos` | 61–91 | `—` | SIM |
+| `buscar_produto` | 95–129 | `sku` | SIM |
+| `listar_inventario` | 133–141 | `—` | SIM |
+| `obter_dashboard` | 145–169 | `—` | SIM |
+
 ### `src/database/connection.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `conectar_banco` | 9–18 | `—` | SIM |
+| `conectar_banco` | 8–17 | `—` | SIM |
 
 ### `src/database/create_tables.py`
 
@@ -306,6 +304,7 @@ ai-supply-chain-copilot/
 | `scripts.inventory_decision` | `scripts.business_rules` |
 | `scripts.inventory_metrics` | `scripts.business_rules` |
 | `scripts.inventory_scoring` | `scripts.business_rules` |
+| `src.api.main` | `src.database.connection` |
 | `src.database.create_tables` | `src.database.connection` |
 | `src.etl.load_products` | `src.database.connection` |
 | `src.etl.load_warehouses` | `src.database.connection` |
@@ -315,6 +314,7 @@ ai-supply-chain-copilot/
 
 ### Dependências externas
 
+- `fastapi`
 - `pandas`
 
 ### Grafo de dependências internas
@@ -330,6 +330,7 @@ flowchart LR
     scripts_inventory_decision["scripts.inventory_decision"] --> scripts_business_rules["scripts.business_rules"]
     scripts_inventory_metrics["scripts.inventory_metrics"] --> scripts_business_rules["scripts.business_rules"]
     scripts_inventory_scoring["scripts.inventory_scoring"] --> scripts_business_rules["scripts.business_rules"]
+    src_api_main["src.api.main"] --> src_database_connection["src.database.connection"]
     src_database_create_tables["src.database.create_tables"] --> src_database_connection["src.database.connection"]
     src_etl_load_products["src.etl.load_products"] --> src_database_connection["src.database.connection"]
     src_etl_load_warehouses["src.etl.load_warehouses"] --> src_database_connection["src.database.connection"]

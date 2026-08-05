@@ -1,8 +1,8 @@
 # AI Supply Chain Copilot
 
-> 🚀 **Current Release:** **v0.2.0 — Business Intelligence Foundation Completed**
+> 🚀 **Current Release:** **v0.4.0 — REST API Foundation Completed**
 
-![Version](https://img.shields.io/badge/version-v0.2.0-blue)
+![Version](https://img.shields.io/badge/version-v0.4.0-blue)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Portfolio](https://img.shields.io/badge/portfolio-AI%20Engineering-orange)
@@ -15,7 +15,7 @@
   >
 </p>
 
-> **End-to-end AI, Data Engineering and Decision Support platform for Supply Chain operations.**
+> **End-to-end Data Engineering and Decision Support platform with an AI-ready architecture for Supply Chain operations.**
 
 An enterprise-inspired software engineering portfolio that combines **Supply Chain expertise, Data Engineering and Artificial Intelligence** to solve realistic inventory management problems using fully synthetic ERP data.
 
@@ -29,7 +29,7 @@ Rather than presenting isolated coding exercises, this repository evolves increm
 - Current Status
 - Main Objectives
 - Technology Stack
-- High-Level Architecture
+- Solution Architecture
 - Project Structure
 - Getting Started
 - Automated Project Audit
@@ -74,10 +74,10 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | Business Rules Engine | ✅ |
 | Configurable Business Rules | ✅ |
 | Automated Project Audit | ✅ |
-| SQL Analytics | 🚧 |
-| KPI Engine | 🚧 |
-| REST API | ⏳ |
-| Dashboard | ⏳ |
+| SQL Analytics | ✅ |
+| KPI Engine | ✅ |
+| REST API | ✅ |
+| Power BI Dashboard | ✅ |
 | AI Copilot | ⏳ |
 | Cloud Deployment | ⏳ |
 
@@ -102,51 +102,78 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 
 | Category | Technologies |
 |----------|--------------|
-| Language | Python |
+| Language | Python 3.13 |
 | Data Processing | Pandas |
-| Configuration | JSON |
 | Database | SQLite |
+| API Framework | FastAPI |
+| Business Intelligence | Power BI |
+| Configuration | JSON |
 | Version Control | Git / GitHub |
 | IDE | Visual Studio Code |
 | Documentation | Markdown |
 
 ### Planned Technologies
 
-- FastAPI
 - PostgreSQL
 - Docker
-- Power BI
 - Azure AI Services
 - Large Language Models (LLMs)
 
 ---
 
-# High-Level Architecture
+# Solution Architecture
 
 ```mermaid
 flowchart LR
 
 A[Synthetic ERP Dataset]
 B[ETL Pipeline]
-C[Inventory Analytics]
-D[Business Rules Engine]
-E[Decision Engine]
-F[SQLite Database]
-G[REST API]
+C[(SQLite Database)]
+D[Analytics Engine]
+E[Decision Support Engine]
+F[REST API]
+G[Power BI Dashboard]
 H[AI Supply Chain Copilot]
+
+R[config/business_rules.json]
 
 A --> B
 B --> C
 C --> D
 D --> E
 E --> F
-F --> G
-G --> H
 
-R[business_rules.json]
+F --> G
+F --> H
+
 R -. Configuration .-> D
 ```
 
+The solution adopts a layered and modular architecture in which each layer has a clearly defined responsibility and can evolve independently over time.
+
+The **ETL Pipeline** extracts, validates, transforms and loads synthetic ERP data into the relational database, establishing a reliable data foundation for the application.
+
+The **SQLite Database** serves as the persistence layer, storing standardized inventory data and supporting analytical queries.
+
+The **Analytics Engine** retrieves persisted data and computes operational KPIs, inventory metrics, stockout risk indicators and prioritization scores based on configurable business parameters.
+
+Business rules are externalized through the `config/business_rules.json` file, allowing operational thresholds and scoring parameters to evolve without modifying the application's source code.
+
+The **Decision Support Engine** consolidates analytical outputs into actionable business recommendations, such as replenishment priorities, excess inventory identification and operational risk assessment.
+
+The **REST API** exposes these analytical results to external consumers, enabling integration with Power BI dashboards and preparing the application for future AI-powered assistants.
+
+This architecture promotes:
+
+- Layered Architecture
+- High Cohesion
+- Low Coupling
+- Single Responsibility Principle (SRP)
+- Separation of Concerns
+- Maintainability
+- Testability
+- Extensibility
+- AI-ready System Design
 ---
 
 # Project Structure
@@ -170,6 +197,29 @@ AI-SUPPLY-CHAIN-COPILOT/
 ├── requirements.txt
 └── .gitignore
 ```
+
+---
+
+# Project Presentation
+
+A comprehensive presentation describing the project's business case, software architecture, implementation strategy and development roadmap is available below.
+
+### Downloads
+
+- 📄 [Project Presentation (PDF)](docs/presentations/AI-Supply-Chain-Copilot.pdf)
+- 📊 [Project Presentation (PowerPoint)](docs/presentations/AI-Supply-Chain-Copilot.pptx)
+
+The presentation provides an executive overview of:
+
+- Business Case
+- Software Architecture
+- ETL Pipeline
+- Business Rules
+- REST API
+- Power BI Dashboard
+- Engineering Decisions
+- Development Roadmap
+- Future AI Integration
 
 ---
 
@@ -230,16 +280,20 @@ Generated report:
 docs/project_audit/PROJECT_AUDIT.md
 ```
 
-Instead of relying exclusively on manually maintained documentation, the project continuously documents itself through automated analysis, helping keep implementation and documentation synchronized.
+Rather than relying exclusively on manually maintained documentation, the project automatically generates engineering reports based on the current repository state, helping keep technical documentation aligned with the implementation.
 
 ---
 
 # Engineering Practices
 
-This project follows engineering principles focused on maintainability and long-term evolution.
+This project follows modern software engineering principles designed to maximize maintainability, extensibility and long-term evolution.
 
+- Layered Architecture
 - Modular Architecture
-- Separation of Responsibilities
+- High Cohesion
+- Low Coupling
+- Single Responsibility Principle (SRP)
+- Separation of Concerns
 - Configuration over Hardcoding
 - Business-driven Development
 - Synthetic Enterprise Dataset
@@ -247,7 +301,7 @@ This project follows engineering principles focused on maintainability and long-
 - Automated Project Audit
 - Incremental Delivery
 - Version Control
-- AI-ready Design
+- AI-ready System Design
 
 ---
 
@@ -259,7 +313,9 @@ Business parameters are centralized in:
 config/business_rules.json
 ```
 
-This configuration layer separates business logic from application code, allowing operational thresholds and scoring rules to evolve without modifying Python source files.
+This configuration layer separates configurable business parameters from application code, allowing operational thresholds, scoring values and business policies to evolve without modifying Python source files.
+
+By externalizing these parameters into a JSON configuration file, the project reduces hardcoded values, improves maintainability and enables business rule adjustments without requiring changes to the application's implementation.
 
 Current configurable parameters include:
 
@@ -303,8 +359,9 @@ Push to GitHub
 |---------|----------------|--------|
 | Foundation (Architecture, Dataset, ETL, Database) | v0.1.0 | ✅ |
 | Business Intelligence (Inventory Analytics, Rules Engine, Audit) | v0.2.0 | ✅ |
-| Analytics (SQL Analytics, KPI Engine) | v0.3.0 | 🚧 |
-| Applications (REST API, Dashboard, AI Copilot) | v0.4.x | ⏳ |
+| Analytics (SQL Analytics, KPI Engine) | v0.3.0 | ✅ |
+| Applications (REST API and Dashboard) | v0.4.0 | ✅ |
+| AI Integration Layer | v0.5.0 | ⏳ |
 | Production Readiness (Cloud Deployment) | v1.0.0 | ⏳ |
 
 ---
@@ -314,16 +371,16 @@ Push to GitHub
 | Version | Highlights |
 |-----------|------------|
 | **v0.1.0** | Project architecture, synthetic ERP dataset and repository foundation |
-| **v0.2.0** | ETL Pipeline, SQLite integration, Inventory Analytics MVP, Business Rules Engine, Configurable Business Rules and Automated Project Audit |
-| **v0.3.0 (Planned)** | SQL Analytics, KPI Engine and advanced business metrics |
-| **v0.4.x (Planned)** | REST API, Dashboard and application layer |
+| **v0.2.0** | ETL Pipeline, SQLite integration, Inventory Analytics MVP, Business Rules Configuration, Configurable Business Rules and Automated Project Audit |
+| **v0.3.0** | SQL Analytics, KPI Engine and advanced business metrics |
+| **v0.4.0** | REST API, Dashboard and application layer |
 | **v1.0.0 (Target)** | AI Copilot, cloud deployment and production-ready architecture |
 
 ---
 
 # Current Development Stage
 
-The project has completed its **Business Intelligence Foundation (v0.2.0)** and is now entering the **Analytics phase**, focused on SQL-based insights, KPI generation and advanced decision support capabilities.
+The project has completed the Application Layer (REST API and Business Intelligence) and is currently entering the AI Integration phase, where LLM capabilities and intelligent decision support will be introduced.
 
 ---
 
