@@ -1,8 +1,9 @@
 # AI Supply Chain Copilot
 
-> 🚀 **Current Release:** **v0.4.0 — REST API Foundation Completed**
+> 🚀 **Current Release:** **v0.5.0 — AI Layer Foundation**
 
-![Version](https://img.shields.io/badge/version-v0.4.0-blue)
+
+![Version](https://img.shields.io/badge/version-v0.5.0-blue)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Portfolio](https://img.shields.io/badge/portfolio-AI%20Engineering-orange)
@@ -78,7 +79,7 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | KPI Engine | ✅ |
 | REST API | ✅ |
 | Power BI Dashboard | ✅ |
-| AI Copilot | ⏳ |
+| AI Layer Foundation | ✅ |
 | Cloud Deployment | ⏳ |
 
 ---
@@ -106,6 +107,7 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | Data Processing | Pandas |
 | Database | SQLite |
 | API Framework | FastAPI |
+| AI Architecture | Modular AI Layer |
 | Business Intelligence | Power BI |
 | Configuration | JSON |
 | Version Control | Git / GitHub |
@@ -361,7 +363,7 @@ Push to GitHub
 | Business Intelligence (Inventory Analytics, Rules Engine, Audit) | v0.2.0 | ✅ |
 | Analytics (SQL Analytics, KPI Engine) | v0.3.0 | ✅ |
 | Applications (REST API and Dashboard) | v0.4.0 | ✅ |
-| AI Integration Layer | v0.5.0 | ⏳ |
+| AI Integration Layer | v0.5.0 | ✅ |
 | Production Readiness (Cloud Deployment) | v1.0.0 | ⏳ |
 
 ---
@@ -374,6 +376,7 @@ Push to GitHub
 | **v0.2.0** | ETL Pipeline, SQLite integration, Inventory Analytics MVP, Business Rules Configuration, Configurable Business Rules and Automated Project Audit |
 | **v0.3.0** | SQL Analytics, KPI Engine and advanced business metrics |
 | **v0.4.0** | REST API, Dashboard and application layer |
+| **v0.5.0** | AI Layer Foundation
 | **v1.0.0 (Target)** | AI Copilot, cloud deployment and production-ready architecture |
 
 ---
