@@ -2,7 +2,9 @@ from pathlib import Path
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
+from src.ai.service import responder
 from src.database.connection import conectar_banco
 
 
@@ -13,6 +15,7 @@ def carregar_inventario() -> pd.DataFrame:
     """
     Carrega o dataset analítico consolidado.
     """
+
     if not CAMINHO_INVENTARIO.exists():
         raise HTTPException(
             status_code=404,
@@ -24,6 +27,14 @@ def carregar_inventario() -> pd.DataFrame:
         sep=";",
         decimal=",",
     )
+
+
+class PerguntaCopilot(BaseModel):
+    """
+    Representa uma pergunta enviada ao AI Supply Chain Copilot.
+    """
+
+    pergunta: str
 
 
 app = FastAPI(
@@ -41,6 +52,7 @@ def raiz() -> dict[str, str]:
     """
     Retorna informações básicas da API.
     """
+
     return {
         "message": "AI Supply Chain Copilot API",
         "status": "online",
@@ -52,6 +64,7 @@ def verificar_saude() -> dict[str, str]:
     """
     Verifica se a API está disponível.
     """
+
     return {
         "status": "healthy",
     }
@@ -62,6 +75,7 @@ def listar_produtos() -> list[dict]:
     """
     Retorna todos os produtos cadastrados no banco SQLite.
     """
+
     conexao = conectar_banco()
 
     try:
@@ -96,6 +110,7 @@ def buscar_produto(sku: str) -> dict:
     """
     Retorna um produto específico pelo SKU.
     """
+
     conexao = conectar_banco()
 
     try:
@@ -134,6 +149,7 @@ def listar_inventario() -> list[dict]:
     """
     Retorna os dados analíticos consolidados de estoque.
     """
+
     df = carregar_inventario()
 
     df = df.astype(object).where(pd.notna(df), None)
@@ -146,6 +162,7 @@ def obter_dashboard() -> dict[str, int | float]:
     """
     Retorna os principais indicadores executivos de estoque.
     """
+
     df = carregar_inventario()
 
     return {
@@ -166,4 +183,27 @@ def obter_dashboard() -> dict[str, int | float]:
             float(df["valor_acao"].sum()),
             2,
         ),
+    }
+
+
+@app.post("/copilot")
+def consultar_copilot(
+    entrada: PerguntaCopilot,
+) -> dict[str, str]:
+    """
+    Envia uma pergunta para a camada de IA do Supply Chain Copilot.
+    """
+
+    try:
+        resposta = responder(entrada.pergunta)
+
+    except (ConnectionError, RuntimeError, ValueError) as erro:
+        raise HTTPException(
+            status_code=500,
+            detail=str(erro),
+        ) from erro
+
+    return {
+        "pergunta": entrada.pergunta,
+        "resposta": resposta,
     }

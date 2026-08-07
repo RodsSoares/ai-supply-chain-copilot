@@ -1,7 +1,105 @@
+import json
+import os
 from typing import Any
 
+from src.ai.prompts import SYSTEM_PROMPT
 
-MODO_CLIENTE = "fake"
+
+MODO_CLIENTE = os.getenv(
+    "LLM_MODE",
+    "fake",
+).strip().lower()
+
+LLM_REAL_ENABLED = os.getenv(
+    "LLM_REAL_ENABLED",
+    "false",
+).strip().lower() == "true"
+
+LIMITE_CARACTERES_CONTEXTO = 20000
+LIMITE_TOKENS_RESPOSTA = 800
+
+
+def validar_configuracao_cliente() -> None:
+    """
+    Valida a configuração do cliente de IA.
+
+    O modo real exige autorização explícita por meio
+    de duas variáveis de ambiente independentes.
+    """
+
+    if MODO_CLIENTE == "fake":
+        return
+
+    if MODO_CLIENTE == "real":
+        if not LLM_REAL_ENABLED:
+            raise RuntimeError(
+                "O modo real está bloqueado. "
+                "Defina LLM_REAL_ENABLED=true para autorizar "
+                "explicitamente chamadas ao provedor."
+            )
+
+        raise RuntimeError(
+            "O modo real foi autorizado, mas o cliente real "
+            "ainda não está implementado."
+        )
+
+    raise ValueError(
+        f"Modo de cliente não suportado: {MODO_CLIENTE}"
+    )
+
+def validar_limites_contexto(
+    contexto: Any | None,
+) -> None:
+    """
+    Valida o tamanho do contexto antes de qualquer chamada ao LLM.
+
+    O limite em caracteres funciona como uma barreira simples
+    e independente de provedor contra requisições excessivamente grandes.
+    """
+
+    if contexto is None:
+        return
+
+    try:
+        contexto_serializado = json.dumps(
+            contexto,
+            ensure_ascii=False,
+            default=str,
+        )
+
+    except (TypeError, ValueError) as erro:
+        raise ValueError(
+            "O contexto não pôde ser serializado."
+        ) from erro
+
+    if len(contexto_serializado) > LIMITE_CARACTERES_CONTEXTO:
+        raise ValueError(
+            "O contexto excede o limite permitido "
+            f"de {LIMITE_CARACTERES_CONTEXTO} caracteres."
+        )
+
+
+def montar_requisicao(
+    pergunta: str,
+    contexto: Any | None = None,
+) -> dict[str, Any]:
+    """
+    Monta a estrutura lógica que será enviada ao futuro LLM.
+
+    Esta função não realiza chamadas externas.
+    Ela apenas organiza system prompt, contexto e pergunta.
+    """
+
+    if not pergunta.strip():
+        raise ValueError("A pergunta não pode estar vazia.")
+
+    validar_limites_contexto(contexto)
+
+    return {
+        "system_prompt": SYSTEM_PROMPT,
+        "contexto": contexto,
+        "pergunta": pergunta,
+    }
 
 
 def gerar_resposta(
@@ -12,27 +110,24 @@ def gerar_resposta(
     Gera uma resposta utilizando o cliente de IA configurado.
 
     No modo atual, utiliza uma implementação simulada para permitir
-    o desenvolvimento da arquitetura sem consumo de API.
-
-    Args:
-        pergunta: Pergunta enviada pelo usuário.
-        contexto: Dados estruturados disponibilizados ao cliente.
-
-    Returns:
-        Resposta textual produzida pelo cliente configurado.
+    o desenvolvimento e os testes sem consumo de API.
     """
 
-    if not pergunta.strip():
-        raise ValueError("A pergunta não pode estar vazia.")
+    validar_configuracao_cliente()
+
+    requisicao = montar_requisicao(
+        pergunta=pergunta,
+        contexto=contexto,
+    )
 
     if MODO_CLIENTE == "fake":
         return gerar_resposta_fake(
-            pergunta=pergunta,
-            contexto=contexto,
+            pergunta=requisicao["pergunta"],
+            contexto=requisicao["contexto"],
         )
 
-    raise ValueError(
-        f"Modo de cliente não suportado: {MODO_CLIENTE}"
+    raise RuntimeError(
+        "Cliente real ainda não implementado."
     )
 
 
@@ -53,11 +148,7 @@ def gerar_resposta_fake(
             "do sistema foi disponibilizado."
         )
 
-    quantidade_registros = (
-        len(contexto)
-        if isinstance(contexto, list)
-        else 1
-    )
+    quantidade_registros = obter_quantidade_registros(contexto)
 
     return (
         "Os dados do sistema foram recebidos corretamente.\n\n"
@@ -69,19 +160,45 @@ def gerar_resposta_fake(
     )
 
 
+def obter_quantidade_registros(
+    contexto: Any,
+) -> int:
+    """
+    Obtém a quantidade de registros detalhados disponíveis no contexto.
+    """
+
+    if isinstance(contexto, list):
+        return len(contexto)
+
+    if isinstance(contexto, dict):
+        registros = contexto.get("registros")
+
+        if isinstance(registros, list):
+            return len(registros)
+
+    return 1
+
+
 if __name__ == "__main__":
-    contexto_teste = [
-        {
-            "sku": "SKU-001",
-            "prioridade": "ALTA",
-            "acao_recomendada": "REPOR",
+    contexto_teste = {
+        "resumo": {
+            "total_registros": 2,
+            "prioridade_alta": 1,
+            "risco_ruptura": 1,
         },
-        {
-            "sku": "SKU-002",
-            "prioridade": "MEDIA",
-            "acao_recomendada": "TRATAR EXCESSO",
-        },
-    ]
+        "registros": [
+            {
+                "sku": "SKU-001",
+                "prioridade": "ALTA",
+                "acao_recomendada": "REPOR",
+            },
+            {
+                "sku": "SKU-002",
+                "prioridade": "MEDIA",
+                "acao_recomendada": "TRATAR EXCESSO",
+            },
+        ],
+    }
 
     resposta = gerar_resposta(
         pergunta="Quais produtos devo priorizar?",

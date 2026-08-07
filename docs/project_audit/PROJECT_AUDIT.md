@@ -1,21 +1,21 @@
 # Project Audit
 
-Gerado em: 05/08/2026 21:46:28
+Gerado em: 06/08/2026 23:39:41
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **19**
-- Linhas totais: **1866**
-- Linhas efetivas de código: **1378**
-- Funções: **53**
-- Classes: **0**
-- Imports internos: **18**
-- Imports externos: **12**
-- Imports da biblioteca padrão: **19**
+- Arquivos Python: **23**
+- Linhas totais: **2992**
+- Linhas efetivas de código: **2245**
+- Funções: **111**
+- Classes: **2**
+- Imports internos: **24**
+- Imports externos: **17**
+- Imports da biblioteca padrão: **25**
 - TODOs/FIXMEs em comentários: **0**
-- Funções sem docstring: **0**
+- Funções sem docstring: **14**
 - Arquivos com erro de sintaxe: **0**
 
 ## 2. Como usar as opções True e False
@@ -68,10 +68,10 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 10.0/10 |
-| Complexidade estrutural | 10.0/10 |
+| Cobertura de docstrings | 8.7/10 |
+| Complexidade estrutural | 9.6/10 |
 | Integridade sintática | 10.0/10 |
-| Saúde geral | **10.0/10** |
+| Saúde geral | **9.6/10** |
 
 ## 6. Estrutura do projeto
 
@@ -147,7 +147,10 @@ ai-supply-chain-copilot/
 │   │   └── load_warehouses.py
 │   └── main.py
 └── tests/
-    └── .gitkeep
+    ├── test_ai_client.py
+    ├── test_ai_service.py
+    ├── test_ai_tools.py
+    └── test_api_copilot.py
 ```
 
 ## 7. Arquivos Python
@@ -163,16 +166,20 @@ ai-supply-chain-copilot/
 | `scripts/inventory_reporting.py` | 228 | 5 | 0 | 0 |
 | `scripts/inventory_scoring.py` | 123 | 6 | 0 | 0 |
 | `scripts/inventory_validation.py` | 78 | 2 | 0 | 0 |
-| `src/ai/client.py` | 91 | 2 | 0 | 0 |
+| `src/ai/client.py` | 208 | 6 | 0 | 0 |
 | `src/ai/prompts.py` | 213 | 0 | 0 | 0 |
-| `src/ai/service.py` | 42 | 1 | 0 | 0 |
+| `src/ai/service.py` | 91 | 2 | 0 | 0 |
 | `src/ai/tools.py` | 74 | 1 | 0 | 0 |
-| `src/api/main.py` | 169 | 7 | 0 | 0 |
+| `src/api/main.py` | 209 | 8 | 1 | 0 |
 | `src/database/connection.py` | 17 | 1 | 0 | 0 |
 | `src/database/create_tables.py` | 121 | 5 | 0 | 0 |
 | `src/etl/load_products.py` | 149 | 4 | 0 | 0 |
 | `src/etl/load_warehouses.py` | 146 | 4 | 0 | 0 |
 | `src/main.py` | 21 | 1 | 0 | 0 |
+| `tests/test_ai_client.py` | 409 | 19 | 0 | 0 |
+| `tests/test_ai_service.py` | 266 | 13 | 0 | 0 |
+| `tests/test_ai_tools.py` | 135 | 14 | 1 | 0 |
+| `tests/test_api_copilot.py` | 110 | 6 | 0 | 0 |
 
 ## 8. Funções e classes
 
@@ -251,8 +258,12 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `gerar_resposta` | 7–36 | `pergunta, contexto` | SIM |
-| `gerar_resposta_fake` | 39–69 | `pergunta, contexto` | SIM |
+| `validar_configuracao_cliente` | 22–48 | `—` | SIM |
+| `validar_limites_contexto` | 50–79 | `contexto` | SIM |
+| `montar_requisicao` | 82–102 | `pergunta, contexto` | SIM |
+| `gerar_resposta` | 105–131 | `pergunta, contexto` | SIM |
+| `gerar_resposta_fake` | 134–160 | `pergunta, contexto` | SIM |
+| `obter_quantidade_registros` | 163–179 | `contexto` | SIM |
 
 ### `src/ai/prompts.py`
 
@@ -262,7 +273,8 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `responder` | 5–29 | `pergunta` | SIM |
+| `preparar_contexto` | 10–62 | `inventario` | SIM |
+| `responder` | 65–79 | `pergunta` | SIM |
 
 ### `src/ai/tools.py`
 
@@ -274,13 +286,18 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `carregar_inventario` | 12–26 | `—` | SIM |
-| `raiz` | 40–47 | `—` | SIM |
-| `verificar_saude` | 51–57 | `—` | SIM |
-| `listar_produtos` | 61–91 | `—` | SIM |
-| `buscar_produto` | 95–129 | `sku` | SIM |
-| `listar_inventario` | 133–141 | `—` | SIM |
-| `obter_dashboard` | 145–169 | `—` | SIM |
+| `carregar_inventario` | 14–29 | `—` | SIM |
+| `raiz` | 51–59 | `—` | SIM |
+| `verificar_saude` | 63–70 | `—` | SIM |
+| `listar_produtos` | 74–105 | `—` | SIM |
+| `buscar_produto` | 109–144 | `sku` | SIM |
+| `listar_inventario` | 148–157 | `—` | SIM |
+| `obter_dashboard` | 161–186 | `—` | SIM |
+| `consultar_copilot` | 190–209 | `entrada` | SIM |
+
+| Classe | Linhas | Docstring |
+|---|---:|---|
+| `PerguntaCopilot` | 32–37 | SIM |
 
 ### `src/database/connection.py`
 
@@ -322,6 +339,82 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `main` | 6–17 | `—` | SIM |
 
+### `tests/test_ai_client.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_gerar_resposta_utiliza_cliente_fake` | 6–51 | `monkeypatch` | SIM |
+| `gerar_resposta_fake` | 23–32 | `pergunta, contexto` | NÃO |
+| `test_gerar_resposta_rejeita_pergunta_vazia` | 54–63 | `—` | SIM |
+| `test_gerar_resposta_rejeita_modo_nao_suportado` | 66–85 | `monkeypatch` | SIM |
+| `test_gerar_resposta_fake_sem_contexto` | 88–103 | `—` | SIM |
+| `test_gerar_resposta_fake_conta_lista_de_registros` | 106–125 | `—` | SIM |
+| `test_gerar_resposta_fake_contexto_nao_lista` | 128–144 | `—` | SIM |
+| `test_montar_requisicao_inclui_system_prompt` | 147–165 | `—` | SIM |
+| `test_montar_requisicao_preserva_pergunta_e_contexto` | 168–196 | `—` | SIM |
+| `test_montar_requisicao_rejeita_pergunta_vazia` | 199–212 | `—` | SIM |
+| `test_obter_quantidade_registros_contexto_estruturado` | 215–234 | `—` | SIM |
+| `test_validar_configuracao_cliente_aceita_modo_fake` | 237–254 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_bloqueia_real_sem_autorizacao` | 257–281 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_real_autorizado_ainda_nao_executa` | 284–308 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_rejeita_modo_invalido` | 311–326 | `monkeypatch` | SIM |
+| `test_validar_limites_contexto_aceita_contexto_pequeno` | 329–346 | `—` | SIM |
+| `test_validar_limites_contexto_rejeita_contexto_excessivo` | 349–371 | `monkeypatch` | SIM |
+| `test_montar_requisicao_bloqueia_contexto_excessivo` | 374–399 | `monkeypatch` | SIM |
+| `test_limite_tokens_resposta_possui_valor_controlado` | 402–409 | `—` | SIM |
+
+### `tests/test_ai_service.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_responder_orquestra_fluxo_corretamente` | 4–66 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 26–27 | `—` | NÃO |
+| `gerar_resposta_fake` | 29–50 | `pergunta, contexto` | NÃO |
+| `test_responder_propaga_erro_da_tool` | 69–90 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 75–76 | `—` | NÃO |
+| `test_responder_propaga_erro_do_client` | 93–130 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 106–107 | `—` | NÃO |
+| `gerar_resposta_fake` | 109–110 | `pergunta, contexto` | NÃO |
+| `test_preparar_contexto_retorna_resumo_e_registros` | 133–164 | `—` | SIM |
+| `test_preparar_contexto_ordena_por_prioridade_e_valor` | 167–202 | `—` | SIM |
+| `test_preparar_contexto_respeita_limite_de_registros` | 205–223 | `—` | SIM |
+| `test_preparar_contexto_trata_inventario_vazio` | 226–241 | `—` | SIM |
+| `test_preparar_contexto_trata_campos_ausentes` | 244–266 | `—` | SIM |
+
+### `tests/test_ai_tools.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `__init__` | 14–15 | `self, dados` | NÃO |
+| `read` | 17–21 | `self` | SIM |
+| `__enter__` | 23–27 | `self` | SIM |
+| `__exit__` | 29–33 | `self, exc_type, exc_value, traceback` | SIM |
+| `test_listar_inventario_retorna_dados_convertidos` | 36–61 | `monkeypatch` | SIM |
+| `urlopen_fake` | 51–55 | `requisicao, timeout` | NÃO |
+| `test_listar_inventario_gera_erro_para_json_invalido` | 64–78 | `monkeypatch` | SIM |
+| `urlopen_fake` | 69–70 | `requisicao, timeout` | NÃO |
+| `test_listar_inventario_gera_erro_de_conexao` | 81–95 | `monkeypatch` | SIM |
+| `urlopen_fake` | 86–87 | `requisicao, timeout` | NÃO |
+| `test_listar_inventario_gera_erro_http` | 98–118 | `monkeypatch` | SIM |
+| `urlopen_fake` | 103–110 | `requisicao, timeout` | NÃO |
+| `test_listar_inventario_gera_erro_de_timeout` | 121–135 | `monkeypatch` | SIM |
+| `urlopen_fake` | 126–127 | `requisicao, timeout` | NÃO |
+
+| Classe | Linhas | Docstring |
+|---|---:|---|
+| `RespostaFake` | 9–33 | SIM |
+
+### `tests/test_api_copilot.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_consultar_copilot_retorna_resposta` | 10–41 | `monkeypatch` | SIM |
+| `responder_fake` | 19–21 | `pergunta_recebida` | NÃO |
+| `test_consultar_copilot_rejeita_corpo_sem_pergunta` | 44–55 | `—` | SIM |
+| `test_consultar_copilot_rejeita_corpo_invalido` | 58–71 | `—` | SIM |
+| `test_consultar_copilot_trata_erros_da_camada_de_ia` | 82–110 | `monkeypatch, erro` | SIM |
+| `responder_fake` | 91–92 | `pergunta` | NÃO |
+
 ## 9. Dependências
 
 ### Dependências internas
@@ -337,8 +430,10 @@ ai-supply-chain-copilot/
 | `scripts.inventory_decision` | `scripts.business_rules` |
 | `scripts.inventory_metrics` | `scripts.business_rules` |
 | `scripts.inventory_scoring` | `scripts.business_rules` |
+| `src.ai.client` | `src.ai.prompts` |
 | `src.ai.service` | `src.ai.client` |
 | `src.ai.service` | `src.ai.tools` |
+| `src.api.main` | `src.ai.service` |
 | `src.api.main` | `src.database.connection` |
 | `src.database.create_tables` | `src.database.connection` |
 | `src.etl.load_products` | `src.database.connection` |
@@ -346,11 +441,17 @@ ai-supply-chain-copilot/
 | `src.main` | `src.database.create_tables` |
 | `src.main` | `src.etl.load_products` |
 | `src.main` | `src.etl.load_warehouses` |
+| `tests.test_ai_client` | `src.ai.client` |
+| `tests.test_ai_service` | `src.ai.service` |
+| `tests.test_ai_tools` | `src.ai.tools` |
+| `tests.test_api_copilot` | `src.api.main` |
 
 ### Dependências externas
 
 - `fastapi`
 - `pandas`
+- `pydantic`
+- `pytest`
 
 ### Grafo de dependências internas
 
@@ -365,8 +466,10 @@ flowchart LR
     scripts_inventory_decision["scripts.inventory_decision"] --> scripts_business_rules["scripts.business_rules"]
     scripts_inventory_metrics["scripts.inventory_metrics"] --> scripts_business_rules["scripts.business_rules"]
     scripts_inventory_scoring["scripts.inventory_scoring"] --> scripts_business_rules["scripts.business_rules"]
+    src_ai_client["src.ai.client"] --> src_ai_prompts["src.ai.prompts"]
     src_ai_service["src.ai.service"] --> src_ai_client["src.ai.client"]
     src_ai_service["src.ai.service"] --> src_ai_tools["src.ai.tools"]
+    src_api_main["src.api.main"] --> src_ai_service["src.ai.service"]
     src_api_main["src.api.main"] --> src_database_connection["src.database.connection"]
     src_database_create_tables["src.database.create_tables"] --> src_database_connection["src.database.connection"]
     src_etl_load_products["src.etl.load_products"] --> src_database_connection["src.database.connection"]
@@ -374,6 +477,10 @@ flowchart LR
     src_main["src.main"] --> src_database_create_tables["src.database.create_tables"]
     src_main["src.main"] --> src_etl_load_products["src.etl.load_products"]
     src_main["src.main"] --> src_etl_load_warehouses["src.etl.load_warehouses"]
+    tests_test_ai_client["tests.test_ai_client"] --> src_ai_client["src.ai.client"]
+    tests_test_ai_service["tests.test_ai_service"] --> src_ai_service["src.ai.service"]
+    tests_test_ai_tools["tests.test_ai_tools"] --> src_ai_tools["src.ai.tools"]
+    tests_test_api_copilot["tests.test_api_copilot"] --> src_api_main["src.api.main"]
 ```
 
 ## 10. Observações automáticas do repositório

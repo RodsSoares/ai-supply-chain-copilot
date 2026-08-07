@@ -80,6 +80,8 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | REST API | ✅ |
 | Power BI Dashboard | ✅ |
 | AI Layer Foundation | ✅ |
+| Automated Test Suite | ✅ |
+| Real LLM Integration | ⏳ |
 | Cloud Deployment | ⏳ |
 
 ---
@@ -107,12 +109,13 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | Data Processing | Pandas |
 | Database | SQLite |
 | API Framework | FastAPI |
-| AI Architecture | Modular AI Layer |
+| AI Architecture | Modular AI Layer with Fake LLM Client |
 | Business Intelligence | Power BI |
 | Configuration | JSON |
 | Version Control | Git / GitHub |
 | IDE | Visual Studio Code |
 | Documentation | Markdown |
+| Automated Testing | Pytest |
 
 ### Planned Technologies
 
@@ -164,6 +167,10 @@ Business rules are externalized through the `config/business_rules.json` file, a
 The **Decision Support Engine** consolidates analytical outputs into actionable business recommendations, such as replenishment priorities, excess inventory identification and operational risk assessment.
 
 The **REST API** exposes these analytical results to external consumers, enabling integration with Power BI dashboards and preparing the application for future AI-powered assistants.
+
+The **AI Integration Layer** introduces a modular Copilot architecture composed of service orchestration, controlled data-access tools, structured context preparation, system prompting and an isolated LLM client.
+
+The current implementation uses a simulated LLM client, allowing the complete application flow to be developed and tested without external API consumption. The architecture already includes explicit safeguards for future real-model integration, including controlled context size, response limits and deliberate activation of the real client.
 
 This architecture promotes:
 
@@ -304,6 +311,9 @@ This project follows modern software engineering principles designed to maximize
 - Incremental Delivery
 - Version Control
 - AI-ready System Design
+- Automated Testing with Pytest
+- Controlled LLM Context
+- Explicit LLM Activation Safeguards
 
 ---
 
@@ -383,7 +393,9 @@ Push to GitHub
 
 # Current Development Stage
 
-The project has completed the Application Layer (REST API and Business Intelligence) and is currently entering the AI Integration phase, where LLM capabilities and intelligent decision support will be introduced.
+The project has completed the AI Layer Foundation, including the Copilot API endpoint, modular AI orchestration, controlled context preparation, system prompting, simulated LLM integration, explicit cost safeguards and an automated test suite.
+
+The current implementation has been validated with 37 automated tests and remains intentionally isolated from paid LLM providers. The next development stage is the controlled integration and validation of a real Large Language Model before progressing toward production readiness and cloud deployment.
 
 ---
 
