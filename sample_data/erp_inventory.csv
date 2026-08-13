@@ -1,101 +1,301 @@
 ﻿sku;produto;categoria;unidade_medida;estoque_atual;estoque_minimo;estoque_maximo;consumo_medio_mensal;custo_unitario;lead_time_dias;fornecedor;deposito;classe_abc;data_ultima_movimentacao
-SKU-1001;Rolamento rígido de esferas Modelo A-10;Rolamentos;UN;253;65;270;53;4.20;5;Fornecedor Beta;CD Santos;C;2026-02-27
-SKU-1002;Rolamento autocompensador Modelo B-20;Rolamentos;UN;38;21;39;15;807.53;45;Eixo Forte;CD Santos;A;2026-02-28
-SKU-1003;Rolamento de rolos cônicos Modelo C-30;Rolamentos;UN;139;84;338;100;16.05;20;Brasil Industrial;CD Campinas;C;2026-07-02
-SKU-1004;Mancal com rolamento Modelo D-40;Rolamentos;UN;119;24;72;50;2411.11;5;Fornecedor Beta;CD Santos;A;2025-12-04
-SKU-1005;Rolamento rígido de esferas Modelo E-50;Rolamentos;UN;144;109;374;25;74.99;10;Eixo Forte;CD Santos;C;2026-01-12
-SKU-1006;Rolamento autocompensador Modelo A-60;Rolamentos;UN;291;78;300;107;78.25;20;Delta Manutenção;CD Curitiba;C;2026-04-29
-SKU-1007;Rolamento de rolos cônicos Modelo B-70;Rolamentos;UN;66;56;114;31;424.03;10;Fornecedor Gama;CD Campinas;B;2026-06-17
-SKU-1008;Mancal com rolamento Modelo C-80;Rolamentos;UN;66;59;155;18;419.41;3;Fornecedor Alfa;CD Campinas;B;2026-01-03
-SKU-1009;Rolamento rígido de esferas Modelo D-90;Rolamentos;UN;32;51;171;19;126.50;45;Eixo Forte;CD Santos;B;2026-06-22
-SKU-1010;Rolamento autocompensador Modelo E-100;Rolamentos;UN;283;31;180;103;270.16;7;Fornecedor Gama;CD Santos;B;2026-03-20
-SKU-1011;Parafuso sextavado Modelo A-10;Fixadores;UN;44;49;450;19;77.78;5;Fornecedor Beta;CD Curitiba;C;2026-04-21
-SKU-1012;Porca sextavada Modelo B-20;Fixadores;UN;114;100;185;63;48.56;15;Fornecedor Alfa;CD Santos;C;2026-01-13
-SKU-1013;Arruela lisa Modelo C-30;Fixadores;UN;0;15;122;9;104.84;5;Eixo Forte;CD Curitiba;B;2025-12-18
-SKU-1014;Parafuso Allen Modelo D-40;Fixadores;UN;212;77;239;148;19.50;20;Atlas Componentes;CD Santos;C;2026-03-25
-SKU-1015;Parafuso sextavado Modelo E-50;Fixadores;UN;197;136;373;133;79.33;5;Fornecedor Gama;CD Santos;C;2026-07-07
-SKU-1016;Porca sextavada Modelo A-60;Fixadores;UN;186;46;191;46;48.88;30;Delta Manutenção;CD Curitiba;C;2026-06-04
-SKU-1017;Arruela lisa Modelo B-70;Fixadores;UN;188;56;191;79;448.01;10;Brasil Industrial;CD Campinas;B;2026-06-01
-SKU-1018;Parafuso Allen Modelo C-80;Fixadores;UN;21;23;66;4;1662.50;5;Atlas Componentes;CD Campinas;A;2025-12-09
-SKU-1019;Parafuso sextavado Modelo D-90;Fixadores;UN;56;20;62;27;856.91;10;Fornecedor Gama;CD Campinas;A;2026-01-09
-SKU-1020;Porca sextavada Modelo E-100;Fixadores;UN;47;18;78;31;497.17;3;Brasil Industrial;CD Santos;A;2026-02-06
-SKU-1021;Contator tripolar Modelo A-10;Elétrica;UN;18;21;124;8;179.11;30;Eixo Forte;CD Campinas;B;2026-06-12
-SKU-1022;Disjuntor industrial Modelo B-20;Elétrica;UN;42;43;223;32;418.54;3;Delta Manutenção;CD Santos;B;2026-07-05
-SKU-1023;Sensor indutivo Modelo C-30;Elétrica;UN;1;40;95;29;237.36;15;Fornecedor Gama;CD Campinas;B;2025-12-03
-SKU-1024;Cabo elétrico Modelo D-40;Elétrica;M;19;50;214;14;432.50;3;Atlas Componentes;CD Curitiba;B;2026-03-02
-SKU-1025;Contator tripolar Modelo E-50;Elétrica;UN;349;45;213;85;60.56;5;Conecta Suprimentos;CD Santos;B;2025-12-23
-SKU-1026;Disjuntor industrial Modelo A-60;Elétrica;UN;57;60;346;29;61.42;3;Brasil Industrial;CD Campinas;C;2026-02-20
-SKU-1027;Sensor indutivo Modelo B-70;Elétrica;UN;41;70;283;20;51.74;30;Eixo Forte;CD Campinas;C;2026-06-25
-SKU-1028;Cabo elétrico Modelo C-80;Elétrica;M;55;19;61;41;348.26;5;Delta Manutenção;CD Curitiba;B;2026-03-13
-SKU-1029;Contator tripolar Modelo D-90;Elétrica;UN;39;19;121;16;422.64;15;Atlas Componentes;CD Curitiba;B;2026-02-22
-SKU-1030;Disjuntor industrial Modelo E-100;Elétrica;UN;282;114;247;87;28.35;5;Conecta Suprimentos;CD Campinas;C;2026-01-19
-SKU-1031;Válvula pneumática Modelo A-10;Pneumática;UN;69;36;128;31;126.36;15;Atlas Componentes;CD Santos;B;2025-12-09
-SKU-1032;Cilindro pneumático Modelo B-20;Pneumática;UN;51;35;116;27;74.98;15;Fornecedor Gama;CD Curitiba;C;2026-06-17
-SKU-1033;Conexão pneumática Modelo C-30;Pneumática;UN;201;44;162;95;51.36;20;Conecta Suprimentos;CD Campinas;C;2026-03-01
-SKU-1034;Mangueira pneumática Modelo D-40;Pneumática;M;2;6;66;3;1036.06;20;Fornecedor Beta;CD Curitiba;A;2026-01-10
-SKU-1035;Válvula pneumática Modelo E-50;Pneumática;UN;0;60;223;38;83.47;30;Conecta Suprimentos;CD Curitiba;C;2026-07-22
-SKU-1036;Cilindro pneumático Modelo A-60;Pneumática;UN;632;82;504;195;70.85;5;Atlas Componentes;CD Campinas;C;2026-04-22
-SKU-1037;Conexão pneumática Modelo B-70;Pneumática;UN;102;44;173;28;374.80;10;Fornecedor Alfa;CD Campinas;B;2026-04-17
-SKU-1038;Mangueira pneumática Modelo C-80;Pneumática;M;269;65;324;150;87.09;20;Atlas Componentes;CD Santos;C;2025-11-30
-SKU-1039;Válvula pneumática Modelo D-90;Pneumática;UN;77;104;319;42;24.99;20;Brasil Industrial;CD Campinas;C;2026-04-08
-SKU-1040;Cilindro pneumático Modelo E-100;Pneumática;UN;301;35;477;212;18.73;10;Fornecedor Beta;CD Santos;C;2026-04-26
-SKU-1041;Mangueira hidráulica Modelo A-10;Hidráulica;M;140;109;349;81;83.03;15;Eixo Forte;CD Curitiba;C;2026-03-21
-SKU-1042;Conexão hidráulica Modelo B-20;Hidráulica;UN;25;33;105;18;204.98;7;Eixo Forte;CD Campinas;B;2026-02-21
-SKU-1043;Válvula hidráulica Modelo C-30;Hidráulica;UN;214;66;253;109;2.04;20;Fornecedor Gama;CD Campinas;C;2026-03-31
-SKU-1044;Bomba hidráulica Modelo D-40;Hidráulica;UN;203;131;297;93;46.98;20;Delta Manutenção;CD Curitiba;C;2026-07-05
-SKU-1045;Mangueira hidráulica Modelo E-50;Hidráulica;M;16;24;70;12;370.69;5;Fornecedor Beta;CD Curitiba;B;2026-04-03
-SKU-1046;Conexão hidráulica Modelo A-60;Hidráulica;UN;154;79;412;83;65.21;3;Brasil Industrial;CD Campinas;C;2025-12-12
-SKU-1047;Válvula hidráulica Modelo B-70;Hidráulica;UN;201;59;231;60;369.69;5;Conecta Suprimentos;CD Campinas;B;2026-04-03
-SKU-1048;Bomba hidráulica Modelo C-80;Hidráulica;UN;0;106;348;72;88.93;30;Fornecedor Gama;CD Santos;C;2025-12-28
-SKU-1049;Mangueira hidráulica Modelo D-90;Hidráulica;M;340;63;269;207;43.77;45;Delta Manutenção;CD Campinas;C;2026-02-18
-SKU-1050;Conexão hidráulica Modelo E-100;Hidráulica;UN;99;30;139;19;332.55;7;Fornecedor Beta;CD Curitiba;B;2026-05-30
-SKU-1051;Motor elétrico trifásico Modelo A-10;Motores;UN;77;18;85;30;795.58;10;Fornecedor Beta;CD Campinas;A;2025-12-27
-SKU-1052;Motoredutor Modelo B-20;Motores;UN;357;119;209;135;53.40;3;Eixo Forte;CD Campinas;C;2026-04-29
-SKU-1053;Inversor de frequência Modelo C-30;Motores;UN;718;83;438;452;85.90;10;Delta Manutenção;CD Campinas;C;2026-03-26
-SKU-1054;Acoplamento elástico Modelo D-40;Motores;UN;299;36;179;209;51.90;3;Fornecedor Beta;CD Curitiba;B;2025-12-08
-SKU-1055;Motor elétrico trifásico Modelo E-50;Motores;UN;60;112;411;29;4.38;15;Fornecedor Alfa;CD Santos;C;2026-04-22
-SKU-1056;Motoredutor Modelo A-60;Motores;UN;257;39;150;103;178.38;5;Atlas Componentes;CD Curitiba;B;2026-03-30
-SKU-1057;Inversor de frequência Modelo B-70;Motores;UN;240;74;268;41;89.99;3;Delta Manutenção;CD Santos;C;2026-05-26
-SKU-1058;Acoplamento elástico Modelo C-80;Motores;UN;28;90;512;38;22.99;15;Fornecedor Alfa;CD Santos;C;2026-01-13
-SKU-1059;Motor elétrico trifásico Modelo D-90;Motores;UN;301;121;259;219;86.81;5;Atlas Componentes;CD Campinas;C;2026-03-02
-SKU-1060;Motoredutor Modelo E-100;Motores;UN;463;78;361;90;81.91;10;Eixo Forte;CD Curitiba;C;2026-07-02
-SKU-1061;Óleo hidráulico Modelo A-10;Lubrificantes;L;156;102;203;85;12.65;5;Fornecedor Alfa;CD Santos;C;2026-03-21
-SKU-1062;Graxa industrial Modelo B-20;Lubrificantes;KG;0;43;344;22;74.37;45;Conecta Suprimentos;CD Campinas;C;2026-01-28
-SKU-1063;Óleo para engrenagens Modelo C-30;Lubrificantes;L;59;25;74;36;1580.45;45;Eixo Forte;CD Campinas;A;2026-04-08
-SKU-1064;Desengripante industrial Modelo D-40;Lubrificantes;L;326;41;263;195;75.10;30;Atlas Componentes;CD Campinas;C;2026-05-03
-SKU-1065;Óleo hidráulico Modelo E-50;Lubrificantes;L;406;57;318;129;18.00;15;Atlas Componentes;CD Curitiba;C;2026-03-08
-SKU-1066;Graxa industrial Modelo A-60;Lubrificantes;KG;245;122;410;138;9.53;45;Atlas Componentes;CD Santos;C;2026-04-05
-SKU-1067;Óleo para engrenagens Modelo B-70;Lubrificantes;L;77;30;148;33;205.80;20;Fornecedor Alfa;CD Campinas;B;2026-04-11
-SKU-1068;Desengripante industrial Modelo C-80;Lubrificantes;L;13;62;260;21;25.84;7;Delta Manutenção;CD Curitiba;C;2026-06-09
-SKU-1069;Óleo hidráulico Modelo D-90;Lubrificantes;L;0;48;160;31;337.08;15;Fornecedor Alfa;CD Santos;B;2026-05-31
-SKU-1070;Graxa industrial Modelo E-100;Lubrificantes;KG;2;23;133;11;330.29;7;Fornecedor Gama;CD Santos;B;2026-02-15
-SKU-1071;Luva de proteção Modelo A-10;EPI;PAR;184;90;415;134;52.52;15;Fornecedor Gama;CD Santos;C;2025-11-30
-SKU-1072;Óculos de segurança Modelo B-20;EPI;UN;66;39;414;15;37.26;15;Delta Manutenção;CD Santos;C;2026-07-07
-SKU-1073;Protetor auricular Modelo C-30;EPI;PAR;373;106;502;141;38.62;45;Fornecedor Beta;CD Campinas;C;2026-05-13
-SKU-1074;Capacete de segurança Modelo D-40;EPI;UN;308;124;254;161;7.30;15;Brasil Industrial;CD Santos;C;2026-02-09
-SKU-1075;Luva de proteção Modelo E-50;EPI;PAR;63;25;65;27;266.32;3;Eixo Forte;CD Curitiba;B;2026-05-30
-SKU-1076;Óculos de segurança Modelo A-60;EPI;UN;199;19;118;100;392.44;10;Brasil Industrial;CD Curitiba;B;2026-04-11
-SKU-1077;Protetor auricular Modelo B-70;EPI;PAR;6;32;108;20;101.09;15;Brasil Industrial;CD Campinas;B;2026-04-07
-SKU-1078;Capacete de segurança Modelo C-80;EPI;UN;276;150;369;113;63.58;3;Fornecedor Beta;CD Curitiba;C;2025-12-13
-SKU-1079;Luva de proteção Modelo D-90;EPI;PAR;0;20;118;13;142.65;3;Eixo Forte;CD Curitiba;B;2026-01-14
-SKU-1080;Óculos de segurança Modelo E-100;EPI;UN;115;20;91;86;2178.49;30;Fornecedor Gama;CD Santos;A;2026-02-16
-SKU-1081;Broca de aço rápido Modelo A-10;Ferramentas;UN;144;35;101;57;207.42;45;Fornecedor Beta;CD Curitiba;B;2026-05-16
-SKU-1082;Disco de corte Modelo B-20;Ferramentas;UN;7;13;69;8;474.55;3;Fornecedor Gama;CD Campinas;A;2026-02-10
-SKU-1083;Chave combinada Modelo C-30;Ferramentas;UN;30;24;102;8;1572.02;7;Eixo Forte;CD Campinas;A;2025-12-03
-SKU-1084;Alicate universal Modelo D-40;Ferramentas;UN;155;33;435;89;44.65;15;Atlas Componentes;CD Curitiba;C;2026-03-09
-SKU-1085;Broca de aço rápido Modelo E-50;Ferramentas;UN;220;22;180;98;132.13;15;Eixo Forte;CD Campinas;B;2026-03-20
-SKU-1086;Disco de corte Modelo A-60;Ferramentas;UN;257;61;374;67;88.26;7;Brasil Industrial;CD Campinas;C;2025-12-19
-SKU-1087;Chave combinada Modelo B-70;Ferramentas;UN;74;73;412;23;77.19;15;Fornecedor Gama;CD Santos;C;2025-12-26
-SKU-1088;Alicate universal Modelo C-80;Ferramentas;UN;118;36;215;79;238.58;10;Fornecedor Beta;CD Santos;B;2026-03-04
-SKU-1089;Broca de aço rápido Modelo D-90;Ferramentas;UN;588;70;392;224;38.15;7;Atlas Componentes;CD Santos;C;2026-03-24
-SKU-1090;Disco de corte Modelo E-100;Ferramentas;UN;385;141;272;80;53.94;45;Conecta Suprimentos;CD Campinas;C;2026-07-25
-SKU-1091;Caixa de papelão Modelo A-10;Embalagens;UN;495;39;359;174;87.36;30;Brasil Industrial;CD Campinas;C;2026-02-12
-SKU-1092;Filme stretch Modelo B-20;Embalagens;KG;305;78;320;184;77.62;3;Brasil Industrial;CD Santos;C;2026-02-20
-SKU-1093;Fita adesiva Modelo C-30;Embalagens;UN;71;59;185;43;83.04;5;Conecta Suprimentos;CD Curitiba;C;2026-04-06
-SKU-1094;Pallet plástico Modelo D-40;Embalagens;UN;58;35;89;23;51.87;10;Fornecedor Beta;CD Curitiba;B;2026-03-15
-SKU-1095;Caixa de papelão Modelo E-50;Embalagens;UN;100;52;172;52;17.85;10;Conecta Suprimentos;CD Santos;C;2026-03-23
-SKU-1096;Filme stretch Modelo A-60;Embalagens;KG;103;31;73;71;144.13;7;Fornecedor Gama;CD Campinas;B;2026-07-10
-SKU-1097;Fita adesiva Modelo B-70;Embalagens;UN;516;84;517;170;28.33;30;Fornecedor Gama;CD Santos;C;2025-12-22
-SKU-1098;Pallet plástico Modelo C-80;Embalagens;UN;0;51;166;16;274.49;30;Atlas Componentes;CD Curitiba;B;2026-05-19
-SKU-1099;Caixa de papelão Modelo D-90;Embalagens;UN;573;36;426;352;70.49;10;Fornecedor Alfa;CD Santos;C;2026-02-23
-SKU-1100;Filme stretch Modelo E-100;Embalagens;KG;914;116;565;596;56.64;5;Atlas Componentes;CD Campinas;C;2025-12-09
+SKU-2001;Rolamento rígido de esferas Série A-10;Rolamentos;UN;15;54;318;157;1293.51;15;Conecta Suprimentos;CD Curitiba;A;2026-05-03
+SKU-2002;Porca sextavada Série B-20;Fixadores;UN;34;91;244;19;2062.78;15;Fornecedor Gama;CD Campinas;A;2026-07-31
+SKU-2003;Broca de aço rápido Série C-30;Ferramentas;UN;52;76;244;95;1675.06;45;Delta Manutenção;CD Santos;A;2026-03-25
+SKU-2004;Rolamento rígido de esferas Série D-40;Rolamentos;UN;59;108;189;55;1015.53;20;Delta Manutenção;CD Campinas;A;2026-02-05
+SKU-2005;Sensor indutivo Série E-50;Elétrica;UN;40;62;334;30;1172.42;15;Delta Manutenção;CD Santos;A;2026-08-12
+SKU-2006;Sensor indutivo Série A-60;Elétrica;UN;37;68;249;170;1323.34;20;Delta Manutenção;CD Curitiba;A;2026-07-11
+SKU-2007;Rolamento rígido de esferas Série B-70;Rolamentos;UN;6;64;331;23;2161.98;45;Fornecedor Beta;CD Curitiba;A;2026-05-19
+SKU-2008;Broca de aço rápido Série C-80;Ferramentas;UN;85;117;344;130;1809.72;45;Fornecedor Beta;CD Campinas;B;2026-02-22
+SKU-2009;Óleo de engrenagem Série D-90;Lubrificantes;L;1;119;360;125;2440.7;30;Eixo Forte;CD Curitiba;A;2026-03-08
+SKU-2010;Óleo de engrenagem Série E-100;Lubrificantes;L;19;125;444;48;875.98;15;Delta Manutenção;CD Santos;B;2026-04-22
+SKU-2011;Capacete de segurança Série A-10;EPI;PAR;3;106;370;85;2325.7;7;Fornecedor Beta;CD Campinas;A;2026-03-03
+SKU-2012;Sensor indutivo Série B-20;Elétrica;UN;9;56;174;155;857.61;5;Conecta Suprimentos;CD Santos;B;2026-03-26
+SKU-2013;Capacete de segurança Série C-30;EPI;PAR;2;93;396;39;2102.14;10;Eixo Forte;CD Curitiba;A;2026-02-08
+SKU-2014;Óleo de engrenagem Série D-40;Lubrificantes;L;31;35;216;164;1966.74;20;Atlas Componentes;CD Curitiba;A;2026-08-10
+SKU-2015;Broca de aço rápido Série E-50;Ferramentas;UN;66;102;308;121;1930.72;45;Brasil Industrial;CD Santos;A;2025-11-24
+SKU-2016;Contator industrial Série A-60;Elétrica;UN;4;119;199;42;727.98;5;Conecta Suprimentos;CD Campinas;A;2026-06-22
+SKU-2017;Óleo de engrenagem Série B-70;Lubrificantes;L;16;136;360;162;82.5;5;Brasil Industrial;CD Campinas;A;2026-07-30
+SKU-2018;Protetor auricular Série C-80;EPI;PAR;5;83;400;135;1890.41;30;Conecta Suprimentos;CD Santos;B;2025-11-21
+SKU-2019;Disjuntor tripolar Série D-90;Elétrica;UN;39;40;281;171;2499.33;30;Conecta Suprimentos;CD Curitiba;A;2026-08-01
+SKU-2020;Chave combinada Série E-100;Ferramentas;UN;29;50;246;69;676.79;20;Atlas Componentes;CD Santos;B;2026-06-13
+SKU-2021;Capacete de segurança Série A-10;EPI;PAR;15;22;156;99;1166.93;30;Fornecedor Gama;CD Campinas;B;2026-05-18
+SKU-2022;Rolamento de rolos cônicos Série B-20;Rolamentos;UN;21;137;334;121;1691.85;20;Atlas Componentes;CD Curitiba;B;2026-05-21
+SKU-2023;Parafuso Allen Série C-30;Fixadores;UN;8;50;340;84;2074.14;7;Fornecedor Gama;CD Santos;B;2026-01-09
+SKU-2024;Filme stretch Série D-40;Embalagens;UN;48;62;307;115;327.18;20;Fornecedor Alfa;CD Santos;A;2026-08-08
+SKU-2025;Fita adesiva Série E-50;Embalagens;UN;95;110;376;179;2477.31;30;Fornecedor Beta;CD Curitiba;A;2025-12-14
+SKU-2026;Rolamento autocompensador Série A-60;Rolamentos;UN;11;55;222;130;184.62;30;Delta Manutenção;CD Santos;A;2026-02-01
+SKU-2027;Broca de aço rápido Série B-70;Ferramentas;UN;88;118;420;78;1719.62;20;Eixo Forte;CD Campinas;A;2026-01-31
+SKU-2028;Parafuso sextavado Série C-80;Fixadores;UN;8;37;277;39;1157.64;45;Conecta Suprimentos;CD Campinas;A;2026-04-04
+SKU-2029;Graxa industrial Série D-90;Lubrificantes;L;3;38;89;16;1020.35;20;Fornecedor Gama;CD Curitiba;A;2026-05-09
+SKU-2030;Parafuso sextavado Série E-100;Fixadores;UN;4;43;363;46;85.94;15;Fornecedor Beta;CD Curitiba;A;2025-12-27
+SKU-2031;Alicate universal Série A-10;Ferramentas;UN;11;24;174;69;1970.61;20;Delta Manutenção;CD Curitiba;A;2026-02-10
+SKU-2032;Sensor indutivo Série B-20;Elétrica;UN;8;21;263;70;889.44;30;Conecta Suprimentos;CD Santos;A;2026-02-23
+SKU-2033;Óculos de segurança Série C-30;EPI;PAR;36;52;180;133;1134.85;15;Fornecedor Beta;CD Santos;B;2026-03-26
+SKU-2034;Chave combinada Série D-40;Ferramentas;UN;12;86;404;27;749.3;45;Fornecedor Gama;CD Curitiba;A;2026-08-11
+SKU-2035;Disco de corte Série E-50;Ferramentas;UN;35;78;382;115;1943.24;10;Delta Manutenção;CD Curitiba;B;2025-12-23
+SKU-2036;Desengraxante Série A-60;Lubrificantes;L;19;105;250;59;1684.93;10;Conecta Suprimentos;CD Campinas;B;2026-02-11
+SKU-2037;Broca de aço rápido Série B-70;Ferramentas;UN;42;63;217;141;2066.78;30;Fornecedor Gama;CD Campinas;B;2026-01-29
+SKU-2038;Rolamento rígido de esferas Série C-80;Rolamentos;UN;6;27;342;51;2568.36;30;Brasil Industrial;CD Campinas;B;2026-07-18
+SKU-2039;Óleo de engrenagem Série D-90;Lubrificantes;L;16;138;222;90;277.13;15;Eixo Forte;CD Santos;B;2026-07-25
+SKU-2040;Arruela lisa Série E-100;Fixadores;UN;1;26;94;91;943.39;10;Fornecedor Gama;CD Curitiba;B;2026-04-27
+SKU-2041;Porca sextavada Série A-10;Fixadores;UN;18;28;343;146;1188.88;5;Atlas Componentes;CD Curitiba;B;2025-11-10
+SKU-2042;Mancal com rolamento Série B-20;Rolamentos;UN;51;130;189;138;751.9;45;Brasil Industrial;CD Campinas;B;2026-07-27
+SKU-2043;Alicate universal Série C-30;Ferramentas;UN;20;92;275;94;1712.9;45;Brasil Industrial;CD Curitiba;B;2026-04-21
+SKU-2044;Contator industrial Série D-40;Elétrica;UN;0;79;205;64;471.23;3;Fornecedor Alfa;CD Santos;A;2026-05-27
+SKU-2045;Filme stretch Série E-50;Embalagens;UN;22;55;118;38;826.72;15;Brasil Industrial;CD Santos;A;2026-05-23
+SKU-2046;Alicate universal Série A-60;Ferramentas;UN;314;111;254;55;2264.45;20;Conecta Suprimentos;CD Curitiba;A;2025-12-13
+SKU-2047;Disco de corte Série B-70;Ferramentas;UN;529;34;244;86;492.05;45;Conecta Suprimentos;CD Santos;A;2026-07-31
+SKU-2048;Mancal com rolamento Série C-80;Rolamentos;UN;462;61;112;140;1427.15;15;Brasil Industrial;CD Curitiba;A;2026-01-02
+SKU-2049;Protetor auricular Série D-90;EPI;PAR;594;106;222;26;1546.44;30;Fornecedor Beta;CD Curitiba;A;2026-05-15
+SKU-2050;Caixa de papelão Série E-100;Embalagens;UN;471;108;401;80;485.5;20;Conecta Suprimentos;CD Campinas;A;2026-06-23
+SKU-2051;Chave combinada Série A-10;Ferramentas;UN;456;52;138;109;1184.28;20;Conecta Suprimentos;CD Santos;A;2026-04-11
+SKU-2052;Parafuso sextavado Série B-20;Fixadores;UN;394;24;80;120;2586.06;15;Conecta Suprimentos;CD Campinas;A;2025-11-29
+SKU-2053;Desengraxante Série C-30;Lubrificantes;L;787;109;395;28;1106.86;45;Delta Manutenção;CD Santos;A;2026-03-04
+SKU-2054;Contator industrial Série D-40;Elétrica;UN;539;115;177;90;1869.05;30;Fornecedor Alfa;CD Santos;A;2026-08-02
+SKU-2055;Fita adesiva Série E-50;Embalagens;UN;680;103;309;95;195.88;30;Atlas Componentes;CD Santos;A;2025-11-28
+SKU-2056;Disjuntor tripolar Série A-60;Elétrica;UN;432;33;207;10;1847.47;15;Brasil Industrial;CD Campinas;A;2026-02-22
+SKU-2057;Protetor auricular Série B-70;EPI;PAR;533;62;196;107;1558.43;15;Fornecedor Beta;CD Curitiba;A;2026-08-12
+SKU-2058;Óculos de segurança Série C-80;EPI;PAR;486;15;205;67;1299.59;15;Conecta Suprimentos;CD Campinas;A;2026-02-27
+SKU-2059;Óleo de engrenagem Série D-90;Lubrificantes;L;479;132;247;151;1024.45;45;Fornecedor Beta;CD Campinas;A;2026-01-30
+SKU-2060;Pallet plástico Série E-100;Embalagens;UN;606;131;355;104;1883.87;45;Fornecedor Alfa;CD Santos;A;2026-01-03
+SKU-2061;Óleo hidráulico Série A-10;Lubrificantes;L;639;127;340;25;860.44;30;Fornecedor Gama;CD Curitiba;A;2026-04-05
+SKU-2062;Disjuntor tripolar Série B-20;Elétrica;UN;574;105;374;102;1873.76;20;Eixo Forte;CD Santos;A;2026-07-19
+SKU-2063;Fita adesiva Série C-30;Embalagens;UN;287;92;170;32;1267.74;45;Atlas Componentes;CD Santos;A;2026-04-07
+SKU-2064;Arruela lisa Série D-40;Fixadores;UN;463;40;153;101;1226.15;15;Fornecedor Beta;CD Campinas;A;2026-04-05
+SKU-2065;Cabo elétrico Série E-50;Elétrica;UN;424;136;281;134;485.04;15;Brasil Industrial;CD Campinas;A;2026-08-11
+SKU-2066;Fita adesiva Série A-60;Embalagens;UN;256;92;208;69;1296.99;45;Fornecedor Gama;CD Curitiba;A;2026-03-24
+SKU-2067;Filme stretch Série B-70;Embalagens;UN;427;88;167;73;1241.33;45;Fornecedor Beta;CD Campinas;A;2026-07-21
+SKU-2068;Porca sextavada Série C-80;Fixadores;UN;725;84;392;63;855.73;20;Conecta Suprimentos;CD Campinas;A;2026-06-08
+SKU-2069;Graxa industrial Série D-90;Lubrificantes;L;493;130;195;161;853.03;20;Fornecedor Alfa;CD Campinas;A;2026-04-15
+SKU-2070;Desengraxante Série E-100;Lubrificantes;L;210;58;167;164;1331.31;45;Delta Manutenção;CD Curitiba;A;2026-05-02
+SKU-2071;Luva de proteção Série A-10;EPI;PAR;444;44;242;17;2163.23;45;Eixo Forte;CD Campinas;A;2026-06-09
+SKU-2072;Porca sextavada Série B-20;Fixadores;UN;436;18;100;14;168.31;15;Atlas Componentes;CD Santos;A;2026-07-15
+SKU-2073;Chave combinada Série C-30;Ferramentas;UN;563;124;438;135;788.77;45;Fornecedor Alfa;CD Campinas;A;2026-03-25
+SKU-2074;Contator industrial Série D-40;Elétrica;UN;445;88;329;165;1039.2;20;Conecta Suprimentos;CD Curitiba;A;2026-01-24
+SKU-2075;Rolamento rígido de esferas Série E-50;Rolamentos;UN;249;136;188;16;1920.33;15;Fornecedor Gama;CD Curitiba;A;2026-06-21
+SKU-2076;Mancal com rolamento Série A-60;Rolamentos;UN;681;17;298;54;552.46;30;Eixo Forte;CD Campinas;A;2026-03-06
+SKU-2077;Óculos de segurança Série B-70;EPI;PAR;619;48;322;111;744.93;20;Eixo Forte;CD Curitiba;A;2026-06-13
+SKU-2078;Graxa industrial Série C-80;Lubrificantes;L;466;122;336;142;724.56;15;Delta Manutenção;CD Curitiba;A;2026-01-15
+SKU-2079;Disco de corte Série D-90;Ferramentas;UN;523;137;408;138;429.55;20;Conecta Suprimentos;CD Santos;A;2026-06-16
+SKU-2080;Pallet plástico Série E-100;Embalagens;UN;389;52;237;167;1397.86;30;Conecta Suprimentos;CD Campinas;A;2026-07-09
+SKU-2081;Cabo elétrico Série A-10;Elétrica;UN;66;92;340;34;186.14;3;Conecta Suprimentos;CD Curitiba;A;2026-07-21
+SKU-2082;Parafuso Allen Série B-20;Fixadores;UN;94;95;262;82;195.53;45;Delta Manutenção;CD Santos;B;2025-11-30
+SKU-2083;Óleo de engrenagem Série C-30;Lubrificantes;L;8;25;192;12;145.01;3;Delta Manutenção;CD Santos;B;2026-06-16
+SKU-2084;Sensor indutivo Série D-40;Elétrica;UN;61;96;387;131;37.1;3;Brasil Industrial;CD Curitiba;A;2026-03-23
+SKU-2085;Disjuntor tripolar Série E-50;Elétrica;UN;29;80;133;51;338.66;5;Atlas Componentes;CD Campinas;A;2026-04-29
+SKU-2086;Mancal com rolamento Série A-60;Rolamentos;UN;17;25;107;28;304.18;15;Eixo Forte;CD Campinas;A;2026-05-12
+SKU-2087;Parafuso Allen Série B-70;Fixadores;UN;87;121;206;18;401.23;7;Fornecedor Gama;CD Campinas;A;2026-05-25
+SKU-2088;Disco de corte Série C-80;Ferramentas;UN;67;69;331;108;414.22;30;Eixo Forte;CD Santos;C;2026-05-27
+SKU-2089;Pallet plástico Série D-90;Embalagens;UN;17;22;145;12;331.83;5;Brasil Industrial;CD Curitiba;B;2026-07-11
+SKU-2090;Luva de proteção Série E-100;EPI;PAR;13;104;195;167;10.78;5;Fornecedor Gama;CD Campinas;C;2026-02-20
+SKU-2091;Disco de corte Série A-10;Ferramentas;UN;49;130;248;60;21.6;5;Fornecedor Alfa;CD Santos;A;2026-03-09
+SKU-2092;Desengraxante Série B-20;Lubrificantes;L;35;39;112;80;344.04;7;Fornecedor Alfa;CD Campinas;A;2026-07-22
+SKU-2093;Porca sextavada Série C-30;Fixadores;UN;16;43;136;26;157.87;5;Fornecedor Gama;CD Campinas;B;2025-11-14
+SKU-2094;Parafuso sextavado Série D-40;Fixadores;UN;102;129;217;125;245.24;20;Fornecedor Beta;CD Campinas;B;2026-03-27
+SKU-2095;Cabo elétrico Série E-50;Elétrica;UN;96;128;349;14;259.06;30;Fornecedor Alfa;CD Curitiba;B;2026-05-25
+SKU-2096;Alicate universal Série A-60;Ferramentas;UN;23;35;106;136;237.85;3;Conecta Suprimentos;CD Santos;B;2025-11-24
+SKU-2097;Filme stretch Série B-70;Embalagens;UN;22;127;435;75;182.05;5;Atlas Componentes;CD Curitiba;A;2025-12-02
+SKU-2098;Cabo elétrico Série C-80;Elétrica;UN;70;88;340;81;56.19;15;Fornecedor Beta;CD Campinas;B;2026-03-30
+SKU-2099;Chave combinada Série D-90;Ferramentas;UN;38;50;349;17;367.05;10;Conecta Suprimentos;CD Curitiba;B;2026-02-10
+SKU-2100;Arruela lisa Série E-100;Fixadores;UN;2;15;303;53;181.99;15;Delta Manutenção;CD Santos;C;2026-04-15
+SKU-2101;Mancal com rolamento Série A-10;Rolamentos;UN;60;109;214;30;291.89;10;Eixo Forte;CD Santos;A;2025-11-26
+SKU-2102;Capacete de segurança Série B-20;EPI;PAR;31;120;186;24;14.03;3;Brasil Industrial;CD Santos;A;2025-12-07
+SKU-2103;Protetor auricular Série C-30;EPI;PAR;92;134;335;107;312.43;10;Conecta Suprimentos;CD Santos;C;2026-08-03
+SKU-2104;Pallet plástico Série D-40;Embalagens;UN;135;137;281;19;284.19;20;Fornecedor Beta;CD Santos;A;2026-03-08
+SKU-2105;Luva de proteção Série E-50;EPI;PAR;28;82;241;132;358.7;5;Eixo Forte;CD Curitiba;B;2026-02-26
+SKU-2106;Capacete de segurança Série A-60;EPI;PAR;18;31;236;86;103.84;3;Atlas Componentes;CD Curitiba;A;2026-05-02
+SKU-2107;Óleo hidráulico Série B-70;Lubrificantes;L;70;110;253;75;378.61;7;Atlas Componentes;CD Curitiba;B;2026-08-11
+SKU-2108;Parafuso Allen Série C-80;Fixadores;UN;38;48;343;111;368.86;7;Atlas Componentes;CD Campinas;A;2026-05-19
+SKU-2109;Rolamento de rolos cônicos Série D-90;Rolamentos;UN;0;18;111;96;54.68;7;Atlas Componentes;CD Santos;A;2026-02-14
+SKU-2110;Óleo hidráulico Série E-100;Lubrificantes;L;8;22;291;156;199.75;10;Brasil Industrial;CD Santos;C;2026-04-14
+SKU-2111;Rolamento autocompensador Série A-10;Rolamentos;UN;62;96;212;49;244.58;3;Conecta Suprimentos;CD Curitiba;B;2026-01-05
+SKU-2112;Parafuso Allen Série B-20;Fixadores;UN;5;41;177;30;172.3;3;Delta Manutenção;CD Curitiba;A;2025-12-02
+SKU-2113;Rolamento rígido de esferas Série C-30;Rolamentos;UN;22;38;232;54;87.67;10;Delta Manutenção;CD Santos;A;2025-11-09
+SKU-2114;Filme stretch Série D-40;Embalagens;UN;13;134;280;36;186.12;10;Fornecedor Beta;CD Santos;C;2026-05-03
+SKU-2115;Desengraxante Série E-50;Lubrificantes;L;20;52;343;76;446.33;5;Conecta Suprimentos;CD Santos;B;2026-06-30
+SKU-2116;Óleo de engrenagem Série A-60;Lubrificantes;L;14;26;82;143;269.99;3;Delta Manutenção;CD Campinas;C;2026-07-16
+SKU-2117;Mancal com rolamento Série B-70;Rolamentos;UN;50;92;159;179;430.78;3;Fornecedor Beta;CD Curitiba;B;2026-06-03
+SKU-2118;Rolamento autocompensador Série C-80;Rolamentos;UN;43;59;181;145;190.0;10;Conecta Suprimentos;CD Curitiba;B;2026-05-20
+SKU-2119;Filme stretch Série D-90;Embalagens;UN;41;103;293;85;104.05;10;Brasil Industrial;CD Santos;B;2026-04-02
+SKU-2120;Cabo elétrico Série E-100;Elétrica;UN;42;130;413;45;435.57;10;Eixo Forte;CD Santos;C;2026-02-20
+SKU-2121;Parafuso Allen Série A-10;Fixadores;UN;60;91;157;51;79.7;3;Atlas Componentes;CD Campinas;B;2026-03-20
+SKU-2122;Desengraxante Série B-20;Lubrificantes;L;20;66;134;24;98.43;5;Fornecedor Alfa;CD Curitiba;B;2026-05-15
+SKU-2123;Mancal com rolamento Série C-30;Rolamentos;UN;50;120;260;17;268.22;3;Eixo Forte;CD Santos;C;2025-11-11
+SKU-2124;Capacete de segurança Série D-40;EPI;PAR;34;98;296;95;370.58;7;Fornecedor Alfa;CD Campinas;C;2026-01-01
+SKU-2125;Óleo de engrenagem Série E-50;Lubrificantes;L;90;135;195;100;24.31;7;Fornecedor Alfa;CD Curitiba;A;2026-07-02
+SKU-2126;Arruela lisa Série A-60;Fixadores;UN;384;131;383;44;277.83;15;Conecta Suprimentos;CD Campinas;A;2026-03-07
+SKU-2127;Óculos de segurança Série B-70;EPI;PAR;507;78;199;122;234.13;15;Conecta Suprimentos;CD Santos;B;2025-11-11
+SKU-2128;Disjuntor tripolar Série C-80;Elétrica;UN;387;128;207;159;411.69;15;Fornecedor Gama;CD Santos;C;2026-01-15
+SKU-2129;Rolamento autocompensador Série D-90;Rolamentos;UN;592;19;292;137;36.97;30;Fornecedor Alfa;CD Curitiba;C;2026-01-16
+SKU-2130;Caixa de papelão Série E-100;Embalagens;UN;520;84;314;86;125.18;30;Fornecedor Gama;CD Campinas;B;2026-03-24
+SKU-2131;Chave combinada Série A-10;Ferramentas;UN;497;66;326;92;166.66;30;Brasil Industrial;CD Campinas;B;2026-07-09
+SKU-2132;Graxa industrial Série B-20;Lubrificantes;L;496;73;367;179;130.75;30;Fornecedor Beta;CD Curitiba;B;2025-12-20
+SKU-2133;Arruela lisa Série C-30;Fixadores;UN;453;30;166;139;289.99;15;Eixo Forte;CD Campinas;C;2026-04-08
+SKU-2134;Alicate universal Série D-40;Ferramentas;UN;357;64;221;145;162.82;10;Conecta Suprimentos;CD Campinas;C;2026-03-23
+SKU-2135;Desengraxante Série E-50;Lubrificantes;L;564;124;288;134;203.46;3;Fornecedor Gama;CD Santos;B;2025-12-10
+SKU-2136;Fita adesiva Série A-60;Embalagens;UN;441;20;104;54;171.87;15;Eixo Forte;CD Santos;B;2026-02-02
+SKU-2137;Mancal com rolamento Série B-70;Rolamentos;UN;388;125;227;174;312.89;7;Atlas Componentes;CD Curitiba;A;2026-01-16
+SKU-2138;Sensor indutivo Série C-80;Elétrica;UN;361;102;284;175;176.96;20;Brasil Industrial;CD Curitiba;B;2026-02-03
+SKU-2139;Protetor auricular Série D-90;EPI;PAR;205;55;106;63;365.33;3;Eixo Forte;CD Santos;B;2026-04-18
+SKU-2140;Disco de corte Série E-100;Ferramentas;UN;544;61;221;66;116.24;30;Brasil Industrial;CD Santos;C;2025-12-28
+SKU-2141;Caixa de papelão Série A-10;Embalagens;UN;614;85;254;112;277.49;30;Conecta Suprimentos;CD Curitiba;C;2026-07-17
+SKU-2142;Capacete de segurança Série B-20;EPI;PAR;338;76;204;54;301.29;3;Eixo Forte;CD Curitiba;A;2026-03-17
+SKU-2143;Óleo hidráulico Série C-30;Lubrificantes;L;371;61;300;38;79.06;10;Fornecedor Gama;CD Campinas;C;2025-12-11
+SKU-2144;Parafuso sextavado Série D-40;Fixadores;UN;306;90;220;72;305.28;7;Fornecedor Beta;CD Santos;C;2026-03-28
+SKU-2145;Disjuntor tripolar Série E-50;Elétrica;UN;451;58;114;47;366.75;7;Eixo Forte;CD Campinas;B;2025-11-17
+SKU-2146;Chave combinada Série A-60;Ferramentas;UN;584;122;327;110;155.37;7;Conecta Suprimentos;CD Santos;B;2025-12-28
+SKU-2147;Filme stretch Série B-70;Embalagens;UN;456;79;160;90;424.42;15;Delta Manutenção;CD Santos;C;2026-01-22
+SKU-2148;Rolamento de rolos cônicos Série C-80;Rolamentos;UN;370;70;240;118;38.91;30;Atlas Componentes;CD Santos;C;2025-12-09
+SKU-2149;Graxa industrial Série D-90;Lubrificantes;L;362;112;336;82;377.5;3;Atlas Componentes;CD Santos;A;2026-03-03
+SKU-2150;Chave combinada Série E-100;Ferramentas;UN;527;83;206;41;63.0;20;Eixo Forte;CD Campinas;B;2026-03-07
+SKU-2151;Pallet plástico Série A-10;Embalagens;UN;459;90;381;79;122.09;45;Fornecedor Alfa;CD Santos;B;2026-04-25
+SKU-2152;Óculos de segurança Série B-20;EPI;PAR;347;16;120;128;276.31;15;Fornecedor Gama;CD Santos;C;2026-04-18
+SKU-2153;Desengraxante Série C-30;Lubrificantes;L;205;50;104;170;255.42;7;Atlas Componentes;CD Santos;C;2026-06-09
+SKU-2154;Porca sextavada Série D-40;Fixadores;UN;566;89;296;178;305.92;30;Eixo Forte;CD Curitiba;C;2026-05-08
+SKU-2155;Disjuntor tripolar Série E-50;Elétrica;UN;429;47;153;21;128.48;5;Brasil Industrial;CD Curitiba;A;2026-05-02
+SKU-2156;Óleo de engrenagem Série A-60;Lubrificantes;L;469;129;285;25;207.24;45;Eixo Forte;CD Santos;C;2026-02-12
+SKU-2157;Rolamento de rolos cônicos Série B-70;Rolamentos;UN;554;98;284;116;125.0;30;Fornecedor Gama;CD Campinas;B;2026-02-16
+SKU-2158;Sensor indutivo Série C-80;Elétrica;UN;528;116;426;47;396.82;5;Brasil Industrial;CD Campinas;C;2026-02-21
+SKU-2159;Parafuso Allen Série D-90;Fixadores;UN;673;111;283;28;432.22;10;Conecta Suprimentos;CD Campinas;B;2026-01-09
+SKU-2160;Rolamento rígido de esferas Série E-100;Rolamentos;UN;653;53;288;8;152.5;10;Delta Manutenção;CD Campinas;B;2026-05-09
+SKU-2161;Fita adesiva Série A-10;Embalagens;UN;543;96;323;48;347.47;5;Atlas Componentes;CD Campinas;A;2026-08-02
+SKU-2162;Luva de proteção Série B-20;EPI;PAR;430;69;252;12;148.93;20;Delta Manutenção;CD Curitiba;C;2026-02-12
+SKU-2163;Desengraxante Série C-30;Lubrificantes;L;258;125;226;119;164.75;3;Fornecedor Gama;CD Campinas;B;2026-03-19
+SKU-2164;Óleo hidráulico Série D-40;Lubrificantes;L;534;36;244;48;118.06;5;Brasil Industrial;CD Campinas;C;2025-11-06
+SKU-2165;Broca de aço rápido Série E-50;Ferramentas;UN;378;96;261;64;105.32;20;Delta Manutenção;CD Santos;C;2026-06-29
+SKU-2166;Desengraxante Série A-60;Lubrificantes;L;142;32;130;94;402.51;20;Fornecedor Alfa;CD Curitiba;B;2026-07-11
+SKU-2167;Óculos de segurança Série B-70;EPI;PAR;307;125;184;163;154.72;45;Fornecedor Gama;CD Curitiba;C;2026-05-14
+SKU-2168;Protetor auricular Série C-80;EPI;PAR;362;18;163;77;439.66;10;Fornecedor Alfa;CD Santos;B;2026-04-25
+SKU-2169;Luva de proteção Série D-90;EPI;PAR;552;51;228;164;236.85;7;Delta Manutenção;CD Santos;B;2025-12-03
+SKU-2170;Filme stretch Série E-100;Embalagens;UN;319;77;256;25;288.6;15;Fornecedor Gama;CD Santos;C;2026-05-05
+SKU-2171;Disjuntor tripolar Série A-10;Elétrica;UN;93;113;190;161;14.49;7;Fornecedor Beta;CD Campinas;B;2026-04-02
+SKU-2172;Protetor auricular Série B-20;EPI;PAR;32;46;223;77;18.38;7;Delta Manutenção;CD Santos;B;2025-12-16
+SKU-2173;Desengraxante Série C-30;Lubrificantes;L;60;68;140;39;55.38;7;Atlas Componentes;CD Santos;B;2026-07-08
+SKU-2174;Óleo hidráulico Série D-40;Lubrificantes;L;73;89;139;174;11.51;7;Delta Manutenção;CD Curitiba;C;2026-03-31
+SKU-2175;Disco de corte Série E-50;Ferramentas;UN;71;93;152;93;10.78;10;Fornecedor Gama;CD Campinas;C;2026-03-31
+SKU-2176;Parafuso Allen Série A-60;Fixadores;UN;59;62;159;56;47.11;10;Eixo Forte;CD Curitiba;B;2026-04-23
+SKU-2177;Óleo hidráulico Série B-70;Lubrificantes;L;22;39;315;45;20.48;10;Conecta Suprimentos;CD Santos;C;2025-12-03
+SKU-2178;Mancal com rolamento Série C-80;Rolamentos;UN;15;43;253;121;44.65;3;Brasil Industrial;CD Curitiba;C;2025-11-08
+SKU-2179;Graxa industrial Série D-90;Lubrificantes;L;104;129;309;85;23.36;3;Fornecedor Gama;CD Curitiba;B;2025-12-07
+SKU-2180;Arruela lisa Série E-100;Fixadores;UN;67;89;161;67;38.85;20;Fornecedor Beta;CD Campinas;C;2025-12-31
+SKU-2181;Fita adesiva Série A-10;Embalagens;UN;85;108;284;168;35.46;5;Fornecedor Beta;CD Santos;B;2025-11-26
+SKU-2182;Filme stretch Série B-20;Embalagens;UN;12;24;104;120;4.24;3;Fornecedor Gama;CD Campinas;B;2026-06-07
+SKU-2183;Mancal com rolamento Série C-30;Rolamentos;UN;40;43;138;56;38.94;5;Delta Manutenção;CD Santos;B;2026-03-08
+SKU-2184;Óleo de engrenagem Série D-40;Lubrificantes;L;37;66;319;92;23.1;10;Fornecedor Alfa;CD Campinas;C;2026-05-02
+SKU-2185;Alicate universal Série E-50;Ferramentas;UN;78;95;190;95;44.0;3;Delta Manutenção;CD Curitiba;C;2025-11-22
+SKU-2186;Disco de corte Série A-60;Ferramentas;UN;108;140;321;144;11.28;20;Conecta Suprimentos;CD Campinas;B;2026-04-29
+SKU-2187;Protetor auricular Série B-70;EPI;PAR;43;139;281;125;6.95;10;Eixo Forte;CD Curitiba;C;2026-04-25
+SKU-2188;Cabo elétrico Série C-80;Elétrica;UN;27;78;318;21;55.95;20;Delta Manutenção;CD Santos;C;2026-08-10
+SKU-2189;Sensor indutivo Série D-90;Elétrica;UN;64;99;190;167;22.17;5;Brasil Industrial;CD Curitiba;C;2026-02-24
+SKU-2190;Mancal com rolamento Série E-100;Rolamentos;UN;87;92;178;91;58.32;7;Delta Manutenção;CD Campinas;C;2026-08-09
+SKU-2191;Contator industrial Série A-10;Elétrica;UN;45;89;237;104;32.86;5;Conecta Suprimentos;CD Santos;C;2026-07-31
+SKU-2192;Parafuso Allen Série B-20;Fixadores;UN;122;134;434;52;39.91;45;Fornecedor Beta;CD Campinas;C;2025-11-03
+SKU-2193;Porca sextavada Série C-30;Fixadores;UN;29;55;213;12;20.76;30;Delta Manutenção;CD Santos;B;2025-11-19
+SKU-2194;Porca sextavada Série D-40;Fixadores;UN;64;72;250;175;57.53;3;Delta Manutenção;CD Campinas;C;2026-02-12
+SKU-2195;Desengraxante Série E-50;Lubrificantes;L;94;98;203;49;37.45;3;Atlas Componentes;CD Curitiba;C;2025-11-29
+SKU-2196;Contator industrial Série A-60;Elétrica;UN;21;34;211;38;28.7;5;Delta Manutenção;CD Curitiba;C;2025-12-10
+SKU-2197;Graxa industrial Série B-70;Lubrificantes;L;69;102;350;165;49.93;10;Fornecedor Alfa;CD Santos;C;2026-01-23
+SKU-2198;Capacete de segurança Série C-80;EPI;PAR;44;91;166;177;7.53;7;Atlas Componentes;CD Campinas;B;2026-07-22
+SKU-2199;Óculos de segurança Série D-90;EPI;PAR;102;121;349;38;17.13;15;Eixo Forte;CD Curitiba;B;2026-04-26
+SKU-2200;Fita adesiva Série E-100;Embalagens;UN;34;101;200;50;13.99;7;Delta Manutenção;CD Santos;C;2026-06-08
+SKU-2201;Capacete de segurança Série A-10;EPI;PAR;68;77;282;120;46.76;15;Brasil Industrial;CD Curitiba;B;2026-04-29
+SKU-2202;Mancal com rolamento Série B-20;Rolamentos;UN;37;51;110;73;7.88;7;Delta Manutenção;CD Campinas;C;2026-05-20
+SKU-2203;Caixa de papelão Série C-30;Embalagens;UN;23;90;382;31;43.32;20;Conecta Suprimentos;CD Curitiba;C;2026-04-14
+SKU-2204;Arruela lisa Série D-40;Fixadores;UN;23;38;175;16;16.25;10;Fornecedor Alfa;CD Campinas;C;2025-12-21
+SKU-2205;Desengraxante Série E-50;Lubrificantes;L;54;89;249;73;20.37;5;Atlas Componentes;CD Campinas;B;2026-05-27
+SKU-2206;Capacete de segurança Série A-60;EPI;PAR;383;63;378;168;26.57;7;Fornecedor Gama;CD Campinas;B;2026-07-14
+SKU-2207;Broca de aço rápido Série B-70;Ferramentas;UN;506;120;437;25;9.81;3;Fornecedor Beta;CD Santos;C;2026-04-11
+SKU-2208;Mancal com rolamento Série C-80;Rolamentos;UN;207;87;197;36;35.39;5;Delta Manutenção;CD Campinas;B;2025-11-13
+SKU-2209;Óleo hidráulico Série D-90;Lubrificantes;L;414;61;128;88;14.33;10;Atlas Componentes;CD Curitiba;C;2026-02-13
+SKU-2210;Protetor auricular Série E-100;EPI;PAR;401;81;322;63;9.33;7;Conecta Suprimentos;CD Campinas;B;2025-11-20
+SKU-2211;Óleo de engrenagem Série A-10;Lubrificantes;L;389;110;325;75;11.12;7;Fornecedor Beta;CD Santos;B;2025-11-05
+SKU-2212;Capacete de segurança Série B-20;EPI;PAR;273;70;150;159;1.67;30;Eixo Forte;CD Curitiba;B;2026-04-01
+SKU-2213;Capacete de segurança Série C-30;EPI;PAR;289;134;283;78;14.56;45;Eixo Forte;CD Curitiba;B;2026-04-13
+SKU-2214;Alicate universal Série D-40;Ferramentas;UN;613;126;329;160;16.99;10;Conecta Suprimentos;CD Campinas;C;2026-04-08
+SKU-2215;Capacete de segurança Série E-50;EPI;PAR;222;52;197;65;14.46;7;Brasil Industrial;CD Santos;B;2026-02-04
+SKU-2216;Alicate universal Série A-60;Ferramentas;UN;215;87;214;84;57.05;30;Brasil Industrial;CD Campinas;C;2026-07-18
+SKU-2217;Desengraxante Série B-70;Lubrificantes;L;190;23;182;24;20.09;15;Conecta Suprimentos;CD Campinas;B;2025-11-15
+SKU-2218;Protetor auricular Série C-80;EPI;PAR;289;115;221;14;47.1;3;Fornecedor Gama;CD Campinas;C;2026-01-22
+SKU-2219;Porca sextavada Série D-90;Fixadores;UN;427;43;150;121;10.4;10;Fornecedor Alfa;CD Curitiba;C;2026-03-20
+SKU-2220;Rolamento de rolos cônicos Série E-100;Rolamentos;UN;210;81;205;76;56.24;45;Conecta Suprimentos;CD Santos;C;2026-06-03
+SKU-2221;Rolamento de rolos cônicos Série A-10;Rolamentos;UN;320;24;220;131;32.45;3;Conecta Suprimentos;CD Campinas;C;2026-07-07
+SKU-2222;Sensor indutivo Série B-20;Elétrica;UN;362;121;354;141;36.89;45;Conecta Suprimentos;CD Curitiba;B;2025-12-07
+SKU-2223;Disco de corte Série C-30;Ferramentas;UN;245;19;231;70;58.22;10;Fornecedor Beta;CD Santos;B;2026-03-01
+SKU-2224;Porca sextavada Série D-40;Fixadores;UN;630;58;220;56;6.09;20;Fornecedor Gama;CD Santos;C;2026-04-11
+SKU-2225;Chave combinada Série E-50;Ferramentas;UN;217;112;181;128;21.52;10;Fornecedor Gama;CD Santos;C;2025-11-21
+SKU-2226;Rolamento autocompensador Série A-60;Rolamentos;UN;283;38;234;111;58.2;20;Brasil Industrial;CD Santos;C;2026-03-27
+SKU-2227;Rolamento de rolos cônicos Série B-70;Rolamentos;UN;243;57;190;41;13.86;30;Fornecedor Beta;CD Santos;C;2026-02-04
+SKU-2228;Parafuso sextavado Série C-80;Fixadores;UN;187;63;156;134;9.58;10;Fornecedor Gama;CD Campinas;B;2026-06-04
+SKU-2229;Porca sextavada Série D-90;Fixadores;UN;186;73;167;47;25.7;7;Fornecedor Gama;CD Santos;C;2026-02-05
+SKU-2230;Rolamento de rolos cônicos Série E-100;Rolamentos;UN;356;137;225;77;5.28;15;Fornecedor Beta;CD Santos;C;2026-01-15
+SKU-2231;Caixa de papelão Série A-10;Embalagens;UN;311;95;289;118;27.15;15;Fornecedor Alfa;CD Curitiba;B;2026-05-06
+SKU-2232;Filme stretch Série B-20;Embalagens;UN;376;65;336;19;16.03;45;Brasil Industrial;CD Campinas;C;2026-03-01
+SKU-2233;Protetor auricular Série C-30;EPI;PAR;213;34;129;74;8.16;3;Fornecedor Gama;CD Curitiba;B;2026-04-17
+SKU-2234;Broca de aço rápido Série D-40;Ferramentas;UN;538;90;374;168;12.69;3;Eixo Forte;CD Santos;C;2026-04-21
+SKU-2235;Luva de proteção Série E-50;EPI;PAR;270;77;184;73;46.83;7;Fornecedor Alfa;CD Campinas;C;2026-06-11
+SKU-2236;Sensor indutivo Série A-60;Elétrica;UN;215;87;159;151;53.23;3;Brasil Industrial;CD Santos;C;2026-03-27
+SKU-2237;Caixa de papelão Série B-70;Embalagens;UN;657;49;356;117;5.01;20;Delta Manutenção;CD Campinas;C;2026-05-19
+SKU-2238;Graxa industrial Série C-80;Lubrificantes;L;501;91;196;47;10.78;5;Fornecedor Beta;CD Santos;C;2026-08-10
+SKU-2239;Parafuso Allen Série D-90;Fixadores;UN;544;76;150;93;9.67;15;Brasil Industrial;CD Santos;C;2025-12-14
+SKU-2240;Pallet plástico Série E-100;Embalagens;UN;175;64;117;73;40.83;15;Fornecedor Alfa;CD Campinas;C;2026-02-10
+SKU-2241;Caixa de papelão Série A-10;Embalagens;UN;115;108;262;17;738.63;20;Eixo Forte;CD Campinas;B;2026-01-21
+SKU-2242;Rolamento rígido de esferas Série B-20;Rolamentos;UN;277;53;361;110;281.39;20;Conecta Suprimentos;CD Campinas;C;2026-01-02
+SKU-2243;Disjuntor tripolar Série C-30;Elétrica;UN;72;66;363;25;1653.05;3;Atlas Componentes;CD Campinas;A;2026-04-02
+SKU-2244;Capacete de segurança Série D-40;EPI;PAR;50;33;141;27;753.44;10;Fornecedor Gama;CD Campinas;B;2026-01-02
+SKU-2245;Fita adesiva Série E-50;Embalagens;UN;337;52;342;53;298.14;7;Fornecedor Beta;CD Curitiba;C;2026-06-04
+SKU-2246;Capacete de segurança Série A-60;EPI;PAR;191;108;252;117;570.83;10;Conecta Suprimentos;CD Campinas;B;2026-04-29
+SKU-2247;Sensor indutivo Série B-70;Elétrica;UN;64;18;133;63;614.93;7;Delta Manutenção;CD Santos;C;2026-01-06
+SKU-2248;Óculos de segurança Série C-80;EPI;PAR;178;116;182;48;1307.07;3;Conecta Suprimentos;CD Curitiba;A;2026-02-13
+SKU-2249;Caixa de papelão Série D-90;Embalagens;UN;128;71;144;121;241.33;30;Conecta Suprimentos;CD Campinas;B;2026-03-14
+SKU-2250;Contator industrial Série E-100;Elétrica;UN;72;67;152;114;675.27;30;Fornecedor Beta;CD Campinas;A;2025-11-19
+SKU-2251;Óleo de engrenagem Série A-10;Lubrificantes;L;292;139;296;66;585.92;30;Conecta Suprimentos;CD Campinas;B;2026-04-30
+SKU-2252;Desengraxante Série B-20;Lubrificantes;L;235;74;344;117;486.63;10;Fornecedor Alfa;CD Curitiba;A;2026-02-21
+SKU-2253;Porca sextavada Série C-30;Fixadores;UN;318;123;438;142;1429.09;20;Fornecedor Gama;CD Campinas;B;2025-12-27
+SKU-2254;Rolamento autocompensador Série D-40;Rolamentos;UN;97;85;211;132;1318.8;45;Fornecedor Beta;CD Campinas;B;2026-01-12
+SKU-2255;Caixa de papelão Série E-50;Embalagens;UN;203;55;323;24;328.67;30;Fornecedor Alfa;CD Santos;A;2026-06-15
+SKU-2256;Porca sextavada Série A-60;Fixadores;UN;129;74;356;13;39.6;10;Conecta Suprimentos;CD Curitiba;B;2026-01-26
+SKU-2257;Broca de aço rápido Série B-70;Ferramentas;UN;149;98;361;128;307.14;5;Brasil Industrial;CD Curitiba;B;2025-12-26
+SKU-2258;Mancal com rolamento Série C-80;Rolamentos;UN;170;123;281;115;173.8;20;Eixo Forte;CD Santos;B;2025-11-22
+SKU-2259;Disco de corte Série D-90;Ferramentas;UN;214;87;309;52;473.9;3;Brasil Industrial;CD Campinas;A;2026-06-22
+SKU-2260;Parafuso Allen Série E-100;Fixadores;UN;91;51;225;27;1497.4;10;Brasil Industrial;CD Santos;A;2026-06-26
+SKU-2261;Óculos de segurança Série A-10;EPI;PAR;271;95;292;128;676.88;15;Fornecedor Gama;CD Curitiba;C;2026-07-09
+SKU-2262;Protetor auricular Série B-20;EPI;PAR;76;74;176;25;1293.52;45;Fornecedor Gama;CD Santos;C;2026-05-24
+SKU-2263;Contator industrial Série C-30;Elétrica;UN;84;17;84;138;1094.73;45;Eixo Forte;CD Campinas;C;2026-07-06
+SKU-2264;Filme stretch Série D-40;Embalagens;UN;226;25;327;71;1299.9;30;Eixo Forte;CD Campinas;A;2026-01-16
+SKU-2265;Mancal com rolamento Série E-50;Rolamentos;UN;86;57;180;117;1444.29;30;Fornecedor Alfa;CD Santos;C;2026-03-06
+SKU-2266;Arruela lisa Série A-60;Fixadores;UN;132;88;245;28;1001.27;20;Fornecedor Alfa;CD Curitiba;A;2026-04-10
+SKU-2267;Contator industrial Série B-70;Elétrica;UN;114;54;136;112;164.61;3;Atlas Componentes;CD Santos;C;2026-01-04
+SKU-2268;Disco de corte Série C-80;Ferramentas;UN;172;106;245;131;207.25;20;Delta Manutenção;CD Santos;A;2026-01-22
+SKU-2269;Capacete de segurança Série D-90;EPI;PAR;40;23;88;109;670.78;30;Delta Manutenção;CD Santos;A;2025-11-14
+SKU-2270;Caixa de papelão Série E-100;Embalagens;UN;56;22;75;147;734.2;20;Eixo Forte;CD Campinas;A;2026-02-23
+SKU-2271;Luva de proteção Série A-10;EPI;PAR;292;39;325;163;933.44;5;Conecta Suprimentos;CD Campinas;B;2026-02-09
+SKU-2272;Óleo de engrenagem Série B-20;Lubrificantes;L;191;44;276;122;1786.42;7;Eixo Forte;CD Curitiba;A;2026-07-26
+SKU-2273;Desengraxante Série C-30;Lubrificantes;L;175;133;189;151;399.26;3;Delta Manutenção;CD Curitiba;C;2025-11-12
+SKU-2274;Mancal com rolamento Série D-40;Rolamentos;UN;130;39;164;83;790.6;45;Delta Manutenção;CD Santos;B;2026-03-23
+SKU-2275;Pallet plástico Série E-50;Embalagens;UN;163;115;179;22;254.19;15;Brasil Industrial;CD Santos;A;2026-04-23
+SKU-2276;Fita adesiva Série A-60;Embalagens;UN;101;80;317;32;1585.92;10;Eixo Forte;CD Campinas;A;2026-04-14
+SKU-2277;Capacete de segurança Série B-70;EPI;PAR;242;124;369;55;218.72;30;Eixo Forte;CD Curitiba;A;2025-12-17
+SKU-2278;Disjuntor tripolar Série C-80;Elétrica;UN;125;83;385;113;551.93;5;Fornecedor Gama;CD Curitiba;B;2026-07-01
+SKU-2279;Óleo de engrenagem Série D-90;Lubrificantes;L;255;136;265;13;1538.0;30;Eixo Forte;CD Campinas;C;2026-05-19
+SKU-2280;Alicate universal Série E-100;Ferramentas;UN;82;49;122;33;736.37;30;Conecta Suprimentos;CD Campinas;C;2026-02-22
+SKU-2281;Óleo de engrenagem Série A-10;Lubrificantes;L;145;76;169;158;1384.62;3;Brasil Industrial;CD Santos;C;2026-07-29
+SKU-2282;Sensor indutivo Série B-20;Elétrica;UN;296;65;380;62;823.83;5;Brasil Industrial;CD Campinas;B;2026-05-17
+SKU-2283;Rolamento de rolos cônicos Série C-30;Rolamentos;UN;214;109;346;173;1482.74;20;Eixo Forte;CD Curitiba;C;2026-03-31
+SKU-2284;Arruela lisa Série D-40;Fixadores;UN;297;107;412;171;340.59;15;Fornecedor Gama;CD Curitiba;C;2025-11-03
+SKU-2285;Óleo de engrenagem Série E-50;Lubrificantes;L;124;15;272;128;648.15;30;Eixo Forte;CD Santos;C;2025-11-24
+SKU-2286;Porca sextavada Série A-60;Fixadores;UN;35;24;79;106;1636.32;20;Atlas Componentes;CD Campinas;A;2026-01-26
+SKU-2287;Caixa de papelão Série B-70;Embalagens;UN;161;38;171;59;819.88;5;Conecta Suprimentos;CD Santos;C;2025-12-11
+SKU-2288;Parafuso Allen Série C-80;Fixadores;UN;209;70;215;102;1388.52;45;Fornecedor Alfa;CD Curitiba;B;2026-06-10
+SKU-2289;Fita adesiva Série D-90;Embalagens;UN;158;92;161;66;1048.8;7;Eixo Forte;CD Santos;A;2025-11-25
+SKU-2290;Alicate universal Série E-100;Ferramentas;UN;152;18;186;52;444.64;5;Fornecedor Beta;CD Curitiba;C;2026-05-19
+SKU-2291;Rolamento autocompensador Série A-10;Rolamentos;UN;156;69;200;15;339.43;20;Conecta Suprimentos;CD Santos;A;2026-07-20
+SKU-2292;Rolamento de rolos cônicos Série B-20;Rolamentos;UN;327;36;348;161;509.55;10;Fornecedor Alfa;CD Santos;B;2026-01-13
+SKU-2293;Mancal com rolamento Série C-30;Rolamentos;UN;169;126;385;136;1354.37;20;Fornecedor Beta;CD Campinas;C;2026-04-18
+SKU-2294;Graxa industrial Série D-40;Lubrificantes;L;184;75;254;131;897.39;5;Brasil Industrial;CD Santos;B;2026-02-11
+SKU-2295;Caixa de papelão Série E-50;Embalagens;UN;238;130;450;111;413.79;30;Fornecedor Beta;CD Campinas;B;2025-11-05
+SKU-2296;Óculos de segurança Série A-60;EPI;PAR;124;21;286;124;1240.06;3;Fornecedor Beta;CD Campinas;B;2026-02-23
+SKU-2297;Caixa de papelão Série B-70;Embalagens;UN;120;78;131;75;537.16;20;Atlas Componentes;CD Campinas;B;2026-04-22
+SKU-2298;Óleo de engrenagem Série C-80;Lubrificantes;L;174;57;174;152;1736.94;7;Brasil Industrial;CD Campinas;C;2026-07-22
+SKU-2299;Disco de corte Série D-90;Ferramentas;UN;243;36;348;141;645.09;3;Conecta Suprimentos;CD Campinas;A;2026-04-19
+SKU-2300;Parafuso Allen Série E-100;Fixadores;UN;183;46;186;92;1632.1;3;Brasil Industrial;CD Curitiba;C;2026-04-26
