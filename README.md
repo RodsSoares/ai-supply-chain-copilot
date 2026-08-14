@@ -10,7 +10,7 @@
 
 <p align="center">
   <img
-    src="docs/images/architecture-overview.png"
+    src="docs/images/architecture-overview.png?v=1.0.0"
     alt="High-level architecture of the AI Supply Chain Copilot"
     width="1000"
   >
