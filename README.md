@@ -1,9 +1,9 @@
 # AI Supply Chain Copilot
 
-> 🚀 **Current Release:** **v0.5.0 — AI Layer Foundation**
+> 🚀 **Current Release:** **v1.0.0 — Functional AI Copilot**
 
 
-![Version](https://img.shields.io/badge/version-v0.5.0-blue)
+![Version](https://img.shields.io/badge/version-v1.0.0-blue)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Portfolio](https://img.shields.io/badge/portfolio-AI%20Engineering-orange)
@@ -16,7 +16,9 @@
   >
 </p>
 
-> **End-to-end Data Engineering and Decision Support platform with an AI-ready architecture for Supply Chain operations.**
+> **End-to-end Supply Chain Decision Support platform combining deterministic analytics, business rules, REST APIs, Business Intelligence and Generative AI.**
+
+The application integrates a deterministic Supply Chain analytics engine with a real Large Language Model (LLM), enabling natural-language interpretation of structured inventory insights while preserving business rules and calculations outside the probabilistic AI layer.
 
 An enterprise-inspired software engineering portfolio that combines **Supply Chain expertise, Data Engineering and Artificial Intelligence** to solve realistic inventory management problems using fully synthetic ERP data.
 
@@ -31,8 +33,11 @@ Rather than presenting isolated coding exercises, this repository evolves increm
 - Main Objectives
 - Technology Stack
 - Solution Architecture
+- AI Copilot
 - Project Structure
+- Project Presentation
 - Getting Started
+- Automated Tests
 - Automated Project Audit
 - Engineering Practices
 - Business Rules Configuration
@@ -57,7 +62,9 @@ The application simulates an enterprise inventory management environment, combin
 - SQLite
 - Data Analytics
 - Business Rules Engine
-- AI-ready Architecture
+- Business Intelligence
+- REST API
+- Generative AI / LLM Integration
 
 All datasets are fully synthetic and inspired by real business processes, preserving corporate confidentiality while maintaining realistic operational scenarios.
 
@@ -81,7 +88,8 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | Power BI Dashboard | ✅ |
 | AI Layer Foundation | ✅ |
 | Automated Test Suite | ✅ |
-| Real LLM Integration | ⏳ |
+| Real LLM Integration | ✅ |
+| LLM Cost / Activation Safeguards | ✅ |
 | Cloud Deployment | ⏳ |
 
 ---
@@ -92,7 +100,7 @@ This repository demonstrates practical implementation of:
 
 - Data Engineering
 - Software Engineering
-- AI-ready Architecture
+- AI-enabled Solution Architecture
 - Supply Chain Analytics
 - Business Process Automation
 - Decision Support Systems
@@ -109,20 +117,21 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | Data Processing | Pandas |
 | Database | SQLite |
 | API Framework | FastAPI |
-| AI Architecture | Modular AI Layer with Fake LLM Client |
 | Business Intelligence | Power BI |
 | Configuration | JSON |
 | Version Control | Git / GitHub |
 | IDE | Visual Studio Code |
 | Documentation | Markdown |
 | Automated Testing | Pytest |
+| AI Integration | OpenAI API / Large Language Model |
+| AI Architecture | Modular AI Layer with Real and Fake LLM Clients |
 
 ### Planned Technologies
 
 - PostgreSQL
 - Docker
+- Cloud Deployment
 - Azure AI Services
-- Large Language Models (LLMs)
 
 ---
 
@@ -138,7 +147,12 @@ D[Analytics Engine]
 E[Decision Support Engine]
 F[REST API]
 G[Power BI Dashboard]
-H[AI Supply Chain Copilot]
+
+H[AI Copilot Service]
+I[Context Preparation]
+J[LLM Client]
+K[Fake LLM]
+L[OpenAI API / Real LLM]
 
 R[config/business_rules.json]
 
@@ -151,6 +165,12 @@ E --> F
 F --> G
 F --> H
 
+H --> I
+I --> J
+
+J --> K
+J --> L
+
 R -. Configuration .-> D
 ```
 
@@ -162,15 +182,25 @@ The **SQLite Database** serves as the persistence layer, storing standardized in
 
 The **Analytics Engine** retrieves persisted data and computes operational KPIs, inventory metrics, stockout risk indicators and prioritization scores based on configurable business parameters.
 
-Business rules are externalized through the `config/business_rules.json` file, allowing operational thresholds and scoring parameters to evolve without modifying the application's source code.
+Business rules are externalized through the `config/business_rules.json` file, allowing operational thresholds, scoring parameters and decision criteria to evolve without modifying the application's source code.
 
-The **Decision Support Engine** consolidates analytical outputs into actionable business recommendations, such as replenishment priorities, excess inventory identification and operational risk assessment.
+The **Decision Support Engine** consolidates analytical outputs into actionable business recommendations, including replenishment priorities, excess inventory identification, stockout risk assessment and managerial prioritization.
 
-The **REST API** exposes these analytical results to external consumers, enabling integration with Power BI dashboards and preparing the application for future AI-powered assistants.
+The **REST API**, implemented with FastAPI, exposes the application's analytical and decision-support capabilities through HTTP endpoints. It serves as the integration layer for external consumers, including the Power BI dashboard and the AI Supply Chain Copilot.
 
-The **AI Integration Layer** introduces a modular Copilot architecture composed of service orchestration, controlled data-access tools, structured context preparation, system prompting and an isolated LLM client.
+The **AI Integration Layer** connects the deterministic application with Generative AI through a modular architecture composed of service orchestration, controlled data-access tools, structured context preparation, system prompting and an isolated LLM client.
 
-The current implementation uses a simulated LLM client, allowing the complete application flow to be developed and tested without external API consumption. The architecture already includes explicit safeguards for future real-model integration, including controlled context size, response limits and deliberate activation of the real client.
+The **AI Copilot Service** orchestrates the interaction between the application's analytical capabilities and the LLM. It retrieves validated inventory information, prepares a structured and bounded business context and delegates natural-language generation to the LLM client.
+
+The **LLM Client** abstracts the model provider from the rest of the application and supports two execution modes. The Fake LLM enables deterministic, cost-free development and automated testing, while the Real LLM mode integrates the application with the OpenAI API.
+
+Real LLM integration has been successfully validated end-to-end through the `/copilot` endpoint. External model calls require explicit activation and a valid API key, while context-size controls and response limits provide additional safeguards over external consumption.
+
+A core architectural principle of the project is the separation between **deterministic business logic and probabilistic AI interpretation**. Inventory metrics, risk indicators, prioritization scores and recommended actions are calculated by deterministic application modules before the LLM is called.
+
+The LLM does not replace the application's business rules or calculate the underlying operational KPIs. Instead, it receives validated analytical context and uses Generative AI to interpret relationships, synthesize information and communicate business insights in natural language.
+
+This approach preserves the traceability and consistency of the analytical engine while applying Generative AI where it provides additional value: contextual interpretation, synthesis and human-oriented communication.
 
 This architecture promotes:
 
@@ -179,12 +209,123 @@ This architecture promotes:
 - Low Coupling
 - Single Responsibility Principle (SRP)
 - Separation of Concerns
+- Deterministic / Probabilistic Layer Separation
 - Maintainability
 - Testability
 - Extensibility
-- AI-ready System Design
+- Modular AI Integration
+- Controlled LLM Context
+- Explicit LLM Activation Safeguards
+- Cost-efficient AI Testing
 ---
 
+# AI Copilot
+
+The **AI Supply Chain Copilot** provides a natural-language interface over the application's deterministic inventory analytics and decision-support capabilities.
+
+Rather than delegating business calculations to the Large Language Model, the Copilot follows a controlled architecture in which operational metrics, risk indicators, prioritization scores and recommended actions are calculated by deterministic application modules before any information is sent to the LLM.
+
+The Copilot workflow follows five main steps:
+
+1. The deterministic application layers calculate inventory metrics, risks, scores and recommended actions.
+2. The AI service retrieves validated inventory information through controlled data-access tools.
+3. A structured and bounded business context is prepared for the LLM.
+4. The LLM interprets the supplied context and generates a natural-language response.
+5. The response is returned through the REST API to support human analysis and decision-making.
+
+This design keeps **business calculations deterministic and auditable**, while using Generative AI for contextual interpretation, synthesis and communication.
+
+## Fake and Real LLM Modes
+
+The LLM client supports two execution modes:
+
+- **Fake LLM** — enables cost-free development, automated testing and validation of the complete application flow without consuming an external AI provider.
+- **Real LLM** — connects the Copilot to the OpenAI API and generates responses using a real Large Language Model.
+
+Real LLM calls require explicit environment-based activation in addition to a valid API key. This deliberate safeguard reduces the risk of accidental external API consumption during development and testing.
+
+The architecture also controls the amount of context sent to the model and limits the maximum response size, providing additional control over token consumption and API costs.
+
+## Copilot API Endpoint
+
+The AI Supply Chain Copilot is exposed through the REST API using the following endpoint:
+
+```text
+POST /copilot
+```
+
+The endpoint receives a natural-language business question, orchestrates the AI service, retrieves the analytical context produced by the deterministic application layers and returns the LLM-generated response.
+
+### Request
+
+Example request body:
+
+```json
+{
+  "pergunta": "Quais produtos apresentam prioridade alta?"
+}
+```
+
+### Response
+
+The endpoint returns the original question together with the natural-language response generated by the configured LLM client.
+
+Example response structure:
+
+```json
+{
+  "pergunta": "Quais produtos apresentam prioridade alta?",
+  "resposta": "Natural-language analysis generated from the supplied inventory context."
+}
+```
+
+The response content depends on the analytical context supplied to the model and on the selected LLM execution mode.
+
+### Execution Flow
+
+```text
+POST /copilot
+      ↓
+FastAPI Endpoint
+      ↓
+AI Service
+      ↓
+Controlled Data-Access Tools
+      ↓
+Structured Context Preparation
+      ↓
+LLM Client
+      ↓
+Fake LLM or Real LLM
+      ↓
+Natural-Language Response
+```
+
+The endpoint preserves the architectural separation between deterministic business logic and probabilistic AI interpretation. Inventory calculations, risk indicators, prioritization scores and recommended actions are generated before the LLM is called. The model receives these analytical results as context and is responsible for interpreting and communicating them in natural language.
+
+## Real LLM Validation
+
+The real LLM integration has been successfully validated end-to-end through the `/copilot` endpoint using the OpenAI API.
+
+During the first successful real-model execution, the Copilot received analytical inventory context generated by the deterministic application layers and produced a natural-language response based on those results.
+
+The validation confirmed that the complete flow — from analytical data processing and business rules to context preparation, external LLM consumption and API response — is operational.
+
+The result also demonstrated the intended role of the LLM within the architecture: **interpreting deterministic analytical outputs rather than replacing the business logic that produces them.**
+
+<p align="center">
+  <img
+    src="docs/images/first llm real answer.png"
+    alt="First successful real LLM response from the AI Supply Chain Copilot"
+    width="900"
+  >
+</p>
+
+<p align="center">
+  <em>First successful end-to-end response generated through the real LLM integration.</em>
+</p>
+
+---
 # Project Structure
 
 ```text
@@ -228,36 +369,138 @@ The presentation provides an executive overview of:
 - Power BI Dashboard
 - Engineering Decisions
 - Development Roadmap
-- Future AI Integration
+- AI Integration Roadmap
 
 ---
 
 # Getting Started
 
-Clone the repository:
+## 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/RodsSoares/ai-supply-chain-copilot.git
+cd ai-supply-chain-copilot
 ```
 
-Install dependencies:
+## 2. Create and activate a virtual environment
 
-```bash
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+## 3. Install dependencies
+
+```powershell
 pip install -r requirements.txt
 ```
 
-Run the inventory analysis:
+## 4. Run the analytical pipeline
 
-```bash
+```powershell
 python scripts/analyze_inventory.py
 ```
 
-Generated output:
+This executes the deterministic Supply Chain pipeline and generates the analytical outputs consumed by the application.
 
-```text
-output/inventory_analysis.csv
+## 5. Choose the LLM execution mode
+
+The Copilot supports both **Fake LLM** and **Real LLM** execution modes.
+
+### Fake LLM Mode
+
+Recommended for local development, testing and demonstrations that do not require external API consumption.
+
+```powershell
+$env:LLM_MODE="fake"
 ```
 
+### Real LLM Mode
+
+To enable the real LLM integration, configure the required environment variables:
+
+```powershell
+$env:OPENAI_API_KEY="your-api-key"
+$env:LLM_MODE="real"
+$env:LLM_REAL_ENABLED="true"
+```
+
+> **Security:** Never commit API keys, credentials or other secrets to the repository. Environment variables should be configured only in the local execution environment or through an appropriate secrets-management solution.
+
+> **Cost control:** Real LLM calls consume external API resources and may generate costs. The `LLM_REAL_ENABLED` variable acts as an explicit safeguard so that selecting real mode alone does not automatically authorize external model calls.
+
+## 6. Start the REST API
+
+```powershell
+uvicorn src.api.main:app --reload
+```
+
+After startup, the interactive API documentation is available at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+## 7. Test the Copilot
+
+Through the Swagger interface, execute:
+
+```text
+POST /copilot
+```
+
+Example request:
+
+```json
+{
+  "pergunta": "Quais produtos apresentam prioridade alta?"
+}
+```
+
+In **Fake LLM Mode**, the application validates the complete internal AI flow without calling an external provider.
+
+In **Real LLM Mode**, the request is processed through the complete application pipeline and sent to the configured external LLM provider.
+
+## 8. Run the automated test suite
+
+```powershell
+python -m pytest
+```
+
+The automated tests validate the deterministic modules, API behavior, AI orchestration, context controls and LLM client safeguards.
+
+---
+# Automated Tests
+
+The project includes an automated test suite built with **Pytest**, covering the REST API and AI integration components.
+
+The current **v1.0.0** release is validated by **39 automated tests**, covering:
+
+- AI client behavior and execution modes
+- Fake and Real LLM safeguards
+- AI service orchestration
+- Controlled data-access tools
+- Context preparation and validation
+- REST API `/copilot` endpoint behavior
+- Integration between the API and AI layers
+- Error handling and external-call protection
+
+The complete test suite can be executed from the project root with:
+
+```powershell
+python -m pytest
+```
+
+Current validated result:
+
+```text
+collected 39 items
+39 passed
+```
+
+The automated test architecture allows the AI integration flow to be validated through simulated dependencies and the Fake LLM client, avoiding unnecessary external API consumption during routine testing.
+
+Real LLM connectivity is validated separately through controlled end-to-end execution, while the automated test suite remains deterministic, repeatable and cost-efficient.
 ---
 
 # Automated Project Audit
@@ -310,10 +553,12 @@ This project follows modern software engineering principles designed to maximize
 - Automated Project Audit
 - Incremental Delivery
 - Version Control
-- AI-ready System Design
 - Automated Testing with Pytest
-- Controlled LLM Context
+- Deterministic / Probabilistic Layer Separation
+- Modular AI Integration
 - Explicit LLM Activation Safeguards
+- Controlled LLM Context
+- Fake Client for Cost-free Testing
 
 ---
 
@@ -338,7 +583,7 @@ Current configurable parameters include:
 - Lead time scoring
 - Priority thresholds
 
-This architecture prepares the application for future administrative interfaces and REST APIs while keeping the core business logic modular and maintainable.
+This architecture supports future administrative interfaces and additional API-based configuration capabilities while keeping the core business logic modular and maintainable.
 
 ---
 
@@ -349,6 +594,9 @@ Develop Feature
       │
       ▼
 Execute Pipeline
+      │
+      ▼
+Run Automated Tests
       │
       ▼
 Execute Project Audit
@@ -374,7 +622,8 @@ Push to GitHub
 | Analytics (SQL Analytics, KPI Engine) | v0.3.0 | ✅ |
 | Applications (REST API and Dashboard) | v0.4.0 | ✅ |
 | AI Integration Layer | v0.5.0 | ✅ |
-| Production Readiness (Cloud Deployment) | v1.0.0 | ⏳ |
+| Functional AI Copilot | v1.0.0 | ✅ |
+| Production Hardening & Cloud Deployment | Future | ⏳ |
 
 ---
 
@@ -386,24 +635,36 @@ Push to GitHub
 | **v0.2.0** | ETL Pipeline, SQLite integration, Inventory Analytics MVP, Business Rules Configuration, Configurable Business Rules and Automated Project Audit |
 | **v0.3.0** | SQL Analytics, KPI Engine and advanced business metrics |
 | **v0.4.0** | REST API, Dashboard and application layer |
-| **v0.5.0** | AI Layer Foundation
-| **v1.0.0 (Target)** | AI Copilot, cloud deployment and production-ready architecture |
+| **v0.5.0** | AI Layer Foundation |
+| **v1.0.0** | Functional AI Copilot with validated real LLM integration, controlled context, explicit activation safeguards and end-to-end API flow |
 
 ---
 
 # Current Development Stage
 
-The project has completed the AI Layer Foundation, including the Copilot API endpoint, modular AI orchestration, controlled context preparation, system prompting, simulated LLM integration, explicit cost safeguards and an automated test suite.
+The **AI Supply Chain Copilot v1.0.0** represents the first fully functional end-to-end release of the project.
 
-The current implementation has been validated with 37 automated tests and remains intentionally isolated from paid LLM providers. The next development stage is the controlled integration and validation of a real Large Language Model before progressing toward production readiness and cloud deployment.
+At this stage, the application integrates the complete deterministic Supply Chain analytical pipeline with a modular Generative AI layer. Synthetic ERP data is processed through ETL, persistence, analytics and configurable business rules before being exposed through the REST API and consumed by the Power BI dashboard and AI Copilot.
+
+The real LLM integration has been successfully validated through the `/copilot` endpoint using the OpenAI API. The application can prepare controlled analytical context, send it to a real Large Language Model and return the generated natural-language response through the API.
+
+The architecture deliberately maintains a clear separation between deterministic business logic and probabilistic AI interpretation. Inventory metrics, stockout risk indicators, prioritization scores and recommended actions remain under deterministic application control, while the LLM is responsible for interpreting, synthesizing and communicating those validated analytical results.
+
+The AI layer supports both **Fake LLM** and **Real LLM** execution modes. The simulated client remains available for automated testing and cost-free development, while real external calls require explicit environment-based activation and a valid API key.
+
+The current release also includes automated testing, controlled LLM context, response limits, external-call safeguards and automated project auditing, providing a stable and testable foundation for future evolution.
+
+Version **v1.0.0 should be considered a functional portfolio release rather than a production-ready enterprise deployment**. Production hardening remains outside the current scope and may include future capabilities such as containerization, cloud deployment, persistent production-grade databases, authentication and authorization, observability, centralized secrets management, enhanced provider error handling and additional AI governance controls.
+
+With the core end-to-end architecture now operational, future development can focus on production hardening, scalability, user experience and advanced AI capabilities without requiring fundamental changes to the application's architectural foundation.
 
 ---
 
 # Why this project?
 
-This repository reflects my transition from Supply Chain leadership to Artificial Intelligence and Software Engineering.
+This repository reflects my transition from Supply Chain leadership toward AI Solutions, Intelligent Automation and AI Transformation.
 
-It combines nearly two decades of enterprise experience solving operational challenges with modern software development practices, using synthetic enterprise data to preserve confidentiality while demonstrating realistic business scenarios.
+It combines nearly two decades of enterprise experience in Supply Chain, Planning and Operations with data, automation, software architecture and Generative AI.
 
 The objective is not only to build software, but to demonstrate the ability to design maintainable business solutions that integrate engineering, analytics and artificial intelligence.
 
@@ -411,9 +672,9 @@ The objective is not only to build software, but to demonstrate the ability to d
 
 # Repository Purpose
 
-This repository serves as a long-term engineering portfolio focused on building an end-to-end Supply Chain application rather than isolated coding exercises.
+This repository serves as a functional AI Solutions portfolio project demonstrating the end-to-end design of a business application integrating data engineering, analytics, business rules, APIs, Business Intelligence and Generative AI.
 
-Each sprint delivers a production-inspired capability while preserving architecture quality, maintainability and long-term scalability.
+Each sprint delivers an enterprise-inspired capability while preserving architecture quality, maintainability and long-term scalability.
 
 ---
 

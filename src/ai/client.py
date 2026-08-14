@@ -2,6 +2,8 @@ import json
 import os
 from typing import Any
 
+from openai import OpenAI
+
 from src.ai.prompts import SYSTEM_PROMPT
 
 
@@ -17,6 +19,7 @@ LLM_REAL_ENABLED = os.getenv(
 
 LIMITE_CARACTERES_CONTEXTO = 20000
 LIMITE_TOKENS_RESPOSTA = 800
+MODELO_LLM = "gpt-5.6-terra"
 
 
 def validar_configuracao_cliente() -> None:
@@ -38,14 +41,17 @@ def validar_configuracao_cliente() -> None:
                 "explicitamente chamadas ao provedor."
             )
 
-        raise RuntimeError(
-            "O modo real foi autorizado, mas o cliente real "
-            "ainda não está implementado."
-        )
+        if not os.getenv("OPENAI_API_KEY"):
+            raise RuntimeError(
+                "OPENAI_API_KEY não configurada."
+            )
+
+        return
 
     raise ValueError(
         f"Modo de cliente não suportado: {MODO_CLIENTE}"
     )
+
 
 def validar_limites_contexto(
     contexto: Any | None,
@@ -84,7 +90,7 @@ def montar_requisicao(
     contexto: Any | None = None,
 ) -> dict[str, Any]:
     """
-    Monta a estrutura lógica que será enviada ao futuro LLM.
+    Monta a estrutura lógica que será enviada ao LLM.
 
     Esta função não realiza chamadas externas.
     Ela apenas organiza system prompt, contexto e pergunta.
@@ -109,8 +115,8 @@ def gerar_resposta(
     """
     Gera uma resposta utilizando o cliente de IA configurado.
 
-    No modo atual, utiliza uma implementação simulada para permitir
-    o desenvolvimento e os testes sem consumo de API.
+    O modo fake permite desenvolvimento e testes sem consumo de API.
+    O modo real utiliza o provedor configurado.
     """
 
     validar_configuracao_cliente()
@@ -126,9 +132,50 @@ def gerar_resposta(
             contexto=requisicao["contexto"],
         )
 
+    if MODO_CLIENTE == "real":
+        return gerar_resposta_real(
+            pergunta=requisicao["pergunta"],
+            contexto=requisicao["contexto"],
+        )
+
     raise RuntimeError(
-        "Cliente real ainda não implementado."
+        f"Modo de cliente não suportado: {MODO_CLIENTE}"
     )
+
+
+def gerar_resposta_real(
+    pergunta: str,
+    contexto: Any | None = None,
+) -> str:
+    """
+    Gera uma resposta utilizando o provedor real de IA.
+    """
+
+    validar_limites_contexto(contexto)
+
+    cliente = OpenAI()
+
+    contexto_serializado = json.dumps(
+        contexto,
+        ensure_ascii=False,
+        default=str,
+    )
+
+    entrada = (
+        "Contexto fornecido pelo sistema:\n\n"
+        f"{contexto_serializado}\n\n"
+        "Pergunta do usuário:\n\n"
+        f"{pergunta}"
+    )
+
+    resposta = cliente.responses.create(
+        model=MODELO_LLM,
+        instructions=SYSTEM_PROMPT,
+        input=entrada,
+        max_output_tokens=LIMITE_TOKENS_RESPOSTA,
+    )
+
+    return resposta.output_text
 
 
 def gerar_resposta_fake(

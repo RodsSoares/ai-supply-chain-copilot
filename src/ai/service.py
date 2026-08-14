@@ -53,13 +53,22 @@ def preparar_contexto(
     ]
 
     return {
-        "resumo": {
-            "total_registros": len(inventario),
-            "prioridade_alta": prioridade_alta,
-            "risco_ruptura": risco_ruptura,
-        },
-        "registros": registros_selecionados,
-    }
+    "resumo": {
+        "total_registros": len(inventario),
+        "prioridade_alta": prioridade_alta,
+        "risco_ruptura": risco_ruptura,
+    },
+    "metadados_contexto": {
+        "total_registros_detalhados": len(registros_selecionados),
+        "limite_registros_detalhados": LIMITE_REGISTROS_CONTEXTO,
+        "criterio_selecao": (
+            "Registros ordenados por score_prioridade e valor_acao, "
+            "ambos em ordem decrescente."
+        ),
+        "contexto_parcial": len(inventario) > len(registros_selecionados),
+    },
+    "registros": registros_selecionados,
+}
 
 
 def responder(pergunta: str) -> str:

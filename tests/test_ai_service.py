@@ -30,22 +30,31 @@ def test_responder_orquestra_fluxo_corretamente(monkeypatch):
         assert pergunta == "Quais produtos apresentam prioridade alta?"
 
         assert contexto == {
-            "resumo": {
-                "total_registros": 2,
-                "prioridade_alta": 1,
-                "risco_ruptura": 0,
-            },
-            "registros": [
-                {
-                    "sku": "SKU001",
-                    "prioridade": "ALTA",
-                },
-                {
-                    "sku": "SKU002",
-                    "prioridade": "BAIXA",
-                },
-            ],
-        }
+    "resumo": {
+        "total_registros": 2,
+        "prioridade_alta": 1,
+        "risco_ruptura": 0,
+    },
+    "metadados_contexto": {
+        "total_registros_detalhados": 2,
+        "limite_registros_detalhados": 20,
+        "criterio_selecao": (
+            "Registros ordenados por score_prioridade e valor_acao, "
+            "ambos em ordem decrescente."
+        ),
+        "contexto_parcial": False,
+    },
+    "registros": [
+        {
+            "sku": "SKU001",
+            "prioridade": "ALTA",
+        },
+        {
+            "sku": "SKU002",
+            "prioridade": "BAIXA",
+        },
+    ],
+}
 
         return resposta_fake
 
@@ -263,4 +272,31 @@ def test_preparar_contexto_trata_campos_ausentes():
     assert contexto["resumo"]["prioridade_alta"] == 1
     assert contexto["resumo"]["risco_ruptura"] == 0
 
-    assert len(contexto["registros"]) == 2       
+    assert len(contexto["registros"]) == 2   
+
+
+def test_preparar_contexto_identifica_contexto_parcial():
+    """
+    Verifica se o contexto informa corretamente quando apenas
+    parte do inventário é enviada como registros detalhados.
+    """
+
+    inventario = [
+        {
+            "sku": f"SKU{i:03d}",
+            "prioridade": "ALTA",
+            "risco_ruptura": "SIM",
+            "score_prioridade": 100 - i,
+            "valor_acao": 1000 - i,
+        }
+        for i in range(25)
+    ]
+
+    contexto = service.preparar_contexto(inventario)
+
+    assert contexto["resumo"]["total_registros"] == 25
+    assert len(contexto["registros"]) == 20
+
+    assert contexto["metadados_contexto"]["total_registros_detalhados"] == 20
+    assert contexto["metadados_contexto"]["limite_registros_detalhados"] == 20
+    assert contexto["metadados_contexto"]["contexto_parcial"] is True    

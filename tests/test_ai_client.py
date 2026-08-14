@@ -281,12 +281,10 @@ def test_validar_configuracao_cliente_bloqueia_real_sem_autorizacao(
         client.validar_configuracao_cliente()
 
 
-def test_validar_configuracao_cliente_real_autorizado_ainda_nao_executa(
-    monkeypatch,
-):
+def test_validar_configuracao_cliente_real_exige_api_key(monkeypatch):
     """
-    Verifica se mesmo com autorização explícita
-    nenhuma chamada real pode ocorrer nesta fase.
+    Verifica se o modo real autorizado exige uma API key
+    antes de permitir chamadas ao provedor.
     """
 
     monkeypatch.setattr(
@@ -301,9 +299,14 @@ def test_validar_configuracao_cliente_real_autorizado_ainda_nao_executa(
         True,
     )
 
+    monkeypatch.delenv(
+        "OPENAI_API_KEY",
+        raising=False,
+    )
+
     with pytest.raises(
         RuntimeError,
-        match="ainda não está implementado",
+        match="OPENAI_API_KEY não configurada",
     ):
         client.validar_configuracao_cliente()
 
@@ -407,3 +410,66 @@ def test_limite_tokens_resposta_possui_valor_controlado():
 
     assert client.LIMITE_TOKENS_RESPOSTA > 0
     assert client.LIMITE_TOKENS_RESPOSTA <= 1000
+
+
+def test_gerar_resposta_real_utiliza_responses_api(monkeypatch):
+    """
+    Verifica se o cliente real monta corretamente a chamada
+    para a Responses API e retorna o texto da resposta.
+    """
+
+    contexto = {
+        "resumo": {
+            "total_registros": 2,
+            "prioridade_alta": 1,
+            "risco_ruptura": 1,
+        },
+        "registros": [
+            {
+                "sku": "SKU-001",
+                "prioridade": "ALTA",
+            },
+            {
+                "sku": "SKU-002",
+                "prioridade": "BAIXA",
+            },
+        ],
+    }
+
+    class RespostaFake:
+        output_text = "Resposta real simulada."
+
+    class ResponsesFake:
+        def create(
+            self,
+            model,
+            instructions,
+            input,
+            max_output_tokens,
+        ):
+            assert model == client.MODELO_LLM
+            assert instructions == client.SYSTEM_PROMPT
+            assert max_output_tokens == client.LIMITE_TOKENS_RESPOSTA
+
+            assert "Contexto fornecido pelo sistema:" in input
+            assert '"SKU-001"' in input
+            assert "Quais produtos apresentam prioridade alta?" in input
+
+            return RespostaFake()
+
+    class OpenAIFake:
+        def __init__(self):
+            self.responses = ResponsesFake()
+
+    monkeypatch.setattr(
+        client,
+        "OpenAI",
+        OpenAIFake,
+    )
+
+    resposta = client.gerar_resposta_real(
+        pergunta="Quais produtos apresentam prioridade alta?",
+        contexto=contexto,
+    )
+
+    assert resposta == "Resposta real simulada."

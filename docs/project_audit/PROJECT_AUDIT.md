@@ -1,21 +1,21 @@
 # Project Audit
 
-Gerado em: 06/08/2026 23:39:41
+Gerado em: 13/08/2026 20:58:01
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
 - Arquivos Python: **23**
-- Linhas totais: **2992**
-- Linhas efetivas de código: **2245**
-- Funções: **111**
-- Classes: **2**
+- Linhas totais: **3232**
+- Linhas efetivas de código: **2437**
+- Funções: **118**
+- Classes: **5**
 - Imports internos: **24**
-- Imports externos: **17**
+- Imports externos: **18**
 - Imports da biblioteca padrão: **25**
 - TODOs/FIXMEs em comentários: **0**
-- Funções sem docstring: **14**
+- Funções sem docstring: **16**
 - Arquivos com erro de sintaxe: **0**
 
 ## 2. Como usar as opções True e False
@@ -68,10 +68,10 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 8.7/10 |
-| Complexidade estrutural | 9.6/10 |
+| Cobertura de docstrings | 8.6/10 |
+| Complexidade estrutural | 9.1/10 |
 | Integridade sintática | 10.0/10 |
-| Saúde geral | **9.6/10** |
+| Saúde geral | **9.4/10** |
 
 ## 6. Estrutura do projeto
 
@@ -99,7 +99,8 @@ ai-supply-chain-copilot/
 │   ├── backlog/
 │   │   └── backlog.md
 │   ├── images/
-│   │   └── architecture-overview.png
+│   │   ├── architecture-overview.png
+│   │   └── first llm real answer.png
 │   ├── presentations/
 │   │   ├── AI-Supply-Chain-Copilot.pdf
 │   │   └── AI-Supply-Chain-Copilot.pptx
@@ -115,8 +116,10 @@ ai-supply-chain-copilot/
 │   │   └── indicadores_r1.xlsx
 │   └── powerbi/
 │       ├── AI_Supply_Chain_Copilot.pbix
-│       └── screenshots/
-│           └── dashboard.png
+│       ├── screenshots/
+│       │   └── dashboard.png
+│       └── themes/
+│           └── ai_supply_chain_dark.json
 ├── requirements.txt
 ├── sample_data/
 │   └── erp_inventory.csv
@@ -147,6 +150,7 @@ ai-supply-chain-copilot/
 │   │   └── load_warehouses.py
 │   └── main.py
 └── tests/
+    ├── golden_test_set.md
     ├── test_ai_client.py
     ├── test_ai_service.py
     ├── test_ai_tools.py
@@ -161,14 +165,14 @@ ai-supply-chain-copilot/
 | `scripts/business_rules.py` | 63 | 2 | 0 | 0 |
 | `scripts/database_setup.py` | 12 | 0 | 0 | 0 |
 | `scripts/inventory_decision.py` | 121 | 5 | 0 | 0 |
-| `scripts/inventory_export.py` | 40 | 1 | 0 | 0 |
+| `scripts/inventory_export.py` | 96 | 3 | 0 | 0 |
 | `scripts/inventory_metrics.py` | 119 | 5 | 0 | 0 |
 | `scripts/inventory_reporting.py` | 228 | 5 | 0 | 0 |
 | `scripts/inventory_scoring.py` | 123 | 6 | 0 | 0 |
 | `scripts/inventory_validation.py` | 78 | 2 | 0 | 0 |
-| `src/ai/client.py` | 208 | 6 | 0 | 0 |
-| `src/ai/prompts.py` | 213 | 0 | 0 | 0 |
-| `src/ai/service.py` | 91 | 2 | 0 | 0 |
+| `src/ai/client.py` | 255 | 7 | 0 | 0 |
+| `src/ai/prompts.py` | 239 | 0 | 0 | 0 |
+| `src/ai/service.py` | 100 | 2 | 0 | 0 |
 | `src/ai/tools.py` | 74 | 1 | 0 | 0 |
 | `src/api/main.py` | 209 | 8 | 1 | 0 |
 | `src/database/connection.py` | 17 | 1 | 0 | 0 |
@@ -176,8 +180,8 @@ ai-supply-chain-copilot/
 | `src/etl/load_products.py` | 149 | 4 | 0 | 0 |
 | `src/etl/load_warehouses.py` | 146 | 4 | 0 | 0 |
 | `src/main.py` | 21 | 1 | 0 | 0 |
-| `tests/test_ai_client.py` | 409 | 19 | 0 | 0 |
-| `tests/test_ai_service.py` | 266 | 13 | 0 | 0 |
+| `tests/test_ai_client.py` | 475 | 22 | 3 | 0 |
+| `tests/test_ai_service.py` | 302 | 14 | 0 | 0 |
 | `tests/test_ai_tools.py` | 135 | 14 | 1 | 0 |
 | `tests/test_api_copilot.py` | 110 | 6 | 0 | 0 |
 
@@ -214,7 +218,9 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `exportar_resultados` | 14–40 | `df, caminho_saida` | SIM |
+| `exportar_resultados` | 11–24 | `df, caminho_saida` | SIM |
+| `exportar_csv` | 27–52 | `df, caminho_saida` | SIM |
+| `exportar_excel` | 55–96 | `df, caminho_excel` | SIM |
 
 ### `scripts/inventory_metrics.py`
 
@@ -258,12 +264,13 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `validar_configuracao_cliente` | 22–48 | `—` | SIM |
-| `validar_limites_contexto` | 50–79 | `contexto` | SIM |
-| `montar_requisicao` | 82–102 | `pergunta, contexto` | SIM |
-| `gerar_resposta` | 105–131 | `pergunta, contexto` | SIM |
-| `gerar_resposta_fake` | 134–160 | `pergunta, contexto` | SIM |
-| `obter_quantidade_registros` | 163–179 | `contexto` | SIM |
+| `validar_configuracao_cliente` | 25–53 | `—` | SIM |
+| `validar_limites_contexto` | 56–85 | `contexto` | SIM |
+| `montar_requisicao` | 88–108 | `pergunta, contexto` | SIM |
+| `gerar_resposta` | 111–143 | `pergunta, contexto` | SIM |
+| `gerar_resposta_real` | 146–178 | `pergunta, contexto` | SIM |
+| `gerar_resposta_fake` | 181–207 | `pergunta, contexto` | SIM |
+| `obter_quantidade_registros` | 210–226 | `contexto` | SIM |
 
 ### `src/ai/prompts.py`
 
@@ -273,8 +280,8 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `preparar_contexto` | 10–62 | `inventario` | SIM |
-| `responder` | 65–79 | `pergunta` | SIM |
+| `preparar_contexto` | 10–71 | `inventario` | SIM |
+| `responder` | 74–88 | `pergunta` | SIM |
 
 ### `src/ai/tools.py`
 
@@ -356,30 +363,40 @@ ai-supply-chain-copilot/
 | `test_obter_quantidade_registros_contexto_estruturado` | 215–234 | `—` | SIM |
 | `test_validar_configuracao_cliente_aceita_modo_fake` | 237–254 | `monkeypatch` | SIM |
 | `test_validar_configuracao_cliente_bloqueia_real_sem_autorizacao` | 257–281 | `monkeypatch` | SIM |
-| `test_validar_configuracao_cliente_real_autorizado_ainda_nao_executa` | 284–308 | `monkeypatch` | SIM |
-| `test_validar_configuracao_cliente_rejeita_modo_invalido` | 311–326 | `monkeypatch` | SIM |
-| `test_validar_limites_contexto_aceita_contexto_pequeno` | 329–346 | `—` | SIM |
-| `test_validar_limites_contexto_rejeita_contexto_excessivo` | 349–371 | `monkeypatch` | SIM |
-| `test_montar_requisicao_bloqueia_contexto_excessivo` | 374–399 | `monkeypatch` | SIM |
-| `test_limite_tokens_resposta_possui_valor_controlado` | 402–409 | `—` | SIM |
+| `test_validar_configuracao_cliente_real_exige_api_key` | 284–311 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_rejeita_modo_invalido` | 314–329 | `monkeypatch` | SIM |
+| `test_validar_limites_contexto_aceita_contexto_pequeno` | 332–349 | `—` | SIM |
+| `test_validar_limites_contexto_rejeita_contexto_excessivo` | 352–374 | `monkeypatch` | SIM |
+| `test_montar_requisicao_bloqueia_contexto_excessivo` | 377–402 | `monkeypatch` | SIM |
+| `test_limite_tokens_resposta_possui_valor_controlado` | 405–412 | `—` | SIM |
+| `test_gerar_resposta_real_utiliza_responses_api` | 415–475 | `monkeypatch` | SIM |
+| `create` | 443–458 | `self, model, instructions, input, max_output_tokens` | NÃO |
+| `__init__` | 461–462 | `self` | NÃO |
+
+| Classe | Linhas | Docstring |
+|---|---:|---|
+| `RespostaFake` | 439–440 | NÃO |
+| `ResponsesFake` | 442–458 | NÃO |
+| `OpenAIFake` | 460–462 | NÃO |
 
 ### `tests/test_ai_service.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `test_responder_orquestra_fluxo_corretamente` | 4–66 | `monkeypatch` | SIM |
+| `test_responder_orquestra_fluxo_corretamente` | 4–75 | `monkeypatch` | SIM |
 | `listar_inventario_fake` | 26–27 | `—` | NÃO |
-| `gerar_resposta_fake` | 29–50 | `pergunta, contexto` | NÃO |
-| `test_responder_propaga_erro_da_tool` | 69–90 | `monkeypatch` | SIM |
-| `listar_inventario_fake` | 75–76 | `—` | NÃO |
-| `test_responder_propaga_erro_do_client` | 93–130 | `monkeypatch` | SIM |
-| `listar_inventario_fake` | 106–107 | `—` | NÃO |
-| `gerar_resposta_fake` | 109–110 | `pergunta, contexto` | NÃO |
-| `test_preparar_contexto_retorna_resumo_e_registros` | 133–164 | `—` | SIM |
-| `test_preparar_contexto_ordena_por_prioridade_e_valor` | 167–202 | `—` | SIM |
-| `test_preparar_contexto_respeita_limite_de_registros` | 205–223 | `—` | SIM |
-| `test_preparar_contexto_trata_inventario_vazio` | 226–241 | `—` | SIM |
-| `test_preparar_contexto_trata_campos_ausentes` | 244–266 | `—` | SIM |
+| `gerar_resposta_fake` | 29–59 | `pergunta, contexto` | NÃO |
+| `test_responder_propaga_erro_da_tool` | 78–99 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 84–85 | `—` | NÃO |
+| `test_responder_propaga_erro_do_client` | 102–139 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 115–116 | `—` | NÃO |
+| `gerar_resposta_fake` | 118–119 | `pergunta, contexto` | NÃO |
+| `test_preparar_contexto_retorna_resumo_e_registros` | 142–173 | `—` | SIM |
+| `test_preparar_contexto_ordena_por_prioridade_e_valor` | 176–211 | `—` | SIM |
+| `test_preparar_contexto_respeita_limite_de_registros` | 214–232 | `—` | SIM |
+| `test_preparar_contexto_trata_inventario_vazio` | 235–250 | `—` | SIM |
+| `test_preparar_contexto_trata_campos_ausentes` | 253–275 | `—` | SIM |
+| `test_preparar_contexto_identifica_contexto_parcial` | 278–302 | `—` | SIM |
 
 ### `tests/test_ai_tools.py`
 
@@ -449,6 +466,7 @@ ai-supply-chain-copilot/
 ### Dependências externas
 
 - `fastapi`
+- `openai`
 - `pandas`
 - `pydantic`
 - `pytest`
