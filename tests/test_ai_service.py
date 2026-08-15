@@ -2,66 +2,41 @@ from src.ai import service
 
 
 def test_responder_orquestra_fluxo_corretamente(monkeypatch):
-    """
-    Verifica se o service obtém o inventário,
-    prepara o contexto, envia pergunta e contexto ao client
-    e retorna a resposta gerada.
-    """
-
     pergunta = "Quais produtos apresentam prioridade alta?"
 
     inventario_fake = [
-        {
-            "sku": "SKU001",
-            "prioridade": "ALTA",
-        },
-        {
-            "sku": "SKU002",
-            "prioridade": "BAIXA",
-        },
+        {"sku": "SKU001"},
+        {"sku": "SKU002"},
     ]
+
+    contexto_fake = {
+        "contexto": "preparado",
+    }
 
     resposta_fake = "O produto SKU001 apresenta prioridade alta."
 
     def listar_inventario_fake():
         return inventario_fake
 
+    def preparar_contexto_fake(inventario):
+        assert inventario == inventario_fake
+        return contexto_fake
+
     def gerar_resposta_fake(pergunta, contexto):
         assert pergunta == "Quais produtos apresentam prioridade alta?"
-
-        assert contexto == {
-    "resumo": {
-        "total_registros": 2,
-        "prioridade_alta": 1,
-        "risco_ruptura": 0,
-    },
-    "metadados_contexto": {
-        "total_registros_detalhados": 2,
-        "limite_registros_detalhados": 20,
-        "criterio_selecao": (
-            "Registros ordenados por score_prioridade e valor_acao, "
-            "ambos em ordem decrescente."
-        ),
-        "contexto_parcial": False,
-    },
-    "registros": [
-        {
-            "sku": "SKU001",
-            "prioridade": "ALTA",
-        },
-        {
-            "sku": "SKU002",
-            "prioridade": "BAIXA",
-        },
-    ],
-}
-
+        assert contexto == contexto_fake
         return resposta_fake
 
     monkeypatch.setattr(
         service,
         "listar_inventario",
         listar_inventario_fake,
+    )
+
+    monkeypatch.setattr(
+        service,
+        "preparar_contexto",
+        preparar_contexto_fake,
     )
 
     monkeypatch.setattr(
@@ -209,45 +184,6 @@ def test_preparar_contexto_ordena_por_prioridade_e_valor():
         "SKU002",
         "SKU001",
     ]
-
-
-def test_preparar_contexto_respeita_limite_de_registros():
-    """
-    Verifica se o contexto respeita o limite máximo
-    de registros detalhados enviados ao cliente.
-    """
-
-    inventario = [
-        {
-            "sku": f"SKU{i:03}",
-            "score_prioridade": i,
-            "valor_acao": i * 100,
-        }
-        for i in range(30)
-    ]
-
-    contexto = service.preparar_contexto(inventario)
-
-    assert len(contexto["registros"]) == service.LIMITE_REGISTROS_CONTEXTO
-    assert len(contexto["registros"]) == 20
-
-
-def test_preparar_contexto_trata_inventario_vazio():
-    """
-    Verifica o comportamento quando não existem
-    registros de inventário.
-    """
-
-    contexto = service.preparar_contexto([])
-
-    assert contexto == {
-        "resumo": {
-            "total_registros": 0,
-            "prioridade_alta": 0,
-            "risco_ruptura": 0,
-        },
-        "registros": [],
-    }
 
 
 def test_preparar_contexto_trata_campos_ausentes():

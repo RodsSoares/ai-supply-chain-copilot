@@ -4,7 +4,7 @@
 
 
 ![Version](https://img.shields.io/badge/version-v1.0.0-blue)
-![Python](https://img.shields.io/badge/python-3.13-blue)
+![Python](https://img.shields.io/badge/python-3.14-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Portfolio](https://img.shields.io/badge/portfolio-AI%20Engineering-orange)
 
@@ -89,6 +89,8 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | AI Layer Foundation | ✅ |
 | Automated Test Suite | ✅ |
 | Real LLM Integration | ✅ |
+| Real LLM Golden Set Validation | ✅ |
+| Multi-Model Benchmark | ✅ |
 | LLM Cost / Activation Safeguards | ✅ |
 | Cloud Deployment | ⏳ |
 
@@ -113,7 +115,7 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 
 | Category | Technologies |
 |----------|--------------|
-| Language | Python 3.13 |
+| Language | Python 3.14 |
 | Data Processing | Pandas |
 | Database | SQLite |
 | API Framework | FastAPI |
@@ -188,19 +190,17 @@ The **Decision Support Engine** consolidates analytical outputs into actionable 
 
 The **REST API**, implemented with FastAPI, exposes the application's analytical and decision-support capabilities through HTTP endpoints. It serves as the integration layer for external consumers, including the Power BI dashboard and the AI Supply Chain Copilot.
 
-The **AI Integration Layer** connects the deterministic application with Generative AI through a modular architecture composed of service orchestration, controlled data-access tools, structured context preparation, system prompting and an isolated LLM client.
+The **AI Integration Layer** connects the deterministic application with Generative AI through a modular architecture composed of controlled data-access tools, deterministic context preparation, service orchestration, system prompting and an isolated LLM client.
 
-The **AI Copilot Service** orchestrates the interaction between the application's analytical capabilities and the LLM. It retrieves validated inventory information, prepares a structured and bounded business context and delegates natural-language generation to the LLM client.
+The **AI Data-Access Tools** retrieve validated analytical inventory information from the application.
 
-The **LLM Client** abstracts the model provider from the rest of the application and supports two execution modes. The Fake LLM enables deterministic, cost-free development and automated testing, while the Real LLM mode integrates the application with the OpenAI API.
+The **Context Preparation Layer**, implemented in `src/ai/context.py`, prepares and deterministically enriches the bounded business context sent to the LLM. This layer is responsible for context selection, consolidated indicators and exact aggregations that should not be delegated to probabilistic model reasoning.
 
-Real LLM integration has been successfully validated end-to-end through the `/copilot` endpoint. External model calls require explicit activation and a valid API key, while context-size controls and response limits provide additional safeguards over external consumption.
+Exact operations such as counts, aggregations, extrema and tie handling are kept in the deterministic layer whenever correctness can be guaranteed before the LLM call. The model receives these computed results as structured context and remains responsible for interpretation and communication rather than probabilistic recalculation.
 
-A core architectural principle of the project is the separation between **deterministic business logic and probabilistic AI interpretation**. Inventory metrics, risk indicators, prioritization scores and recommended actions are calculated by deterministic application modules before the LLM is called.
+The **AI Copilot Service**, implemented in `src/ai/service.py`, acts as an orchestration layer. It coordinates data retrieval, context preparation and LLM response generation without absorbing analytical or provider-specific responsibilities.
 
-The LLM does not replace the application's business rules or calculate the underlying operational KPIs. Instead, it receives validated analytical context and uses Generative AI to interpret relationships, synthesize information and communicate business insights in natural language.
-
-This approach preserves the traceability and consistency of the analytical engine while applying Generative AI where it provides additional value: contextual interpretation, synthesis and human-oriented communication.
+The **LLM Client** abstracts the model provider from the rest of the application and supports both Fake and Real execution modes.
 
 This architecture promotes:
 
@@ -305,13 +305,30 @@ The endpoint preserves the architectural separation between deterministic busine
 
 ## Real LLM Validation
 
-The real LLM integration has been successfully validated end-to-end through the `/copilot` endpoint using the OpenAI API.
+The Real LLM integration was validated end-to-end through the `/copilot` endpoint using the OpenAI API and a structured Golden Set evaluation.
 
-During the first successful real-model execution, the Copilot received analytical inventory context generated by the deterministic application layers and produced a natural-language response based on those results.
+The evaluation covered factual accuracy, consolidated KPI interpretation, ranking, comparison, partial-context awareness, hallucination resistance, business-rule governance and deterministic aggregation.
 
-The validation confirmed that the complete flow — from analytical data processing and business rules to context preparation, external LLM consumption and API response — is operational.
+During the baseline evaluation, a probabilistic inconsistency was identified in a supplier-frequency question: one model execution failed to preserve a tie.
 
-The result also demonstrated the intended role of the LLM within the architecture: **interpreting deterministic analytical outputs rather than replacing the business logic that produces them.**
+Rather than addressing the issue only through prompting, the architecture was improved by moving exact aggregation, extrema and tie handling into the deterministic context-preparation layer.
+
+After the change:
+
+- the complete automated suite passed: **42/42 tests**;
+- supplier maximum-frequency regression: **3/3 PASS**;
+- supplier minimum-frequency validation: **3/3 PASS**;
+- the corrected behavior was reproduced with multiple real LLM models.
+
+A comparative benchmark between **GPT-5.6 Terra** and **GPT-5.6 Sol** was also performed. Both models demonstrated strong factual grounding and governance.
+
+GPT-5.6 Terra remains the default model due to its balance of accuracy, conciseness and operational efficiency, while GPT-5.6 Sol produced richer but generally more verbose explanations.
+
+A core lesson from the validation process is that deterministic calculations should remain in the application engine whenever exact results can be computed before the LLM call. The LLM is then responsible for interpretation, synthesis and communication.
+
+The complete benchmark evidence is available at:
+
+`docs/evaluations/LLM_Real_Model_Benchmark_Final.xlsx`
 
 <p align="center">
   <img
@@ -336,12 +353,37 @@ AI-SUPPLY-CHAIN-COPILOT/
 │
 ├── data/
 ├── database/
+│
 ├── docs/
+│   ├── architecture/
+│   ├── evaluations/
+│   │   └── LLM_Real_Model_Benchmark_Final.xlsx
+│   ├── images/
+│   ├── presentations/
+│   ├── project_audit/
+│   └── roadmap/
+│
 ├── output/
+├── reports/
 ├── sample_data/
 ├── scripts/
+│
 ├── src/
+│   ├── ai/
+│   │   ├── client.py
+│   │   ├── context.py
+│   │   ├── prompts.py
+│   │   ├── service.py
+│   │   └── tools.py
+│   └── api/
+│
 ├── tests/
+│   ├── golden_test_set.md
+│   ├── test_ai_client.py
+│   ├── test_ai_context.py
+│   ├── test_ai_service.py
+│   ├── test_ai_tools.py
+│   └── test_api_copilot.py
 │
 ├── README.md
 ├── requirements.txt
@@ -432,7 +474,7 @@ $env:LLM_REAL_ENABLED="true"
 ## 6. Start the REST API
 
 ```powershell
-uvicorn src.api.main:app --reload
+python -m uvicorn src.api.main:app
 ```
 
 After startup, the interactive API documentation is available at:
@@ -474,7 +516,7 @@ The automated tests validate the deterministic modules, API behavior, AI orchest
 
 The project includes an automated test suite built with **Pytest**, covering the REST API and AI integration components.
 
-The current **v1.0.0** release is validated by **39 automated tests**, covering:
+The current **v1.0.0** release is validated by **42 automated tests**, covering:
 
 - AI client behavior and execution modes
 - Fake and Real LLM safeguards
@@ -494,8 +536,8 @@ python -m pytest
 Current validated result:
 
 ```text
-collected 39 items
-39 passed
+collected 42 items
+42 passed
 ```
 
 The automated test architecture allows the AI integration flow to be validated through simulated dependencies and the Fake LLM client, avoiding unnecessary external API consumption during routine testing.
@@ -647,6 +689,10 @@ The **AI Supply Chain Copilot v1.0.0** represents the first fully functional end
 At this stage, the application integrates the complete deterministic Supply Chain analytical pipeline with a modular Generative AI layer. Synthetic ERP data is processed through ETL, persistence, analytics and configurable business rules before being exposed through the REST API and consumed by the Power BI dashboard and AI Copilot.
 
 The real LLM integration has been successfully validated through the `/copilot` endpoint using the OpenAI API. The application can prepare controlled analytical context, send it to a real Large Language Model and return the generated natural-language response through the API.
+
+The Real LLM layer has also completed structured Golden Set validation and a comparative multi-model benchmark. A probabilistic aggregation inconsistency identified during evaluation was corrected by moving exact frequency, extrema and tie handling into the deterministic context-preparation layer.
+
+The validated default model remains GPT-5.6 Terra, while GPT-5.6 Sol was evaluated as a higher-capability alternative for richer analytical responses.
 
 The architecture deliberately maintains a clear separation between deterministic business logic and probabilistic AI interpretation. Inventory metrics, stockout risk indicators, prioritization scores and recommended actions remain under deterministic application control, while the LLM is responsible for interpreting, synthesizing and communicating those validated analytical results.
 
