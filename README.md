@@ -92,6 +92,7 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | Real LLM Golden Set Validation | ✅ |
 | Multi-Model Benchmark | ✅ |
 | LLM Cost / Activation Safeguards | ✅ |
+| Streamlit Conversational Frontend | ✅ |
 | Cloud Deployment | ⏳ |
 
 ---
@@ -127,6 +128,7 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | Automated Testing | Pytest |
 | AI Integration | OpenAI API / Large Language Model |
 | AI Architecture | Modular AI Layer with Real and Fake LLM Clients |
+| Frontend | Streamlit |
 
 ### Planned Technologies
 
@@ -363,6 +365,9 @@ AI-SUPPLY-CHAIN-COPILOT/
 │   ├── project_audit/
 │   └── roadmap/
 │
+├── frontend/
+│   └── app.py
+│
 ├── output/
 ├── reports/
 ├── sample_data/
@@ -510,6 +515,14 @@ python -m pytest
 ```
 
 The automated tests validate the deterministic modules, API behavior, AI orchestration, context controls and LLM client safeguards.
+
+## 9. Start the Streamlit Frontend
+
+With the REST API running, start the conversational frontend in a second terminal:
+
+```powershell
+python -m streamlit run frontend/app.py
+```
 
 ---
 # Automated Tests
