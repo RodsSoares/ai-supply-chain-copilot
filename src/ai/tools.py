@@ -1,10 +1,17 @@
 import json
+import os
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 
-URL_INVENTARIO = "http://127.0.0.1:8000/inventory"
+API_BASE_URL = os.getenv(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000",
+).rstrip("/")
+
+URL_INVENTARIO = f"{API_BASE_URL}/inventory"
+
 TIMEOUT_SEGUNDOS = 10
 
 
