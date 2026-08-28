@@ -1,308 +1,530 @@
-# Module Relationships
+# Data Model
 
 ## Purpose
 
-This document describes the responsibilities and interactions between the current Python modules.
+This document describes the current data architecture and data representations used by the **AI Supply Chain Copilot v1.1.0**.
 
-Its objective is to explain how the software is organized internally and how each component collaborates with the others.
+Its objective is to explain how operational source data is transformed into structured application data, persisted, analyzed and converted into deterministic business information.
 
-Unlike the Current Architecture document, this file focuses specifically on the Python codebase.
+This document focuses on the data model and data lifecycle rather than application orchestration or cloud deployment.
 
 ---
 
-# Current Modules
+# Data Architecture Overview
+
+The current application contains two complementary data paths with different responsibilities.
+
+## Analytical Inventory Path
+
+The primary analytical workflow used by the Inventory Analytics, REST API `/inventory`, Power BI and AI Copilot is based on the synthetic ERP inventory dataset.
+
+```mermaid
+flowchart LR
+
+    ERP[sample_data/erp_inventory.csv]
+
+    ANALYTICS[Deterministic Analytics Pipeline]
+
+    OUTPUT[output/inventory_analysis.csv]
+
+    API[FastAPI /inventory]
+
+    BI[Power BI]
+
+    AI[AI Context / Copilot]
+
+    ERP --> ANALYTICS
+    ANALYTICS --> OUTPUT
+
+    OUTPUT --> API
+    OUTPUT --> BI
+    API --> AI
+```
+
+The synthetic ERP dataset contains the operational inventory information required by the analytical pipeline, including stock levels, consumption, costs, lead times, suppliers, warehouses and ABC classification.
+
+The deterministic analytical scripts transform this source information into the consolidated analytical artifact:
+
+`output/inventory_analysis.csv`
+
+This file currently acts as the operational analytical dataset consumed by the `/inventory` API endpoint and downstream analytical and AI capabilities.
+
+---
+
+## Relational Reference Data Path
+
+The project also maintains a SQLite relational model used for structured master and inventory-related entities.
+
+```mermaid
+flowchart LR
+
+    MASTER[Synthetic Master Data]
+
+    ETL[ETL / Standardization]
+
+    DB[(SQLite)]
+
+    PRODUCTS[Product API / Relational Consumers]
+
+    MASTER --> ETL
+    ETL --> DB
+    DB --> PRODUCTS
+```
+
+The current SQLite database contains structured entities such as:
+
+- products;
+- warehouses;
+- inventory parameters;
+- inventory movements.
+
+For example, the `/products` API endpoint retrieves product master data directly from SQLite.
+
+---
+
+## Current Architectural Distinction
+
+The analytical inventory dataset and the relational SQLite model currently coexist in the application but serve different responsibilities.
+
+The current analytical Copilot flow is primarily:
+
+`Synthetic ERP Inventory → Deterministic Analytics → inventory_analysis.csv → FastAPI → AI Context → LLM`
+
+The relational path is:
+
+`Master / Structured Data → ETL → SQLite → Relational Consumers`
+
+Therefore, SQLite should not currently be interpreted as the exclusive persistence source for the 300-SKU analytical inventory dataset used by the Copilot.
+
+This distinction reflects the incremental evolution of the project and should remain explicit until the analytical and relational persistence models are unified in a future architectural milestone.
+---
+
+# Data Representations
+
+The application uses different data representations depending on the responsibility of each processing stage.
+
+## Source Files
+
+Synthetic ERP-style files represent the external operational data supplied to the application.
+
+They simulate realistic business information while protecting confidential corporate data.
+
+Source files should be treated as input artifacts rather than as the application's analytical model.
+
+---
+
+## Pandas DataFrames
+
+During ETL and analytical processing, data may be loaded into Pandas DataFrames.
+
+A DataFrame is an in-memory tabular data structure used for operations such as:
+
+- transformation;
+- cleaning;
+- filtering;
+- aggregation;
+- calculation;
+- validation.
+
+A DataFrame is not itself a database or permanent persistence mechanism.
+
+Its lifecycle normally exists within the execution of the application process unless its contents are explicitly persisted elsewhere.
+
+---
+
+## Relational Persistence
+
+SQLite provides the current relational persistence layer.
+
+Persisted data survives beyond the lifetime of an individual Python DataFrame or function execution because it is written to a database file.
+
+The persistence layer separates stored application data from temporary in-memory processing structures.
+
+---
+
+## Analytical Data
+
+The analytical layer derives deterministic Supply Chain information from the synthetic ERP inventory dataset and produces the consolidated analytical output consumed by the application.
+
+Current analytical concepts include:
+
+- inventory value;
+- inventory coverage;
+- lead time;
+- rupture risk;
+- financial impact;
+- ABC classification;
+- prioritization scores;
+- supplier aggregations.
+
+These values are calculated by application logic rather than generated by the LLM.
+
+---
+
+## Decision-Support Data
+
+Analytical outputs are transformed into business classifications and recommended actions.
+
+Current concepts include:
+
+- `REPOR`;
+- `TRATAR EXCESSO`;
+- `SEM AÇÃO`;
+- priority classification;
+- rupture-risk classification;
+- action value.
+
+Decision-support data represents business interpretation produced deterministically from operational and analytical information.
+
+---
+
+# Data Lifecycle
+
+The current lifecycle can be represented as:
 
 ```text
-src/
+Synthetic ERP Inventory
+        │
+        ▼
+Pandas DataFrame
+        │
+        ▼
+Validation / Transformation
+        │
+        ▼
+Deterministic Analytics
+        │
+        ▼
+Decision-Support Calculations
+        │
+        ▼
+output/inventory_analysis.csv
+        │
+        ├────────► REST API
+        │
+        ├────────► Power BI
+        │
+        └────────► AI Context
+```
 
-├── main.py
-│
-├── database/
-│   ├── connection.py
-│   ├── create_tables.py
-│   └── load_orders.py
-│
-├── analysis/
-│
-└── utils/
+This separation prevents presentation and Generative AI components from becoming the source of business facts.
+
+---
+
+# Deterministic Data Ownership
+
+The application treats deterministic data as the authoritative source for business calculations.
+
+The LLM does not own or independently calculate core business metrics.
+
+Instead, the AI layer receives controlled information produced by deterministic components.
+
+The principle is:
+
+**Data and application logic establish the facts; Generative AI interprets and communicates them.**
+
+This distinction is particularly important for:
+
+- exact counts;
+- sums;
+- averages;
+- minimum and maximum values;
+- supplier frequency;
+- ties;
+- inventory metrics;
+- scoring;
+- business classifications.
+
+---
+
+# Data Consumers
+
+The same deterministic data foundation supports multiple consumers.
+
+| Consumer | Data Usage |
+|---|---|
+| Analytics Layer | Calculates deterministic business metrics |
+| Decision Support | Produces classifications and recommended actions |
+| REST API | Exposes structured application information |
+| Power BI | Provides analytical visualization |
+| AI Context Builder | Supplies controlled business context to the LLM |
+| Streamlit Frontend | Presents responses received through the API |
+
+Consumers should not independently redefine the authoritative business calculations.
+
+---
+
+# Persistence Scope
+
+SQLite is currently appropriate for the project's synthetic and primarily analytical workload.
+
+The current application does not depend on continuous user-generated transactional writes.
+
+For a future production-oriented architecture, the persistence layer may evolve toward a managed relational database such as PostgreSQL.
+
+Such evolution should preserve the logical data responsibilities even if the physical persistence technology changes.
+
+Detailed cloud persistence considerations are documented in:
+
+[`05_cloud_deployment.md`](05_cloud_deployment.md)
+
+---
+
+# Physical Schema
+
+The current SQLite database contains four application tables:
+
+| Table | Purpose |
+|---|---|
+| `produtos` | Product master data |
+| `depositos` | Warehouse master data |
+| `parametros_estoque` | Inventory parameters by product and warehouse |
+| `movimentacoes_estoque` | Inventory movement records |
+
+SQLite also maintains the internal `sqlite_sequence` table to support the autoincrement identifier used by `movimentacoes_estoque`. This table is managed by SQLite and is not part of the application's business data model.
+
+---
+
+## Entity Relationship Overview
+
+```mermaid
+erDiagram
+
+    PRODUTOS ||--o{ PARAMETROS_ESTOQUE : defines
+    DEPOSITOS ||--o{ PARAMETROS_ESTOQUE : defines
+
+    PRODUTOS ||--o{ MOVIMENTACOES_ESTOQUE : generates
+    DEPOSITOS ||--o{ MOVIMENTACOES_ESTOQUE : receives
+
+    PRODUTOS {
+        TEXT sku PK
+        TEXT descricao
+        TEXT grupo_gerencial
+        TEXT unidade_medida
+        REAL peso_kg
+    }
+
+    DEPOSITOS {
+        TEXT codigo_deposito PK
+        TEXT descricao
+        TEXT cidade
+        TEXT uf
+    }
+
+    PARAMETROS_ESTOQUE {
+        TEXT sku PK, FK
+        TEXT codigo_deposito PK, FK
+        INTEGER estoque_minimo
+        INTEGER estoque_maximo
+        INTEGER ponto_ressuprimento
+    }
+
+    MOVIMENTACOES_ESTOQUE {
+        INTEGER id PK
+        TEXT data
+        TEXT sku FK
+        TEXT codigo_deposito FK
+        TEXT tipo_movimentacao
+        INTEGER quantidade
+        TEXT documento_referencia
+    }
 ```
 
 ---
 
-# Module Dependency Diagram
+## `produtos`
+
+Stores product master data.
+
+| Column | Type | Constraint / Purpose |
+|---|---|---|
+| `sku` | TEXT | Primary Key |
+| `descricao` | TEXT | Required product description |
+| `grupo_gerencial` | TEXT | Required managerial product group |
+| `unidade_medida` | TEXT | Required unit of measure |
+| `peso_kg` | REAL | Required; must be greater than or equal to zero |
+
+The `sku` field uniquely identifies each product and is referenced by inventory-related tables.
+
+---
+
+## `depositos`
+
+Stores warehouse master data.
+
+| Column | Type | Constraint / Purpose |
+|---|---|---|
+| `codigo_deposito` | TEXT | Primary Key |
+| `descricao` | TEXT | Required warehouse description |
+| `cidade` | TEXT | Required city |
+| `uf` | TEXT | Required state identifier |
+
+`codigo_deposito` uniquely identifies each warehouse.
+
+---
+
+## `parametros_estoque`
+
+Stores inventory-control parameters for each product and warehouse combination.
+
+| Column | Type | Constraint / Purpose |
+|---|---|---|
+| `sku` | TEXT | Composite Primary Key; Foreign Key → `produtos.sku` |
+| `codigo_deposito` | TEXT | Composite Primary Key; Foreign Key → `depositos.codigo_deposito` |
+| `estoque_minimo` | INTEGER | Required; must be greater than or equal to zero |
+| `estoque_maximo` | INTEGER | Required; must be greater than or equal to `estoque_minimo` |
+| `ponto_ressuprimento` | INTEGER | Required; must be greater than or equal to zero |
+
+The composite primary key:
+
+`(sku, codigo_deposito)`
+
+ensures that each product can have one inventory-parameter configuration for each warehouse.
+
+This models the fact that inventory policies may vary by both product and physical location.
+
+---
+
+## `movimentacoes_estoque`
+
+Stores inventory movement records.
+
+| Column | Type | Constraint / Purpose |
+|---|---|---|
+| `id` | INTEGER | Primary Key; Auto Increment |
+| `data` | TEXT | Required movement date |
+| `sku` | TEXT | Required; Foreign Key → `produtos.sku` |
+| `codigo_deposito` | TEXT | Required; Foreign Key → `depositos.codigo_deposito` |
+| `tipo_movimentacao` | TEXT | Required; `ENTRADA` or `SAIDA` |
+| `quantidade` | INTEGER | Required; must be greater than zero |
+| `documento_referencia` | TEXT | Optional reference document |
+
+The database enforces the following movement-type constraint:
+
+`tipo_movimentacao IN ('ENTRADA', 'SAIDA')`
+
+and requires:
+
+`quantidade > 0`
+
+Movement direction is therefore represented explicitly by `tipo_movimentacao` rather than by positive and negative quantity values.
+
+---
+
+# Relationships
+
+The physical model currently contains two master entities:
+
+- `produtos`;
+- `depositos`.
+
+These entities are referenced by both inventory-related tables.
+
+The relationship structure is:
 
 ```text
-                    main.py
-                        │
-        ┌───────────────┴───────────────┐
-        │                               │
-        ▼                               ▼
-create_tables.py                 load_orders.py
-        │                               │
-        └───────────────┬───────────────┘
-                        │
-                        ▼
-                 connection.py
-                        │
-                        ▼
-                  SQLite Database
-                        │
-                        ▼
-                  inventory.db
+produtos ───────┐
+                ├──► parametros_estoque
+depositos ──────┘
+
+produtos ───────┐
+                ├──► movimentacoes_estoque
+depositos ──────┘
 ```
 
----
+This allows inventory information to be modeled at the intersection of:
 
-# Module Responsibilities
+**Product × Warehouse**
 
-## main.py
-
-### Responsibility
-
-Acts as the application's entry point.
-
-Its purpose is to orchestrate the execution of the project's modules.
-
-At the current stage, its responsibilities are intentionally minimal.
-
-Future versions will coordinate:
-
-- ETL execution
-- KPI generation
-- AI services
-- Dashboards
-- APIs
+rather than treating inventory as an attribute of the product alone.
 
 ---
 
-## connection.py
+# Database Constraints
 
-### Responsibility
+The current physical schema implements several deterministic integrity controls directly at database level.
 
-Provides a centralized connection to the SQLite database.
+These include:
 
-Instead of every module opening its own database connection, all database communication passes through this module.
+- product primary-key uniqueness;
+- warehouse primary-key uniqueness;
+- composite uniqueness for product/warehouse inventory parameters;
+- foreign-key relationships between inventory tables and master entities;
+- non-negative product weight;
+- non-negative minimum inventory;
+- maximum inventory greater than or equal to minimum inventory;
+- non-negative reorder point;
+- positive inventory-movement quantity;
+- controlled inventory-movement types.
 
-Advantages:
-
-- Single source of truth
-- Easier maintenance
-- Consistent database access
-
----
-
-## create_tables.py
-
-### Responsibility
-
-Creates the project's relational database structure.
-
-Current responsibilities include:
-
-- Creating tables
-- Initializing the database
-
-Future responsibilities may include:
-
-- Schema updates
-- Database migrations
+These constraints complement application-level validation by protecting structural data integrity within the relational model.
 
 ---
 
-## load_orders.py
+# Current Database State
 
-### Responsibility
+At the time of this documentation review, the supplied SQLite database contains:
 
-Implements the first ETL pipeline.
+| Table | Current Rows |
+|---|---:|
+| `produtos` | 5 |
+| `depositos` | 3 |
+| `parametros_estoque` | 0 |
+| `movimentacoes_estoque` | 0 |
 
-Current workflow:
+These row counts represent the inspected database instance and are not architectural constraints.
 
-1. Read CSV file
-2. Load data into Pandas
-3. Standardize column names
-4. Persist data into SQLite
-
-This module represents the project's first complete data ingestion pipeline.
-
----
-
-## inventory.db
-
-### Responsibility
-
-Stores the project's persistent information.
-
-The database currently contains the initial relational structure required by the application.
-
-Future modules will expand its contents with additional business entities.
+The schema is therefore more important than the current record volume when describing the application's physical data model.
 
 ---
 
-# Current Module Interactions
+# Data Modeling Principles
 
-The current execution flow is relatively simple.
+The current data architecture follows these principles:
 
-```text
-main.py
+## Synthetic Data by Design
 
-↓
+Published business data is fictional or synthetic and does not expose proprietary corporate information.
 
-load_orders.py
+## Canonicalization
 
-↓
+Source-specific structures are standardized before downstream business processing.
 
-connection.py
+## Persistence Separation
 
-↓
+Temporary in-memory processing structures and persisted application data have distinct responsibilities.
 
-SQLite
-```
+## Deterministic Calculations
 
-Database initialization follows a similar path.
+Business metrics and classifications are calculated through deterministic application logic.
 
-```text
-main.py
+## Reusability
 
-↓
+The same structured analytical foundation can serve API, BI and AI consumers.
 
-create_tables.py
+## Technology Independence
 
-↓
-
-connection.py
-
-↓
-
-SQLite
-```
+Higher application layers should depend on the logical data model rather than unnecessary details of the physical persistence technology.
 
 ---
 
-# Dependency Matrix
+# Document Relationships
 
-| Module | Uses | Purpose |
-|---------|------|----------|
-| main.py | create_tables.py | Application orchestration |
-| main.py | load_orders.py | Execute ETL |
-| create_tables.py | connection.py | Database initialization |
-| load_orders.py | connection.py | Persist ETL results |
-| connection.py | SQLite | Database communication |
-
----
-
-# Design Decisions
-
-## Single Responsibility Principle
-
-Each module performs one primary responsibility.
-
-Examples:
-
-- Database connection
-- Database creation
-- ETL
-
-Responsibilities are intentionally separated.
-
----
-
-## Loose Coupling
-
-Modules communicate through well-defined interfaces instead of sharing internal implementation details.
-
-This makes future maintenance significantly easier.
-
----
-
-## High Cohesion
-
-Each module groups together closely related functionality.
-
-For example:
-
-load_orders.py contains only ETL-related logic.
-
-Database connection logic is intentionally isolated.
-
----
-
-# Future Module Evolution
-
-The architecture has been designed to accommodate new modules without changing the existing structure.
-
-Examples of future modules include:
-
-```text
-analysis/
-
-├── inventory_analysis.py
-├── transportation_analysis.py
-├── demand_forecast.py
-└── kpi_engine.py
-```
-
-```text
-database/
-
-├── load_products.py
-├── load_inventory.py
-├── load_transportation.py
-└── migrations.py
-```
-
-```text
-api/
-
-├── routes.py
-├── services.py
-└── auth.py
-```
-
-Each new module should preserve the same architectural principles established in the current implementation.
-
----
-
-# Module Evolution Strategy
-
-The project adopts incremental modular growth.
-
-Instead of creating large files with multiple responsibilities, new functionality will be introduced through independent modules.
-
-This approach provides:
-
-- Better readability
-- Easier testing
-- Improved maintainability
-- Lower coupling
-- Higher scalability
-
----
-
-# Current Assessment
-
-Current architecture demonstrates:
-
-✅ Modular organization
-
-✅ Clear separation of responsibilities
-
-✅ Reusable database connection
-
-✅ Independent ETL implementation
-
-Although still relatively small, the architecture already follows software engineering practices commonly found in production systems.
+| Document | Responsibility |
+|---|---|
+| `01_system_overview.md` | High-level system and business architecture |
+| `02_current_architecture.md` | Current technical implementation |
+| `04_decision_log.md` | Significant architectural decisions |
+| `05_cloud_deployment.md` | Cloud persistence and deployment considerations |
 
 ---
 
 # Document Information
 
 | Property | Value |
-|----------|-------|
-| Document | Module Relationships |
-| Directory | docs/architecture |
-| Version | 1.0 |
+|---|---|
+| Document | Data Model |
+| Directory | `docs/architecture` |
+| Application Version | v1.1.0 |
 | Status | Active |
-| Owner | Rodrigo Soares |
-| Repository | AI Supply Chain Engineering Portfolio |
-| Last Updated | July 2026 |
-| Next Review | After Milestone 02 |
+| Last Updated | August 2026 |

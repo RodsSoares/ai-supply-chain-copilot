@@ -1,16 +1,17 @@
 # AI Supply Chain Copilot
 
-> 🚀 **Current Release:** **v1.0.0 — Functional AI Copilot**
+> 🚀 **Current Release:** **v1.1.0 — Cloud-Deployed AI Copilot**
+> 🌐 **Live Demo:** [Open AI Supply Chain Copilot](https://ai-supply-chain-copilot.streamlit.app)
 
 
-![Version](https://img.shields.io/badge/version-v1.0.0-blue)
+![Version](https://img.shields.io/badge/version-v1.1.0-blue)
 ![Python](https://img.shields.io/badge/python-3.14-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Portfolio](https://img.shields.io/badge/portfolio-AI%20Engineering-orange)
 
 <p align="center">
   <img
-    src="docs/images/architecture-overview.png?v=1.0.0"
+    src="docs/images/architecture-overview.png?v=1.1.0"
     alt="High-level architecture of the AI Supply Chain Copilot"
     width="1000"
   >
@@ -36,7 +37,7 @@ Rather than presenting isolated coding exercises, this repository evolves increm
 - AI Copilot
 - Project Structure
 - Project Presentation
-- Getting Started
+- Getting Started - Local Development
 - Automated Tests
 - Automated Project Audit
 - Engineering Practices
@@ -65,6 +66,8 @@ The application simulates an enterprise inventory management environment, combin
 - Business Intelligence
 - REST API
 - Generative AI / LLM Integration
+- Streamlit Conversational Frontend
+- Public Cloud Deployment
 
 All datasets are fully synthetic and inspired by real business processes, preserving corporate confidentiality while maintaining realistic operational scenarios.
 
@@ -93,7 +96,8 @@ All datasets are fully synthetic and inspired by real business processes, preser
 | Multi-Model Benchmark | ✅ |
 | LLM Cost / Activation Safeguards | ✅ |
 | Streamlit Conversational Frontend | ✅ |
-| Cloud Deployment | ⏳ |
+| Public Cloud Deployment | ✅ |
+| End-to-End Cloud Integration | ✅ |
 
 ---
 
@@ -121,7 +125,7 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | Database | SQLite |
 | API Framework | FastAPI |
 | Business Intelligence | Power BI |
-| Configuration | JSON |
+| Business Rules Configuration | JSON |
 | Version Control | Git / GitHub |
 | IDE | Visual Studio Code |
 | Documentation | Markdown |
@@ -129,12 +133,14 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | AI Integration | OpenAI API / Large Language Model |
 | AI Architecture | Modular AI Layer with Real and Fake LLM Clients |
 | Frontend | Streamlit |
+| Backend Hosting | Render |
+| Frontend Hosting | Streamlit Community Cloud |
+| Cloud Configuration | Environment Variables / Secrets |
 
 ### Planned Technologies
 
 - PostgreSQL
 - Docker
-- Cloud Deployment
 - Azure AI Services
 
 ---
@@ -142,55 +148,72 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 # Solution Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
 
-A[Synthetic ERP Dataset]
-B[ETL Pipeline]
-C[(SQLite Database)]
-D[Analytics Engine]
-E[Decision Support Engine]
-F[REST API]
-G[Power BI Dashboard]
+    ERP[Synthetic ERP Inventory Dataset]
+    ANALYTICS[Deterministic Analytics]
+    RULES[Business Rules]
+    DECISION[Decision Support]
+    OUTPUT[output/inventory_analysis.csv]
 
-H[AI Copilot Service]
-I[Context Preparation]
-J[LLM Client]
-K[Fake LLM]
-L[OpenAI API / Real LLM]
+    API[FastAPI REST API]
+    BI[Power BI]
 
-R[config/business_rules.json]
+    AI[AI Service]
+    CONTEXT[Deterministic Context]
+    LLM[LLM Client]
+    OPENAI[OpenAI API]
 
-A --> B
-B --> C
-C --> D
-D --> E
-E --> F
+    FRONTEND[Streamlit Frontend]
+    USER[User]
 
-F --> G
-F --> H
+    MASTER[Synthetic Master / Structured Data]
+    ETL[ETL / Standardization]
+    DB[(SQLite)]
+    RELATIONAL[Relational Consumers]
 
-H --> I
-I --> J
+    ERP --> ANALYTICS
+    ANALYTICS --> RULES
+    RULES --> DECISION
+    DECISION --> OUTPUT
 
-J --> K
-J --> L
+    OUTPUT --> API
+    OUTPUT --> BI
 
-R -. Configuration .-> D
+    API --> AI
+    AI --> CONTEXT
+    CONTEXT --> LLM
+    LLM --> OPENAI
+    OPENAI --> LLM
+    LLM --> AI
+    AI --> API
+
+    USER --> FRONTEND
+    FRONTEND --> API
+    API --> FRONTEND
+
+    MASTER --> ETL
+    ETL --> DB
+    DB --> RELATIONAL
 ```
 
 The solution adopts a layered and modular architecture in which each layer has a clearly defined responsibility and can evolve independently over time.
 
-The **ETL Pipeline** extracts, validates, transforms and loads synthetic ERP data into the relational database, establishing a reliable data foundation for the application.
+The **Analytical Inventory Path** processes the synthetic ERP inventory dataset through deterministic analytics, business rules and decision-support logic. Its consolidated output is materialized in `output/inventory_analysis.csv`, which serves as the current analytical artifact consumed by the REST API, Power BI and AI capabilities.
 
-The **SQLite Database** serves as the persistence layer, storing standardized inventory data and supporting analytical queries.
+The **ETL Pipeline** supports ingestion, validation, transformation and standardization of structured data used by the relational data path.
 
-The **Analytics Engine** retrieves persisted data and computes operational KPIs, inventory metrics, stockout risk indicators and prioritization scores based on configurable business parameters.
+The **SQLite Database** provides relational persistence for structured master and inventory-related entities. It supports relational application capabilities but is not the source of the current analytical inventory artifact consumed by the `/inventory` endpoint.
+
+The **Analytics Engine** operates on the synthetic ERP inventory dataset and computes operational KPIs, inventory metrics, stockout risk indicators and prioritization scores based on configurable business parameters.
 
 Business rules are externalized through the `config/business_rules.json` file, allowing operational thresholds, scoring parameters and decision criteria to evolve without modifying the application's source code.
 
 The **Decision Support Engine** consolidates analytical outputs into actionable business recommendations, including replenishment priorities, excess inventory identification, stockout risk assessment and managerial prioritization.
 
 The **REST API**, implemented with FastAPI, exposes the application's analytical and decision-support capabilities through HTTP endpoints. It serves as the integration layer for external consumers, including the Power BI dashboard and the AI Supply Chain Copilot.
+
+The **Streamlit Conversational Frontend** provides the user-facing interface for interacting with the AI Copilot. It consumes the FastAPI backend through the REST API contract, keeping presentation responsibilities separated from business logic, analytics and AI orchestration.
 
 The **AI Integration Layer** connects the deterministic application with Generative AI through a modular architecture composed of controlled data-access tools, deterministic context preparation, service orchestration, system prompting and an isolated LLM client.
 
@@ -219,6 +242,74 @@ This architecture promotes:
 - Controlled LLM Context
 - Explicit LLM Activation Safeguards
 - Cost-efficient AI Testing
+---
+
+## Cloud Deployment Architecture
+
+The application is deployed as a distributed cloud solution while preserving the same layered architecture used during local development.
+
+```mermaid
+flowchart LR
+
+U[User / Browser]
+
+SC[Streamlit Community Cloud]
+FE[Streamlit Conversational Frontend]
+
+R[Render Web Service]
+API[FastAPI REST API]
+
+ANALYTICAL[Analytical Inventory Artifact]
+DB[(SQLite Relational Persistence)]
+AI[AI Service]
+CTX[Deterministic Context Preparation]
+LLM[LLM Client]
+
+OAI[OpenAI API / Real LLM]
+
+GH[GitHub Repository]
+
+U -->|HTTPS| SC
+SC --> FE
+
+FE -->|HTTPS / JSON| R
+R --> API
+
+ANALYTICAL --> API
+API --> AI
+
+AI --> CTX
+CTX --> LLM
+LLM --> OAI
+OAI -->|Generated Response| LLM
+LLM --> AI
+
+AI --> API
+API -->|JSON Response| FE
+FE --> U
+
+GH -. Source / Deploy .-> SC
+GH -. Source / Deploy .-> R
+```
+
+### Environment-based configuration
+
+The same source code supports both local and cloud execution through environment-specific configuration.
+
+| Configuration | Local | Cloud |
+|---|---|---|
+| Frontend API Base URL | `http://127.0.0.1:8000` | Render public backend URL |
+| LLM Mode | configurable | `real` |
+| Real LLM Enabled | configurable | `true` |
+| OpenAI API Key | local environment variable | backend secret |
+
+Application code, runtime configuration and secrets are deliberately separated.
+
+The `OPENAI_API_KEY` is never stored in source code or exposed to the Streamlit frontend.
+
+Detailed cloud deployment architecture, service responsibilities, runtime configuration and deployment decisions are documented in:
+
+[`docs/architecture/05_cloud_deployment.md`](docs/architecture/05_cloud_deployment.md)
 ---
 
 # AI Copilot
@@ -315,12 +406,7 @@ During the baseline evaluation, a probabilistic inconsistency was identified in 
 
 Rather than addressing the issue only through prompting, the architecture was improved by moving exact aggregation, extrema and tie handling into the deterministic context-preparation layer.
 
-After the change:
-
-- the complete automated suite passed: **42/42 tests**;
-- supplier maximum-frequency regression: **3/3 PASS**;
-- supplier minimum-frequency validation: **3/3 PASS**;
-- the corrected behavior was reproduced with multiple real LLM models.
+After the architectural correction, the complete automated suite passed **42/42 tests**, and the corrected deterministic behavior was successfully reproduced across multiple real LLM executions and models.
 
 A comparative benchmark between **GPT-5.6 Terra** and **GPT-5.6 Sol** was also performed. Both models demonstrated strong factual grounding and governance.
 
@@ -344,6 +430,16 @@ The complete benchmark evidence is available at:
   <em>First successful end-to-end response generated through the real LLM integration.</em>
 </p>
 
+### Cloud End-to-End Flow
+
+The production-demo flow is currently:
+
+`User → Streamlit Cloud → FastAPI on Render → deterministic analytics/context → LLM Client → OpenAI API → FastAPI → Streamlit → User`
+
+The cloud deployment was validated end-to-end using the same analytical questions previously covered by the Golden Set and multi-model evaluation process.
+
+The cloud milestone validates deployment and distributed integration rather than re-validating LLM analytical behavior, which had already been evaluated before deployment.
+
 ---
 # Project Structure
 
@@ -358,6 +454,12 @@ AI-SUPPLY-CHAIN-COPILOT/
 │
 ├── docs/
 │   ├── architecture/
+│   │   ├── 01_system_overview.md
+│   │   ├── 02_current_architecture.md
+│   │   ├── 03_data_model.md
+│   │   ├── 04_decision_log.md
+│   │   └── 05_cloud_deployment.md
+│   │
 │   ├── evaluations/
 │   │   └── LLM_Real_Model_Benchmark_Final.xlsx
 │   ├── images/
@@ -420,7 +522,11 @@ The presentation provides an executive overview of:
 
 ---
 
-# Getting Started
+# Getting Started — Local Development
+
+The steps below describe how to run the complete application locally.
+
+For direct access to the deployed version, use the **Live Demo** available at the top of this README.
 
 ## 1. Clone the repository
 
@@ -518,6 +624,20 @@ The automated tests validate the deterministic modules, API behavior, AI orchest
 
 ## 9. Start the Streamlit Frontend
 
+### Frontend API Configuration
+
+The Streamlit frontend communicates with the FastAPI backend through the `API_BASE_URL` environment variable.
+
+For local execution:
+
+```powershell
+$env:API_BASE_URL="http://127.0.0.1:8000"
+```
+
+In cloud environments, `API_BASE_URL` should point to the deployed FastAPI backend.
+
+If the variable is not defined, the application defaults to the local API address.
+
 With the REST API running, start the conversational frontend in a second terminal:
 
 ```powershell
@@ -529,7 +649,7 @@ python -m streamlit run frontend/app.py
 
 The project includes an automated test suite built with **Pytest**, covering the REST API and AI integration components.
 
-The current **v1.0.0** release is validated by **42 automated tests**, covering:
+The current **v1.1.0** release is validated by **42 automated tests**, covering:
 
 - AI client behavior and execution modes
 - Fake and Real LLM safeguards
@@ -602,6 +722,7 @@ This project follows modern software engineering principles designed to maximize
 - Single Responsibility Principle (SRP)
 - Separation of Concerns
 - Configuration over Hardcoding
+- Environment-based Runtime Configuration
 - Business-driven Development
 - Synthetic Enterprise Dataset
 - Continuous Refactoring
@@ -664,6 +785,12 @@ Commit
       │
       ▼
 Push to GitHub
+      │
+      ▼
+Cloud Deployment
+      │
+      ▼
+End-to-End Validation
 ```
 
 ---
@@ -678,7 +805,8 @@ Push to GitHub
 | Applications (REST API and Dashboard) | v0.4.0 | ✅ |
 | AI Integration Layer | v0.5.0 | ✅ |
 | Functional AI Copilot | v1.0.0 | ✅ |
-| Production Hardening & Cloud Deployment | Future | ⏳ |
+| Cloud Deployment & Conversational Frontend | v1.1.0 | ✅ |
+| Production Hardening | Future | ⏳ |
 
 ---
 
@@ -692,30 +820,27 @@ Push to GitHub
 | **v0.4.0** | REST API, Dashboard and application layer |
 | **v0.5.0** | AI Layer Foundation |
 | **v1.0.0** | Functional AI Copilot with validated real LLM integration, controlled context, explicit activation safeguards and end-to-end API flow |
+| **v1.1.0** | Streamlit conversational frontend, public cloud deployment, Render-hosted FastAPI backend, Streamlit Community Cloud frontend, environment-based service configuration and validated end-to-end cloud integration |
 
 ---
 
 # Current Development Stage
 
-The **AI Supply Chain Copilot v1.0.0** represents the first fully functional end-to-end release of the project.
+The **AI Supply Chain Copilot v1.1.0** is a functional, publicly accessible cloud-deployed portfolio application.
 
-At this stage, the application integrates the complete deterministic Supply Chain analytical pipeline with a modular Generative AI layer. Synthetic ERP data is processed through ETL, persistence, analytics and configurable business rules before being exposed through the REST API and consumed by the Power BI dashboard and AI Copilot.
+The current release integrates deterministic Supply Chain analytics, configurable business rules and decision support with a complementary relational data path, REST API, Power BI dashboard, conversational Streamlit frontend and a modular Generative AI layer.
 
-The real LLM integration has been successfully validated through the `/copilot` endpoint using the OpenAI API. The application can prepare controlled analytical context, send it to a real Large Language Model and return the generated natural-language response through the API.
+The AI integration has completed structured Golden Set validation and a comparative multi-model benchmark. Exact calculations, aggregations, extrema and tie handling remain under deterministic application control, while the LLM is responsible for interpretation, synthesis and natural-language communication.
 
-The Real LLM layer has also completed structured Golden Set validation and a comparative multi-model benchmark. A probabilistic aggregation inconsistency identified during evaluation was corrected by moving exact frequency, extrema and tie handling into the deterministic context-preparation layer.
+The application is deployed through a distributed cloud architecture. The Streamlit frontend is hosted on Streamlit Community Cloud and communicates over HTTPS with the FastAPI backend hosted on Render. Runtime configuration is externalized through environment variables, while sensitive credentials remain isolated from source code and the frontend.
 
-The validated default model remains GPT-5.6 Terra, while GPT-5.6 Sol was evaluated as a higher-capability alternative for richer analytical responses.
+The complete public flow has been validated end-to-end:
 
-The architecture deliberately maintains a clear separation between deterministic business logic and probabilistic AI interpretation. Inventory metrics, stockout risk indicators, prioritization scores and recommended actions remain under deterministic application control, while the LLM is responsible for interpreting, synthesizing and communicating those validated analytical results.
+`User → Streamlit Cloud → FastAPI / Render → deterministic analytics/context → LLM Client → OpenAI API → FastAPI → Streamlit → User`
 
-The AI layer supports both **Fake LLM** and **Real LLM** execution modes. The simulated client remains available for automated testing and cost-free development, while real external calls require explicit environment-based activation and a valid API key.
+Version **v1.1.0 remains a portfolio-grade deployment rather than a production-ready enterprise system**. Future production hardening may include a production-grade persistent database, authentication and authorization, observability, containerization, centralized secrets management, scalability improvements and additional AI governance controls.
 
-The current release also includes automated testing, controlled LLM context, response limits, external-call safeguards and automated project auditing, providing a stable and testable foundation for future evolution.
-
-Version **v1.0.0 should be considered a functional portfolio release rather than a production-ready enterprise deployment**. Production hardening remains outside the current scope and may include future capabilities such as containerization, cloud deployment, persistent production-grade databases, authentication and authorization, observability, centralized secrets management, enhanced provider error handling and additional AI governance controls.
-
-With the core end-to-end architecture now operational, future development can focus on production hardening, scalability, user experience and advanced AI capabilities without requiring fundamental changes to the application's architectural foundation.
+The current architectural foundation allows these capabilities to evolve without requiring fundamental redesign of the core application.
 
 ---
 
@@ -731,7 +856,7 @@ The objective is not only to build software, but to demonstrate the ability to d
 
 # Repository Purpose
 
-This repository serves as a functional AI Solutions portfolio project demonstrating the end-to-end design of a business application integrating data engineering, analytics, business rules, APIs, Business Intelligence and Generative AI.
+This repository serves as a functional AI Solutions portfolio project demonstrating the end-to-end design, implementation and cloud deployment of a business application integrating data engineering, analytics, business rules, APIs, Business Intelligence and Generative AI.
 
 Each sprint delivers an enterprise-inspired capability while preserving architecture quality, maintainability and long-term scalability.
 

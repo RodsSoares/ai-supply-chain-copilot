@@ -1,21 +1,21 @@
 # Project Audit
 
-Gerado em: 15/08/2026 02:18:07
+Gerado em: 27/08/2026 23:28:09
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **25**
-- Linhas totais: **3371**
-- Linhas efetivas de código: **2551**
-- Funções: **123**
+- Arquivos Python: **26**
+- Linhas totais: **3797**
+- Linhas efetivas de código: **2848**
+- Funções: **125**
 - Classes: **5**
 - Imports internos: **28**
-- Imports externos: **18**
-- Imports da biblioteca padrão: **26**
+- Imports externos: **20**
+- Imports da biblioteca padrão: **28**
 - TODOs/FIXMEs em comentários: **0**
-- Funções sem docstring: **23**
+- Funções sem docstring: **25**
 - Arquivos com erro de sintaxe: **0**
 
 ## 2. Como usar as opções True e False
@@ -68,10 +68,10 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 8.1/10 |
-| Complexidade estrutural | 9.6/10 |
+| Cobertura de docstrings | 8.0/10 |
+| Complexidade estrutural | 9.2/10 |
 | Integridade sintática | 10.0/10 |
-| Saúde geral | **9.4/10** |
+| Saúde geral | **9.3/10** |
 
 ## 6. Estrutura do projeto
 
@@ -95,7 +95,8 @@ ai-supply-chain-copilot/
 │   │   ├── 01_system_overview.md
 │   │   ├── 02_current_architecture.md
 │   │   ├── 03_data_model.md
-│   │   └── 04_decision_log.md
+│   │   ├── 04_decision_log.md
+│   │   └── 05_cloud_deployment.md
 │   ├── backlog/
 │   │   └── backlog.md
 │   ├── evaluations/
@@ -110,6 +111,8 @@ ai-supply-chain-copilot/
 │   │   └── PROJECT_AUDIT.md
 │   └── roadmap/
 │       └── AI_Supply_Chain_Copilot_Gantt_v0.2.0.xlsx
+├── frontend/
+│   └── app.py
 ├── output/
 │   └── inventory_analysis.csv
 ├── README.md
@@ -165,6 +168,7 @@ ai-supply-chain-copilot/
 
 | Arquivo | Linhas | Funções | Classes | TODOs |
 |---|---:|---:|---:|---:|
+| `frontend/app.py` | 419 | 2 | 0 | 0 |
 | `scripts/analyze_inventory.py` | 39 | 1 | 0 | 0 |
 | `scripts/business_rules.py` | 63 | 2 | 0 | 0 |
 | `scripts/database_setup.py` | 12 | 0 | 0 | 0 |
@@ -178,7 +182,7 @@ ai-supply-chain-copilot/
 | `src/ai/context.py` | 144 | 2 | 0 | 0 |
 | `src/ai/prompts.py` | 239 | 0 | 0 | 0 |
 | `src/ai/service.py` | 32 | 1 | 0 | 0 |
-| `src/ai/tools.py` | 74 | 1 | 0 | 0 |
+| `src/ai/tools.py` | 81 | 1 | 0 | 0 |
 | `src/api/main.py` | 209 | 8 | 1 | 0 |
 | `src/database/connection.py` | 17 | 1 | 0 | 0 |
 | `src/database/create_tables.py` | 121 | 5 | 0 | 0 |
@@ -192,6 +196,13 @@ ai-supply-chain-copilot/
 | `tests/test_api_copilot.py` | 110 | 6 | 0 | 0 |
 
 ## 8. Funções e classes
+
+### `frontend/app.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `api_esta_online` | 150–159 | `—` | NÃO |
+| `consultar_copilot` | 162–206 | `pergunta` | NÃO |
 
 ### `scripts/analyze_inventory.py`
 
@@ -299,7 +310,7 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `listar_inventario` | 11–62 | `—` | SIM |
+| `listar_inventario` | 18–69 | `—` | SIM |
 
 ### `src/api/main.py`
 
@@ -493,6 +504,8 @@ ai-supply-chain-copilot/
 - `pandas`
 - `pydantic`
 - `pytest`
+- `requests`
+- `streamlit`
 
 ### Grafo de dependências internas
 
