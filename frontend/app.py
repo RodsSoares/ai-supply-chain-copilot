@@ -137,6 +137,47 @@ div[data-testid="stAlert"] {
 hr {
     border-color: rgba(148, 163, 184, 0.18);
 }
+
+/* Tabelas dentro das respostas do Copilot */
+[data-testid="stChatMessage"] table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: rgba(15, 23, 42, 0.72);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+[data-testid="stChatMessage"] thead tr {
+    background: rgba(30, 41, 59, 0.95);
+}
+
+[data-testid="stChatMessage"] th {
+    color: #f8fafc !important;
+    font-weight: 700;
+    text-align: left;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+[data-testid="stChatMessage"] td {
+    color: #e2e8f0 !important;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+[data-testid="stChatMessage"] tbody tr {
+    background: rgba(15, 23, 42, 0.55);
+}
+
+[data-testid="stChatMessage"] tbody tr:nth-child(even) {
+    background: rgba(30, 41, 59, 0.55);
+}
+
+[data-testid="stChatMessage"] tbody tr:hover {
+    background: rgba(56, 189, 248, 0.10);
+}
+
 </style>
 """,
     unsafe_allow_html=True,
@@ -177,15 +218,21 @@ def consultar_copilot(pergunta: str) -> str:
                 "A resposta não pôde ser interpretada como JSON."
             )
 
+        if not isinstance(dados, dict):
+            return (
+                "O Copilot recebeu uma resposta inesperada da API.\n\n"
+                "Tente novamente em alguns instantes."
+            )
+
         resposta = dados.get("resposta")
 
-        if not resposta:
+        if not isinstance(resposta, str) or not resposta.strip():
             return (
                 "A API respondeu corretamente, mas não retornou "
                 "o conteúdo esperado do Copilot."
             )
 
-        return resposta
+        return resposta.strip()
 
     except requests.Timeout:
         return (
@@ -199,10 +246,31 @@ def consultar_copilot(pergunta: str) -> str:
             "Verifique se a API está disponível."
         )
 
-    except requests.RequestException as erro:
+    except requests.HTTPError as erro:
+        status_code = erro.response.status_code if erro.response else None
+
+        if status_code == 429:
+            return (
+                "O limite temporário de utilização foi atingido.\n\n"
+                "Tente novamente em alguns instantes."
+            )
+
+        if status_code and 500 <= status_code < 600:
+            return (
+                "O serviço está temporariamente indisponível.\n\n"
+                "Tente novamente em alguns instantes."
+            )
+
+        return (
+            "Não foi possível processar a solicitação.\n\n"
+            "Revise a pergunta e tente novamente."
+        )
+    
+
+    except requests.RequestException:
         return (
             "Não foi possível consultar o Copilot neste momento.\n\n"
-            f"Detalhe técnico: {erro}"
+            "Tente novamente em alguns instantes."
         )
 
 
@@ -218,6 +286,8 @@ if "messages" not in st.session_state:
         }
     ]
 
+if "processando" not in st.session_state:
+    st.session_state.processando = False
 
 # ---------------------------------------------------------
 # Sidebar
@@ -367,7 +437,8 @@ if len(st.session_state.messages) == 1:
 # ---------------------------------------------------------
 
 pergunta_digitada = st.chat_input(
-    "Pergunte sobre sua operação..."
+    "Pergunte sobre sua operação...",
+    disabled=st.session_state.processando,
 )
 
 pergunta = (
@@ -375,12 +446,31 @@ pergunta = (
     or pergunta_sugerida
 )
 
+MAX_PERGUNTA_CHARS = 1000
+
+if pergunta:
+    pergunta = pergunta.strip()
+
+    if not pergunta:
+        st.warning("Digite uma pergunta válida.")
+        pergunta = None
+
+    elif len(pergunta) > MAX_PERGUNTA_CHARS:
+        st.warning(
+            f"A pergunta é muito longa. "
+            f"Use no máximo {MAX_PERGUNTA_CHARS} caracteres."
+        )
+        pergunta = None
+
+
 
 # ---------------------------------------------------------
 # Consulta ao Copilot
 # ---------------------------------------------------------
 
 if pergunta:
+
+    st.session_state.processando = True
 
     st.session_state.messages.append(
         {
@@ -416,4 +506,15 @@ if pergunta:
         }
     )
 
+MAX_MESSAGES = 20
+
+if len(st.session_state.messages) > MAX_MESSAGES:
+    st.session_state.messages = (
+        [st.session_state.messages[0]]
+        + st.session_state.messages[-(MAX_MESSAGES - 1):]
+    )
+
+    st.session_state.processando = False
+
     st.rerun()
+    

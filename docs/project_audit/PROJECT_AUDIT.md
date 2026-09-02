@@ -1,14 +1,14 @@
 # Project Audit
 
-Gerado em: 27/08/2026 23:28:09
+Gerado em: 01/09/2026 23:21:31
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
 - Arquivos Python: **26**
-- Linhas totais: **3797**
-- Linhas efetivas de código: **2848**
+- Linhas totais: **3897**
+- Linhas efetivas de código: **2925**
 - Funções: **125**
 - Classes: **5**
 - Imports internos: **28**
@@ -168,7 +168,7 @@ ai-supply-chain-copilot/
 
 | Arquivo | Linhas | Funções | Classes | TODOs |
 |---|---:|---:|---:|---:|
-| `frontend/app.py` | 419 | 2 | 0 | 0 |
+| `frontend/app.py` | 519 | 2 | 0 | 0 |
 | `scripts/analyze_inventory.py` | 39 | 1 | 0 | 0 |
 | `scripts/business_rules.py` | 63 | 2 | 0 | 0 |
 | `scripts/database_setup.py` | 12 | 0 | 0 | 0 |
@@ -201,8 +201,8 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `api_esta_online` | 150–159 | `—` | NÃO |
-| `consultar_copilot` | 162–206 | `pergunta` | NÃO |
+| `api_esta_online` | 191–200 | `—` | NÃO |
+| `consultar_copilot` | 203–274 | `pergunta` | NÃO |
 
 ### `scripts/analyze_inventory.py`
 
