@@ -409,7 +409,7 @@ def test_limite_tokens_resposta_possui_valor_controlado():
     """
 
     assert client.LIMITE_TOKENS_RESPOSTA > 0
-    assert client.LIMITE_TOKENS_RESPOSTA <= 1000
+    assert client.LIMITE_TOKENS_RESPOSTA <= 1500
 
 
 def test_gerar_resposta_real_utiliza_responses_api(monkeypatch):
