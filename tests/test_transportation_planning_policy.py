@@ -1,6 +1,7 @@
 """Testes das políticas de planejamento de Transportation."""
 
 from src.decision.transportation.planning_policy import (
+    calcular_cenarios_planejamento,
     calcular_metricas_alternativa,
     calcular_viagens_necessarias,
     calcular_viagens_por_capacidade,
@@ -215,3 +216,48 @@ def test_calcular_viagens_por_capacidade_limite_exato():
         forecast_pieces=20000,
         capacity_pieces=10000,
     ) == 2
+
+
+def test_calcular_cenarios_planejamento_separa_economico_e_servico():
+    resultado = calcular_cenarios_planejamento(
+        forecast_pieces=8_000,
+        capacity_pieces=10_000,
+        rate_per_trip=3_000.0,
+        target_frequency=2,
+    )
+
+    assert resultado["economic"]["planned_trips"] == 1
+    assert resultado["economic"]["offered_capacity"] == 10_000
+    assert resultado["economic"]["utilization"] == 0.8
+    assert resultado["economic"]["planned_cost"] == 3_000.0
+    assert resultado["economic"]["cost_per_piece"] == 0.375
+
+    assert resultado["service"]["planned_trips"] == 2
+    assert resultado["service"]["offered_capacity"] == 20_000
+    assert resultado["service"]["utilization"] == 0.4
+    assert resultado["service"]["planned_cost"] == 6_000.0
+    assert resultado["service"]["cost_per_piece"] == 0.75
+
+
+def test_calcular_cenarios_planejamento_calcula_service_premium():
+    resultado = calcular_cenarios_planejamento(
+        forecast_pieces=8_000,
+        capacity_pieces=10_000,
+        rate_per_trip=3_000.0,
+        target_frequency=2,
+    )
+
+    assert resultado["service_premium"] == 1.0
+
+
+def test_calcular_cenarios_planejamento_premium_zero_quando_capacidade_ja_exige_frequencia():
+    resultado = calcular_cenarios_planejamento(
+        forecast_pieces=15_000,
+        capacity_pieces=10_000,
+        rate_per_trip=3_000.0,
+        target_frequency=2,
+    )
+
+    assert resultado["economic"]["planned_trips"] == 2
+    assert resultado["service"]["planned_trips"] == 2
+    assert resultado["service_premium"] == 0.0

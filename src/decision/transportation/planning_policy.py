@@ -131,3 +131,57 @@ def calcular_viagens_por_capacidade(
 ) -> int:
     """Calcula o número mínimo de viagens exigido pela capacidade."""
     return math.ceil(forecast_pieces / capacity_pieces)
+
+
+def calcular_cenarios_planejamento(
+    forecast_pieces,
+    capacity_pieces,
+    rate_per_trip,
+    target_frequency,
+):
+    """Compara os cenários econômico e de serviço para uma alternativa."""
+
+    economic_trips = calcular_viagens_por_capacidade(
+        forecast_pieces=forecast_pieces,
+        capacity_pieces=capacity_pieces,
+    )
+
+    service_trips = max(
+        economic_trips,
+        target_frequency,
+    )
+
+    economic_capacity = economic_trips * capacity_pieces
+    economic_cost = economic_trips * rate_per_trip
+
+    service_capacity = service_trips * capacity_pieces
+    service_cost = service_trips * rate_per_trip
+
+    economic_cost_per_piece = economic_cost / forecast_pieces
+    service_cost_per_piece = service_cost / forecast_pieces
+
+    economic = {
+        "planned_trips": economic_trips,
+        "offered_capacity": economic_capacity,
+        "utilization": forecast_pieces / economic_capacity,
+        "planned_cost": economic_cost,
+        "cost_per_piece": economic_cost_per_piece,
+    }
+
+    service = {
+        "planned_trips": service_trips,
+        "offered_capacity": service_capacity,
+        "utilization": forecast_pieces / service_capacity,
+        "planned_cost": service_cost,
+        "cost_per_piece": service_cost_per_piece,
+    }
+
+    service_premium = (
+        service_cost_per_piece / economic_cost_per_piece
+    ) - 1
+
+    return {
+        "economic": economic,
+        "service": service,
+        "service_premium": service_premium,
+    }

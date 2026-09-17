@@ -1,21 +1,21 @@
 # Project Audit
 
-Gerado em: 16/09/2026 23:32:22
+Gerado em: 17/09/2026 11:14:43
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **28**
-- Linhas totais: **4050**
-- Linhas efetivas de código: **3044**
-- Funções: **132**
+- Arquivos Python: **34**
+- Linhas totais: **4939**
+- Linhas efetivas de código: **3746**
+- Funções: **180**
 - Classes: **5**
-- Imports internos: **31**
-- Imports externos: **20**
-- Imports da biblioteca padrão: **29**
+- Imports internos: **56**
+- Imports externos: **23**
+- Imports da biblioteca padrão: **33**
 - TODOs/FIXMEs em comentários: **0**
-- Funções sem docstring: **25**
+- Funções sem docstring: **41**
 - Arquivos com erro de sintaxe: **0**
 
 ## 2. Como usar as opções True e False
@@ -68,8 +68,8 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 8.1/10 |
-| Complexidade estrutural | 9.3/10 |
+| Cobertura de docstrings | 7.7/10 |
+| Complexidade estrutural | 9.4/10 |
 | Integridade sintática | 10.0/10 |
 | Saúde geral | **9.3/10** |
 
@@ -160,17 +160,25 @@ ai-supply-chain-copilot/
 │   │   ├── prompts.py
 │   │   ├── service.py
 │   │   └── tools.py
+│   ├── analytics/
+│   │   └── transportation/
+│   │       └── planning.py
 │   ├── api/
 │   │   └── main.py
 │   ├── database/
 │   │   ├── connection.py
 │   │   ├── create_inventory_tables.py
 │   │   └── create_transportation_tables.py
+│   ├── decision/
+│   │   └── transportation/
+│   │       └── planning_policy.py
 │   ├── etl/
 │   │   ├── inventory/
 │   │   │   ├── load_products.py
 │   │   │   └── load_warehouses.py
-│   │   └── transportation
+│   │   └── transportation/
+│   │       ├── load_forecast.py
+│   │       └── load_master_data.py
 │   └── main.py
 └── tests/
     ├── golden_test_set.md
@@ -179,6 +187,8 @@ ai-supply-chain-copilot/
     ├── test_ai_service.py
     ├── test_ai_tools.py
     ├── test_api_copilot.py
+    ├── test_transportation_planning.py
+    ├── test_transportation_planning_policy.py
     └── test_transportation_tables.py
 ```
 
@@ -201,19 +211,25 @@ ai-supply-chain-copilot/
 | `src/ai/prompts.py` | 239 | 0 | 0 | 0 |
 | `src/ai/service.py` | 32 | 1 | 0 | 0 |
 | `src/ai/tools.py` | 81 | 1 | 0 | 0 |
+| `src/analytics/transportation/planning.py` | 157 | 5 | 0 | 0 |
 | `src/api/main.py` | 209 | 8 | 1 | 0 |
-| `src/database/connection.py` | 17 | 1 | 0 | 0 |
+| `src/database/connection.py` | 19 | 1 | 0 | 0 |
 | `src/database/create_inventory_tables.py` | 121 | 5 | 0 | 0 |
-| `src/database/create_transportation_tables.py` | 110 | 6 | 0 | 0 |
+| `src/database/create_transportation_tables.py` | 156 | 8 | 0 | 0 |
+| `src/decision/transportation/planning_policy.py` | 133 | 7 | 0 | 0 |
 | `src/etl/inventory/load_products.py` | 149 | 4 | 0 | 0 |
 | `src/etl/inventory/load_warehouses.py` | 146 | 4 | 0 | 0 |
+| `src/etl/transportation/load_forecast.py` | 69 | 5 | 0 | 0 |
+| `src/etl/transportation/load_master_data.py` | 94 | 9 | 0 | 0 |
 | `src/main.py` | 21 | 1 | 0 | 0 |
 | `tests/test_ai_client.py` | 475 | 22 | 3 | 0 |
 | `tests/test_ai_context.py` | 127 | 5 | 0 | 0 |
 | `tests/test_ai_service.py` | 238 | 13 | 0 | 0 |
 | `tests/test_ai_tools.py` | 135 | 14 | 1 | 0 |
 | `tests/test_api_copilot.py` | 110 | 6 | 0 | 0 |
-| `tests/test_transportation_tables.py` | 42 | 1 | 0 | 0 |
+| `tests/test_transportation_planning.py` | 169 | 4 | 0 | 0 |
+| `tests/test_transportation_planning_policy.py` | 217 | 16 | 0 | 0 |
+| `tests/test_transportation_tables.py` | 44 | 1 | 0 | 0 |
 
 ## 8. Funções e classes
 
@@ -332,6 +348,16 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `listar_inventario` | 18–69 | `—` | SIM |
 
+### `src/analytics/transportation/planning.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `buscar_alternativas_veiculo` | 14–37 | `route_id` | SIM |
+| `analisar_alternativas_planejamento` | 40–95 | `route_id, week_start` | SIM |
+| `selecionar_plano` | 98–108 | `route_id, week_start` | SIM |
+| `gerar_plano_planejado` | 111–121 | `route_id, week_start` | SIM |
+| `salvar_viagens_planejadas` | 124–157 | `viagens` | SIM |
+
 ### `src/api/main.py`
 
 | Função | Linhas | Argumentos | Docstring |
@@ -353,7 +379,7 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `conectar_banco` | 8–17 | `—` | SIM |
+| `conectar_banco` | 8–19 | `—` | SIM |
 
 ### `src/database/create_inventory_tables.py`
 
@@ -374,7 +400,21 @@ ai-supply-chain-copilot/
 | `criar_tabela_route_vehicle_options` | 33–50 | `cursor` | SIM |
 | `criar_tabela_route_vehicle_rates` | 53–77 | `cursor` | SIM |
 | `criar_tabela_forecast_raw` | 80–96 | `cursor` | SIM |
-| `criar_tabelas_transportation` | 99–110 | `—` | SIM |
+| `criar_tabela_demand_forecast` | 99–111 | `cursor` | SIM |
+| `criar_tabela_planned_trips` | 114–134 | `cursor` | SIM |
+| `criar_tabelas_transportation` | 137–150 | `—` | SIM |
+
+### `src/decision/transportation/planning_policy.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `calcular_viagens_necessarias` | 6–14 | `forecast_pieces, capacity_pieces, target_frequency` | SIM |
+| `classificar_perfil_rota` | 17–25 | `distance_km` | SIM |
+| `obter_frequencia_alvo` | 28–39 | `route_profile` | SIM |
+| `calcular_metricas_alternativa` | 42–66 | `forecast_pieces, capacity_pieces, rate_per_trip, target_frequency` | SIM |
+| `selecionar_alternativa` | 69–88 | `alternativas` | SIM |
+| `gerar_viagens_planejadas` | 91–125 | `plano` | SIM |
+| `calcular_viagens_por_capacidade` | 128–133 | `forecast_pieces, capacity_pieces` | SIM |
 
 ### `src/etl/inventory/load_products.py`
 
@@ -393,6 +433,30 @@ ai-supply-chain-copilot/
 | `transformar_depositos` | 24–88 | `df` | SIM |
 | `carregar_depositos` | 91–127 | `df` | SIM |
 | `main` | 130–142 | `—` | SIM |
+
+### `src/etl/transportation/load_forecast.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `extrair_forecast` | 15–17 | `—` | SIM |
+| `transformar_forecast` | 20–35 | `df` | SIM |
+| `carregar_forecast_raw` | 38–46 | `df` | SIM |
+| `carregar_demand_forecast` | 49–57 | `df` | SIM |
+| `main` | 59–65 | `—` | SIM |
+
+### `src/etl/transportation/load_master_data.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `extrair_routes` | 16–18 | `—` | SIM |
+| `carregar_routes` | 21–29 | `df` | SIM |
+| `extrair_vehicle_types` | 32–34 | `—` | SIM |
+| `carregar_vehicle_types` | 37–45 | `df` | SIM |
+| `extrair_route_vehicle_options` | 48–50 | `—` | SIM |
+| `carregar_route_vehicle_options` | 53–61 | `df` | SIM |
+| `extrair_route_vehicle_rates` | 64–66 | `—` | SIM |
+| `carregar_route_vehicle_rates` | 69–77 | `df` | SIM |
+| `main` | 80–90 | `—` | SIM |
 
 ### `src/main.py`
 
@@ -495,11 +559,41 @@ ai-supply-chain-copilot/
 | `test_consultar_copilot_trata_erros_da_camada_de_ia` | 82–110 | `monkeypatch, erro` | SIM |
 | `responder_fake` | 91–92 | `pergunta` | NÃO |
 
+### `tests/test_transportation_planning.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `banco_planejamento` | 18–98 | `tmp_path, monkeypatch` | SIM |
+| `test_analisar_alternativas_planejamento` | 101–115 | `banco_planejamento` | SIM |
+| `test_selecionar_plano` | 118–138 | `banco_planejamento` | SIM |
+| `test_salvar_viagens_planejadas` | 141–168 | `banco_planejamento` | SIM |
+
+### `tests/test_transportation_planning_policy.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_calcular_viagens_necessarias_por_frequencia` | 20–25 | `—` | NÃO |
+| `test_calcular_viagens_necessarias_por_capacidade` | 28–33 | `—` | NÃO |
+| `test_calcular_viagens_necessarias_no_limite_da_capacidade` | 36–41 | `—` | NÃO |
+| `test_obter_frequencia_alvo` | 44–47 | `—` | NÃO |
+| `test_obter_frequencia_alvo_rejeita_perfil_invalido` | 50–55 | `—` | NÃO |
+| `test_classificar_perfil_rota_short` | 58–60 | `—` | NÃO |
+| `test_classificar_perfil_rota_medium` | 63–66 | `—` | NÃO |
+| `test_classificar_perfil_rota_long` | 69–71 | `—` | NÃO |
+| `test_calcular_metricas_alternativa` | 74–86 | `—` | NÃO |
+| `test_selecionar_alternativa_por_menor_custo_por_peca` | 89–120 | `—` | NÃO |
+| `test_selecionar_alternativa_rejeita_lista_vazia` | 123–128 | `—` | NÃO |
+| `test_gerar_viagens_planejadas_distribui_pecas_corretamente` | 131–163 | `—` | NÃO |
+| `test_gerar_viagens_planejadas_preserva_grain_da_viagem` | 166–197 | `—` | NÃO |
+| `test_calcular_viagens_por_capacidade_uma_viagem` | 199–203 | `—` | NÃO |
+| `test_calcular_viagens_por_capacidade_multiplas_viagens` | 206–210 | `—` | NÃO |
+| `test_calcular_viagens_por_capacidade_limite_exato` | 213–217 | `—` | NÃO |
+
 ### `tests/test_transportation_tables.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `test_criar_tabelas_transportation` | 9–41 | `tmp_path, monkeypatch` | SIM |
+| `test_criar_tabelas_transportation` | 9–43 | `tmp_path, monkeypatch` | SIM |
 
 ## 9. Dependências
 
@@ -520,12 +614,16 @@ ai-supply-chain-copilot/
 | `src.ai.service` | `src.ai.client` |
 | `src.ai.service` | `src.ai.context` |
 | `src.ai.service` | `src.ai.tools` |
+| `src.analytics.transportation.planning` | `src.database.connection` |
+| `src.analytics.transportation.planning` | `src.decision.transportation.planning_policy` |
 | `src.api.main` | `src.ai.service` |
 | `src.api.main` | `src.database.connection` |
 | `src.database.create_inventory_tables` | `src.database.connection` |
 | `src.database.create_transportation_tables` | `src.database.connection` |
 | `src.etl.inventory.load_products` | `src.database.connection` |
 | `src.etl.inventory.load_warehouses` | `src.database.connection` |
+| `src.etl.transportation.load_forecast` | `src.database.connection` |
+| `src.etl.transportation.load_master_data` | `src.database.connection` |
 | `src.main` | `src.database.create_inventory_tables` |
 | `src.main` | `src.etl.inventory.load_products` |
 | `src.main` | `src.etl.inventory.load_warehouses` |
@@ -534,6 +632,11 @@ ai-supply-chain-copilot/
 | `tests.test_ai_service` | `src.ai.service` |
 | `tests.test_ai_tools` | `src.ai.tools` |
 | `tests.test_api_copilot` | `src.api.main` |
+| `tests.test_transportation_planning` | `src.database.connection` |
+| `tests.test_transportation_planning` | `src.analytics.transportation.planning` |
+| `tests.test_transportation_planning` | `src.database.create_transportation_tables` |
+| `tests.test_transportation_planning_policy` | `src.decision.transportation.planning_policy` |
+| `tests.test_transportation_planning_policy` | `src.analytics.transportation.planning` |
 | `tests.test_transportation_tables` | `src.database.connection` |
 | `tests.test_transportation_tables` | `src.database.create_transportation_tables` |
 
@@ -564,12 +667,16 @@ flowchart LR
     src_ai_service["src.ai.service"] --> src_ai_client["src.ai.client"]
     src_ai_service["src.ai.service"] --> src_ai_context["src.ai.context"]
     src_ai_service["src.ai.service"] --> src_ai_tools["src.ai.tools"]
+    src_analytics_transportation_planning["src.analytics.transportation.planning"] --> src_database_connection["src.database.connection"]
+    src_analytics_transportation_planning["src.analytics.transportation.planning"] --> src_decision_transportation_planning_policy["src.decision.transportation.planning_policy"]
     src_api_main["src.api.main"] --> src_ai_service["src.ai.service"]
     src_api_main["src.api.main"] --> src_database_connection["src.database.connection"]
     src_database_create_inventory_tables["src.database.create_inventory_tables"] --> src_database_connection["src.database.connection"]
     src_database_create_transportation_tables["src.database.create_transportation_tables"] --> src_database_connection["src.database.connection"]
     src_etl_inventory_load_products["src.etl.inventory.load_products"] --> src_database_connection["src.database.connection"]
     src_etl_inventory_load_warehouses["src.etl.inventory.load_warehouses"] --> src_database_connection["src.database.connection"]
+    src_etl_transportation_load_forecast["src.etl.transportation.load_forecast"] --> src_database_connection["src.database.connection"]
+    src_etl_transportation_load_master_data["src.etl.transportation.load_master_data"] --> src_database_connection["src.database.connection"]
     src_main["src.main"] --> src_database_create_inventory_tables["src.database.create_inventory_tables"]
     src_main["src.main"] --> src_etl_inventory_load_products["src.etl.inventory.load_products"]
     src_main["src.main"] --> src_etl_inventory_load_warehouses["src.etl.inventory.load_warehouses"]
@@ -578,6 +685,11 @@ flowchart LR
     tests_test_ai_service["tests.test_ai_service"] --> src_ai_service["src.ai.service"]
     tests_test_ai_tools["tests.test_ai_tools"] --> src_ai_tools["src.ai.tools"]
     tests_test_api_copilot["tests.test_api_copilot"] --> src_api_main["src.api.main"]
+    tests_test_transportation_planning["tests.test_transportation_planning"] --> src_analytics_transportation_planning["src.analytics.transportation.planning"]
+    tests_test_transportation_planning["tests.test_transportation_planning"] --> src_database_connection["src.database.connection"]
+    tests_test_transportation_planning["tests.test_transportation_planning"] --> src_database_create_transportation_tables["src.database.create_transportation_tables"]
+    tests_test_transportation_planning_policy["tests.test_transportation_planning_policy"] --> src_analytics_transportation_planning["src.analytics.transportation.planning"]
+    tests_test_transportation_planning_policy["tests.test_transportation_planning_policy"] --> src_decision_transportation_planning_policy["src.decision.transportation.planning_policy"]
     tests_test_transportation_tables["tests.test_transportation_tables"] --> src_database_connection["src.database.connection"]
     tests_test_transportation_tables["tests.test_transportation_tables"] --> src_database_create_transportation_tables["src.database.create_transportation_tables"]
 ```

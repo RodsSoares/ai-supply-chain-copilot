@@ -3,9 +3,9 @@ Transportation Analytics Architecture
 Document: 06_transportation_architecture.md
 Project: AI Supply Chain Copilot
 Status: Phase 0 --- Bounded Transportation Extension
-Last updated: 2026-09-16
+Last updated: 2026-09-17
 
-1. Purpose
+Purpose
 
 Transportation is a bounded analytics extension of the existing AI
 Supply Chain Copilot.
@@ -42,7 +42,7 @@ using fully synthetic data, then integrated those capabilities into an
 existing AI Supply Chain Copilot to demonstrate architectural
 extensibility.
 
-2. Clean-Room and Confidentiality Rules
+Clean-Room and Confidentiality Rules
 
 This project must reconstruct the problem class, not any previous
 proprietary implementation.
@@ -97,67 +97,67 @@ The goal is not historical reproduction. It is to create a credible
 synthetic analytical domain inspired by real classes of planning
 problems.
 
-3. Scope
+Scope
 
 The Transportation domain will cover a bounded planning and analytics
 chain:
 
 Forecast Demand
-      ↓
+↓
 Route Characteristics
-      ↓
+↓
 Planning Policy
-      ↓
+↓
 Vehicle / Capacity Choice
-      ↓
+↓
 Required Trips
-      ↓
+↓
 Capacity Utilization
-      ↓
+↓
 Transportation Cost
-      ↓
+↓
 R$/Piece
-      ↓
+↓
 Plan vs Actual
-      ↓
+↓
 Variance / Driver Analysis
-      ↓
+↓
 Prioritization
 
 The emphasis is on analytics and decision support, not mathematical
 optimization.
 
-4. Architectural Position
+Architectural Position
 
 Transportation becomes a second analytical domain inside the existing
 Copilot.
 
 Data / Synthetic ERP
-        ↓
+↓
 Canonical Data Layer
-        ↓
+↓
 Decision / Analytics Layer
-        ├── Inventory
-        └── Transportation
-                ↓
-         API / Tool Contracts
-                ↓
-          LLM / Copilot
+├── Inventory
+└── Transportation
+↓
+API / Tool Contracts
+↓
+LLM / Copilot
 
 For natural-language analytical questions:
 
 User Question
-      ↓
+↓
 LLM Intent / Tool Selection
-      ↓
+↓
 Transportation Analytical Tool
-      ↓
+↓
 SQL / Deterministic Analytics
-      ↓
+↓
 Structured Result
-      ↓
+↓
 LLM Interpretation
-      ↓
+↓
 Business Answer
 
 Core architectural rule
@@ -180,7 +180,7 @@ translate analytical output into business language.
 
 The LLM must not become the source of truth for KPI calculations.
 
-5. Planning Policy v0
+Planning Policy v0
 
 The Transportation planning model uses a deliberately simplified,
 synthetic policy.
@@ -283,23 +283,23 @@ economic feasibility rules.
 A simplified conceptual relationship is:
 
 Forecast
-   +
++
 Route
-   +
++
 Vehicle Capacity
-   +
++
 Service Policy
-   +
++
 Route/Vehicle Tariff
-        ↓
+↓
 Vehicle Configuration
-        ↓
+↓
 Planned Trips
 
 planned_trips may be materialized in the plan for analytics, but it
 remains a derived planning output.
 
-6. Planning Policy vs Optimization
+Planning Policy vs Optimization
 
 The MVP must not evolve into a vehicle-routing or fleet-optimization
 engine.
@@ -310,21 +310,21 @@ explainable planning scenario.
 Conceptually:
 
 Forecast
-    ↓
+↓
 Route Characteristics
-    ↓
+↓
 Eligible / Preferred Vehicle Logic
-    ↓
+↓
 Target Service Frequency
-    ↓
+↓
 Economic Feasibility
-    ↓
+↓
 Vehicle + Trips
-    ↓
+↓
 Capacity Utilization
-    ↓
+↓
 Planned Cost
-    ↓
+↓
 R$/Piece
 
 The analytical system can compare valid alternatives, but the objective
@@ -333,7 +333,7 @@ is not to build a globally optimal mathematical transportation plan.
 A lower-cost configuration is not automatically the correct
 configuration if it violates the synthetic service policy.
 
-7. PLAN and ACTUAL
+PLAN and ACTUAL
 
 The model explicitly separates planned and realized operations.
 
@@ -383,9 +383,9 @@ Plan vs Actual analytics
 
 including volume, trip, utilization and cost variances.
 
-8. Minimum Synthetic Data Model
+Current Synthetic Data Model
 
-The initial model should remain small.
+The implemented model remains deliberately small and uses the grain required by each business process.
 
 routes
 
@@ -393,13 +393,27 @@ route_id
 origin_id
 destination_id
 distance_km
-route_profile       -- SHORT / LONG
+
+route_profile is NOT persisted. It is deterministically derived from distance_km by Planning Policy v0:
+
+SHORT: distance < 300 km
+
+MEDIUM: 300 <= distance <= 800 km
+
+LONG: distance > 800 km
 
 vehicle_types
 
 vehicle_type_id
 vehicle_name
 capacity_pieces
+
+route_vehicle_options
+
+route_id
+vehicle_type_id
+
+This table represents valid route/vehicle combinations. Eligibility is separate from pricing.
 
 route_vehicle_rates
 
@@ -409,40 +423,54 @@ effective_from
 effective_to
 rate_per_trip
 
-The temporal fields allow future synthetic tariff changes without
-redesigning the schema.
+The temporal fields allow synthetic tariff changes without redesigning the schema. The current synthetic dataset has one active rate per route/vehicle combination; temporal rate selection must be enforced before historical rate versions are introduced.
 
-demand_forecast
+forecast_raw
 
-period
+year
+week
 route_id
 forecast_pieces
 
-transport_plan
+Grain: ISO year x week x route.
 
-period
+demand_forecast
+
+week_start
+route_id
+forecast_pieces
+
+Grain: route x week. week_start is the ISO-week Monday produced by ETL.
+
+planned_trips
+
+trip_id
+week_start
 route_id
 vehicle_type_id
-planned_trips
+planned_pieces
 planned_capacity
-planned_utilization
 planned_cost
-planned_cost_per_piece
 
-transport_plan is a derived/materialized analytical output.
+Grain: one row = one planned trip. Frequency is derived with COUNT(trip_id) rather than stored redundantly. Weekly capacity and cost are reconstructed with aggregation.
 
-transport_actual
+Current deterministic trip materialization rules:
 
-period
-route_id
-actual_pieces
-actual_trips
-actual_cost
+trip_id is deterministic, e.g. 20260824-R001-01;
 
-Additional fields should only be introduced when required by a concrete
-business question.
+forecast pieces are distributed as evenly as possible across trips;
 
-9. Core Planning Calculations
+the difference between trip piece counts is at most one piece;
+
+SUM(planned_pieces) = forecast_pieces;
+
+planned_capacity and planned_cost are stored at individual-trip grain.
+
+A separate physical transport_plan table is not required at this stage. Weekly plan outputs can be reconstructed from planned_trips through SQL/views.
+
+transport_actual has not yet been implemented. It belongs to the later bounded Plan-vs-Actual step and should only be introduced when required by that business question.
+
+Core Planning Calculations
 
 For a candidate vehicle configuration:
 
@@ -474,7 +502,7 @@ LLM.
 The final number of planned trips may also reflect the target service
 frequency and economic-exception rule.
 
-10. Why R$/Piece Is a Core KPI
+Why R$/Piece Is a Core KPI
 
 R$/Piece is not a cosmetic metric.
 
@@ -498,7 +526,7 @@ is largely volume-driven.
 R$/piece is therefore a protagonist of the Transportation analytical
 layer.
 
-11. Cost Variance Decomposition
+Cost Variance Decomposition
 
 Let:
 
@@ -546,7 +574,7 @@ R$60k came from deterioration in transportation cost per piece.
 
 This decomposition should remain simple, transparent and explainable.
 
-12. Driver Hierarchy
+Driver Hierarchy
 
 The analytical hierarchy should distinguish detection from diagnosis.
 
@@ -585,7 +613,7 @@ deterministic data supports.
 The objective is explainable driver analysis, not an unnecessarily
 complex causal model.
 
-13. Capacity Threshold Effect
+Capacity Threshold Effect
 
 Transportation cost can behave discontinuously.
 
@@ -616,7 +644,7 @@ volume change alone does not explain transportation cost behavior.
 The analytical layer should be able to distinguish volume growth from
 operational effects such as additional trips and lower utilization.
 
-14. Canonical Business Questions
+Canonical Business Questions
 
 The dataset and SQL exercises should be driven by business questions
 rather than isolated syntax drills.
@@ -708,7 +736,7 @@ priority_rank
 
 Prioritization logic must remain transparent and explainable.
 
-15. Advanced SQL Learning Objectives
+Advanced SQL Learning Objectives
 
 Phase 0 uses Transportation as a vehicle for learning SQL through
 realistic analytical problems.
@@ -768,7 +796,7 @@ SQL Technique → Artificial Exercise
 The target is approximately 10--15 high-quality business queries,
 not a large collection of generic exercises.
 
-16. SQL Learning Progression
+SQL Learning Progression
 
 A single business problem may evolve through increasingly advanced SQL.
 
@@ -848,27 +876,27 @@ multiple KPIs
 The capstone should combine several of these concepts in one explainable
 analytical flow.
 
-17. SQL Exit Criterion
+SQL Exit Criterion
 
 Phase 0 SQL is considered sufficient when the user can independently
 reason through:
 
 Business Problem
-      ↓
+↓
 Required Grain
-      ↓
+↓
 Required Tables
-      ↓
+↓
 Joins
-      ↓
+↓
 Aggregation
-      ↓
+↓
 Window / Temporal Comparison
-      ↓
+↓
 Business Rule
-      ↓
+↓
 Analytical Result
-      ↓
+↓
 Business Interpretation
 
 The objective is not memorizing syntax.
@@ -887,7 +915,7 @@ what the output means operationally;
 
 what the query does not prove.
 
-18. Candidate Transportation Analytical Tools
+Candidate Transportation Analytical Tools
 
 Names are provisional and should only be implemented when supported by
 completed deterministic analytics.
@@ -904,11 +932,11 @@ analyze_plan_vs_actual(...)
 Example structured output:
 
 {
-  "cost_change_pct": 18.4,
-  "volume_change_pct": 12.1,
-  "cost_per_piece_change_pct": 5.6,
-  "volume_effect": 420000,
-  "unit_cost_effect": 190000
+"cost_change_pct": 18.4,
+"volume_change_pct": 12.1,
+"cost_per_piece_change_pct": 5.6,
+"volume_effect": 420000,
+"unit_cost_effect": 190000
 }
 
 The LLM receives structured analytical results and produces a business
@@ -916,7 +944,7 @@ explanation.
 
 Tool contracts should remain stable, explicit and testable.
 
-19. Testing Strategy
+Testing Strategy
 
 Testing precedes trust in LLM interpretation.
 
@@ -986,7 +1014,7 @@ python -m pytest -q
 A plausible LLM explanation is not evidence that the analytical
 calculation is correct.
 
-20. Optional GHG Extension
+Optional GHG Extension
 
 Environmental impact existed as a dimension in the broader class of
 transportation-planning problems.
@@ -1022,7 +1050,7 @@ Copilot integration;
 
 transition to the next roadmap phase.
 
-21. Explicit Non-Goals
+Explicit Non-Goals
 
 Transportation must not become:
 
@@ -1055,30 +1083,30 @@ model.
 
 Interesting adjacent ideas go to the backlog.
 
-22. Scope-Control Rule
+Scope-Control Rule
 
 The development path is:
 
 Synthetic Transportation Problem
-        ↓
+↓
 Advanced SQL
-        ↓
+↓
 Deterministic Analytics + Tests
-        ↓
+↓
 Copilot Integration
-        ↓
+↓
 LLM / Tool Calling
-        ↓
+↓
 Extensibility Demonstrated
-        ↓
+↓
 STOP
 
 Any adjacent idea that is not necessary for this chain:
 
 Good Idea
-   ↓
+↓
 BACKLOG
-   ↓
+↓
 Continue Current Scope
 
 The word STOP is intentional.
@@ -1086,7 +1114,7 @@ The word STOP is intentional.
 Transportation exists to complete Phase 0, not to delay the broader
 career roadmap.
 
-23. Relationship to Career Roadmap
+Relationship to Career Roadmap
 
 Transportation is Phase 0.
 
@@ -1161,28 +1189,28 @@ one observability platform.
 Active job applications should not wait for mastery of every later
 topic.
 
-24. Portfolio Value
+Portfolio Value
 
 The value of this extension is not the number of features.
 
 It demonstrates a combination of:
 
 Business Reasoning
-        +
++
 Supply Chain Domain Knowledge
-        +
++
 Data Modeling
-        +
++
 Advanced SQL
-        +
++
 Deterministic Analytics
-        +
++
 Testing
-        +
++
 API / Tool Contracts
-        +
++
 LLM Interpretation
-        +
++
 Software Extensibility
 
 The desired architectural story is:
@@ -1206,7 +1234,7 @@ The technology changes.
 The underlying ability to structure and solve complex business problems
 remains central.
 
-25. Design Principles
+Design Principles
 
 Business question before SQL syntax.
 
@@ -1251,30 +1279,307 @@ Finish bounded scope before adjacent capabilities.
 Portfolio value = business reasoning + architecture, not feature
 count.
 
-26. First Development Sequence
+First Development Sequence
 
 With architecture and scope frozen, implementation should proceed in
 this order:
 
-1. Create minimal synthetic schema
-2. Create small deterministic synthetic dataset
-3. Validate planning-policy calculations
-4. Start business-question-driven SQL exercises
-5. Progress from aggregation to advanced analytical SQL
-6. Implement deterministic Transportation analytics
-7. Add tests
-8. Expose selected analytics through Copilot-compatible contracts
-9. Integrate LLM/tool calling
-10. Run Inventory + Transportation regression
-11. Document demonstrated extensibility
-12. STOP
+Create minimal synthetic schema
+
+Create small deterministic synthetic dataset
+
+Validate planning-policy calculations
+
+Start business-question-driven SQL exercises
+
+Progress from aggregation to advanced analytical SQL
+
+Implement deterministic Transportation analytics
+
+Add tests
+
+Expose selected analytics through Copilot-compatible contracts
+
+Integrate LLM/tool calling
+
+Run Inventory + Transportation regression
+
+Document demonstrated extensibility
+
+STOP
 
 Documentation should not become the work itself.
 
 After this architecture document is accepted, the emphasis moves to
 implementation and learning.
 
-27. Definition of Done --- Transportation Phase 0
+Current Implementation Checkpoint --- 2026-09-17
+
+This section is the authoritative handoff point for resuming development. Earlier sections describe the target architecture; this section records what is actually implemented now.
+
+Repository and environment
+
+Repository: ai-supply-chain-copilot
+
+Default environment: Windows + PowerShell + project-local .venv
+
+Test command convention: always python -m pytest; never bare pytest
+
+Database: database/supply_chain.db
+
+Inventory ETL lives under src/etl/inventory/
+
+Transportation ETL lives under src/etl/transportation/
+
+Prefer complete files for meaningful edits and incremental development: concept -> implementation -> targeted test -> full regression.
+
+Implemented Transportation data
+
+The synthetic master data and forecast pipeline are implemented and loaded. Current tables are:
+
+routes
+
+vehicle_types
+
+route_vehicle_options
+
+route_vehicle_rates
+
+forecast_raw
+
+demand_forecast
+
+planned_trips
+
+Current synthetic dataset:
+
+12 routes;
+
+5 vehicle types;
+
+32 valid route/vehicle combinations;
+
+32 synthetic route/vehicle rates;
+
+96 weekly forecast rows = 12 routes x 8 weeks;
+
+forecast window: 2026-08-24 through 2026-10-12.
+
+SQLite foreign-key enforcement is enabled centrally by the application connection with PRAGMA foreign_keys = ON.
+
+Implemented planning flow
+
+Weekly Route Forecast
+-> Route Context
+-> Eligible Vehicles + Synthetic Rates
+-> Planning Alternatives
+-> Capacity Requirement + Service Target
+-> Economic Scenario + Service Scenario
+-> Service Premium
+-> Economic Baseline Selection
+-> Selected Weekly Plan
+-> Individual Planned Trips
+-> SQLite Persistence
+
+Implemented policy/decision functions include:
+
+classificar_perfil_rota(...)
+
+obter_frequencia_alvo(...)
+
+calcular_viagens_necessarias(...)
+
+calcular_viagens_por_capacidade(...)
+
+calcular_metricas_alternativa(...)
+
+calcular_cenarios_planejamento(...)
+
+selecionar_alternativa(...)
+
+gerar_viagens_planejadas(...)
+
+Implemented analytics/orchestration functions include:
+
+buscar_alternativas_veiculo(...)
+
+analisar_alternativas_planejamento(...)
+
+analisar_cenarios_planejamento(...)
+
+selecionar_plano(...)
+
+gerar_plano_planejado(...)
+
+salvar_viagens_planejadas(...)
+
+The current selection baseline chooses the lowest cost_per_piece, with explicit deterministic tie-breaks. It remains an ECONOMIC BASELINE. The economic-vs-service analysis is intentionally parallel to the existing selection flow and does not silently change the selected weekly plan.
+
+Resolved semantic issue: Capacity Requirement != Service Target
+
+Capacity Requirement answers:
+
+"How many trips are physically required for the forecast and vehicle capacity?"
+
+Service Target answers:
+
+"How many trips would the service policy prefer?"
+
+calcular_viagens_por_capacidade(...) represents the physical minimum.
+
+calcular_cenarios_planejamento(...) exposes two deterministic scenarios for each candidate vehicle.
+
+Economic scenario:
+
+trips = minimum required by capacity;
+
+offered capacity;
+
+utilization;
+
+planned cost;
+
+R$/Piece.
+
+Service scenario:
+
+trips = max(capacity-required trips, target service frequency);
+
+offered capacity;
+
+utilization;
+
+planned cost;
+
+R$/Piece.
+
+The explicit service premium is:
+
+service_premium = (service_cost_per_piece / economic_cost_per_piece) - 1
+
+The service premium quantifies the incremental unit cost required to buy the preferred service frequency instead of operating only at the physical capacity minimum.
+
+Validation against the synthetic dataset
+
+Example inspected: R001, week 2026-08-24, profile SHORT, forecast 7,200 pieces.
+
+For MEDIUM_TRUCK:
+
+capacity = 10,000 pieces;
+
+rate_per_trip = R$1,150;
+
+economic scenario = 1 trip, R$1,150 planned cost, 72% utilization, approximately R$0.160/piece;
+
+service scenario = 2 trips, R$2,300 planned cost, 36% utilization, approximately R$0.319/piece;
+
+service_premium = 100%.
+
+This demonstrates the intended semantic separation: one trip is physically sufficient, while buying the target service frequency requires a second trip and doubles transportation cost for that candidate.
+
+A full exploratory pass across the current synthetic dataset produced 256 route/week/vehicle alternatives:
+
+SHORT: 96 alternatives; 71 with 0% premium and 25 with 100% premium.
+
+MEDIUM: 120 alternatives; 85 with 0% premium and 35 with 100% premium.
+
+LONG: 40 alternatives; 38 with 0% premium and 2 with 100% premium.
+
+No intermediate service-premium values occur in the current synthetic dataset.
+
+Scope decision: do not overfit service-premium policy
+
+The current dataset and architecture are sufficient to demonstrate the intended business and architectural concept.
+
+Transportation Phase 0 will NOT be expanded merely to manufacture intermediate premium values or increasingly detailed logistics rules.
+
+No arbitrary SHORT / MEDIUM / LONG service-premium thresholds will be introduced at this checkpoint.
+
+Reason:
+
+the deterministic architecture already exposes Capacity Requirement, Service Target, Economic Scenario, Service Scenario and Service Premium;
+
+the current synthetic dataset produces only 0% and 100% service premiums;
+
+inventing thresholds such as 10%, 20%, 30% or similar would not materially change decisions on the current dataset;
+
+modifying forecasts, tariffs, frequency rules or other domain assumptions primarily to create more premium granularity would add domain complexity without demonstrating a new architectural capability;
+
+Transportation is explicitly a bounded analytics/extensibility case, not a transportation-optimization product.
+
+Therefore, service_premium remains an explicit decision-support metric rather than an automatically enforced final tolerance rule.
+
+A future business-backed use case may introduce an explicit tolerance policy if requirements justify it. Such a future policy must remain synthetic for this portfolio project, transparent, explainable and tested.
+
+This is a deliberate scope-control decision, not an unresolved defect.
+
+Testing checkpoint
+
+Confirmed full regression before economic-vs-service implementation: 62 passed.
+
+After adding calcular_cenarios_planejamento(...), the targeted Transportation planning-policy suite passed:
+
+19 passed.
+
+After integrating analisar_cenarios_planejamento(...) into src/analytics/transportation/planning.py, the targeted Transportation planning analytics suite passed:
+
+3 passed.
+
+Final confirmed full regression after the economic-vs-service increment:
+
+65 passed.
+
+Current checkpoint: 65 / 65 tests passing.
+
+Known follow-up items
+
+The rate schema supports effective_from / effective_to, but the current vehicle-alternative query does not yet enforce the tariff effective-date window. This is safe with the current single-rate synthetic dataset and only needs correction before multiple historical rates per route/vehicle are introduced.
+
+Zero forecast is allowed by the current forecast schema; metric logic involving cost_per_piece needs an explicit zero-volume policy before that edge case is relied upon.
+
+Master/forecast ETLs currently use append semantics and are not intended to be blindly rerun against already-loaded primary keys. Do not use pandas if_exists="replace", because that would destroy schema constraints. Define explicit idempotency/upsert behavior only when needed.
+
+Do not expand Transportation into increasingly detailed service-policy calibration, routing optimization or TMS behavior.
+
+Remaining bounded sequence from this checkpoint
+
+Freeze the economic-vs-service increment.
+
+Materialize the complete synthetic plan when required by the next analytical step.
+
+Build approximately 10-15 business-question-driven Advanced SQL analyses.
+
+Add bounded Plan vs Actual data/analytics.
+
+Implement cost variance and R$/Piece driver analysis.
+
+Complete transparent route-prioritization capstone.
+
+Expose selected deterministic analytics through Copilot-compatible API/tool contracts.
+
+Integrate selected natural-language questions through LLM/tool calling.
+
+Run Inventory + Transportation regression and document extensibility.
+
+STOP Transportation expansion and move to the bounded LinkedIn Agentic refactor.
+
+Resume instruction
+
+When a new development session starts, this file should be treated as the Transportation source of truth. Resume from the Current Implementation Checkpoint, not from older aspirational sequences.
+
+Current regression baseline:
+
+python -m pytest -q
+
+Expected checkpoint result at the time of this update:
+
+65 passed
+
+If regression remains green, continue one bounded step at a time from the remaining sequence above.
+
+Do not reopen service-premium calibration unless a concrete later business requirement makes it necessary.
+
+Definition of Done --- Transportation Phase 0
 
 Transportation Phase 0 is complete when:
 
