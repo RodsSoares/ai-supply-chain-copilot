@@ -1,19 +1,19 @@
 # Project Audit
 
-Gerado em: 01/09/2026 23:21:31
+Gerado em: 16/09/2026 23:32:22
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **26**
-- Linhas totais: **3897**
-- Linhas efetivas de código: **2925**
-- Funções: **125**
+- Arquivos Python: **28**
+- Linhas totais: **4050**
+- Linhas efetivas de código: **3044**
+- Funções: **132**
 - Classes: **5**
-- Imports internos: **28**
+- Imports internos: **31**
 - Imports externos: **20**
-- Imports da biblioteca padrão: **28**
+- Imports da biblioteca padrão: **29**
 - TODOs/FIXMEs em comentários: **0**
 - Funções sem docstring: **25**
 - Arquivos com erro de sintaxe: **0**
@@ -55,7 +55,7 @@ inventory_export.py
 
 | Entrega | Caminho | Status |
 |---|---|:---:|
-| Banco SQLite | `database/inventory.db` | ✅ |
+| Banco SQLite | `database/supply_chain.db` | ✅ |
 | Arquivo analítico | `output/inventory_analysis.csv` | ✅ |
 | Relatório Excel | `reports/excel/indicadores_r1.xlsx` | ✅ |
 | Dashboard Power BI | `reports/powerbi/AI_Supply_Chain_Copilot.pbix` | ✅ |
@@ -68,8 +68,8 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 8.0/10 |
-| Complexidade estrutural | 9.2/10 |
+| Cobertura de docstrings | 8.1/10 |
+| Complexidade estrutural | 9.3/10 |
 | Integridade sintática | 10.0/10 |
 | Saúde geral | **9.3/10** |
 
@@ -77,6 +77,8 @@ inventory_export.py
 
 ```text
 ai-supply-chain-copilot/
+├── .devcontainer/
+│   └── devcontainer.json
 ├── .gitignore
 ├── config/
 │   └── business_rules.json
@@ -84,26 +86,38 @@ ai-supply-chain-copilot/
 │   ├── processed/
 │   │   └── .gitkeep
 │   ├── raw/
-│   │   ├── depositos.csv
-│   │   └── produtos.csv
+│   │   ├── inventory/
+│   │   │   ├── depositos.csv
+│   │   │   └── produtos.csv
+│   │   └── transportation/
+│   │       └── forecast_raw.csv
 │   └── synthetic/
-│       └── .gitkeep
+│       └── transportation/
+│           ├── route_vehicle_options.csv
+│           ├── route_vehicle_rates.csv
+│           ├── routes.csv
+│           └── vehicle_types.csv
 ├── database/
-│   └── inventory.db
+│   └── supply_chain.db
 ├── docs/
 │   ├── architecture/
 │   │   ├── 01_system_overview.md
 │   │   ├── 02_current_architecture.md
 │   │   ├── 03_data_model.md
 │   │   ├── 04_decision_log.md
-│   │   └── 05_cloud_deployment.md
+│   │   ├── 05_cloud_deployment.md
+│   │   └── 06_transportation_architecture.md
 │   ├── backlog/
 │   │   └── backlog.md
 │   ├── evaluations/
 │   │   └── LLM_Real_Model_Benchmark_Final.xlsx
 │   ├── images/
 │   │   ├── architecture-overview.png
-│   │   └── first llm real answer.png
+│   │   ├── art-end-to-end-copilot-flow.png
+│   │   ├── banner.png
+│   │   ├── featured.png
+│   │   ├── first-llm-real-answer.png
+│   │   └── public-mobile-validation.png
 │   ├── presentations/
 │   │   ├── AI-Supply-Chain-Copilot.pdf
 │   │   └── AI-Supply-Chain-Copilot.pptx
@@ -150,10 +164,13 @@ ai-supply-chain-copilot/
 │   │   └── main.py
 │   ├── database/
 │   │   ├── connection.py
-│   │   └── create_tables.py
+│   │   ├── create_inventory_tables.py
+│   │   └── create_transportation_tables.py
 │   ├── etl/
-│   │   ├── load_products.py
-│   │   └── load_warehouses.py
+│   │   ├── inventory/
+│   │   │   ├── load_products.py
+│   │   │   └── load_warehouses.py
+│   │   └── transportation
 │   └── main.py
 └── tests/
     ├── golden_test_set.md
@@ -161,14 +178,15 @@ ai-supply-chain-copilot/
     ├── test_ai_context.py
     ├── test_ai_service.py
     ├── test_ai_tools.py
-    └── test_api_copilot.py
+    ├── test_api_copilot.py
+    └── test_transportation_tables.py
 ```
 
 ## 7. Arquivos Python
 
 | Arquivo | Linhas | Funções | Classes | TODOs |
 |---|---:|---:|---:|---:|
-| `frontend/app.py` | 519 | 2 | 0 | 0 |
+| `frontend/app.py` | 520 | 2 | 0 | 0 |
 | `scripts/analyze_inventory.py` | 39 | 1 | 0 | 0 |
 | `scripts/business_rules.py` | 63 | 2 | 0 | 0 |
 | `scripts/database_setup.py` | 12 | 0 | 0 | 0 |
@@ -185,15 +203,17 @@ ai-supply-chain-copilot/
 | `src/ai/tools.py` | 81 | 1 | 0 | 0 |
 | `src/api/main.py` | 209 | 8 | 1 | 0 |
 | `src/database/connection.py` | 17 | 1 | 0 | 0 |
-| `src/database/create_tables.py` | 121 | 5 | 0 | 0 |
-| `src/etl/load_products.py` | 149 | 4 | 0 | 0 |
-| `src/etl/load_warehouses.py` | 146 | 4 | 0 | 0 |
+| `src/database/create_inventory_tables.py` | 121 | 5 | 0 | 0 |
+| `src/database/create_transportation_tables.py` | 110 | 6 | 0 | 0 |
+| `src/etl/inventory/load_products.py` | 149 | 4 | 0 | 0 |
+| `src/etl/inventory/load_warehouses.py` | 146 | 4 | 0 | 0 |
 | `src/main.py` | 21 | 1 | 0 | 0 |
 | `tests/test_ai_client.py` | 475 | 22 | 3 | 0 |
 | `tests/test_ai_context.py` | 127 | 5 | 0 | 0 |
 | `tests/test_ai_service.py` | 238 | 13 | 0 | 0 |
 | `tests/test_ai_tools.py` | 135 | 14 | 1 | 0 |
 | `tests/test_api_copilot.py` | 110 | 6 | 0 | 0 |
+| `tests/test_transportation_tables.py` | 42 | 1 | 0 | 0 |
 
 ## 8. Funções e classes
 
@@ -335,7 +355,7 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `conectar_banco` | 8–17 | `—` | SIM |
 
-### `src/database/create_tables.py`
+### `src/database/create_inventory_tables.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
@@ -343,9 +363,20 @@ ai-supply-chain-copilot/
 | `criar_tabela_depositos` | 23–37 | `cursor` | SIM |
 | `criar_tabela_parametros_estoque` | 40–66 | `cursor` | SIM |
 | `criar_tabela_movimentacoes_estoque` | 69–94 | `cursor` | SIM |
-| `criar_tabelas` | 97–117 | `—` | SIM |
+| `criar_tabelas_inventory` | 97–117 | `—` | SIM |
 
-### `src/etl/load_products.py`
+### `src/database/create_transportation_tables.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `criar_tabela_routes` | 6–17 | `cursor` | SIM |
+| `criar_tabela_vehicle_types` | 20–30 | `cursor` | SIM |
+| `criar_tabela_route_vehicle_options` | 33–50 | `cursor` | SIM |
+| `criar_tabela_route_vehicle_rates` | 53–77 | `cursor` | SIM |
+| `criar_tabela_forecast_raw` | 80–96 | `cursor` | SIM |
+| `criar_tabelas_transportation` | 99–110 | `—` | SIM |
+
+### `src/etl/inventory/load_products.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
@@ -354,7 +385,7 @@ ai-supply-chain-copilot/
 | `carregar_produtos` | 96–130 | `df` | SIM |
 | `main` | 133–145 | `—` | SIM |
 
-### `src/etl/load_warehouses.py`
+### `src/etl/inventory/load_warehouses.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
@@ -464,6 +495,12 @@ ai-supply-chain-copilot/
 | `test_consultar_copilot_trata_erros_da_camada_de_ia` | 82–110 | `monkeypatch, erro` | SIM |
 | `responder_fake` | 91–92 | `pergunta` | NÃO |
 
+### `tests/test_transportation_tables.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_criar_tabelas_transportation` | 9–41 | `tmp_path, monkeypatch` | SIM |
+
 ## 9. Dependências
 
 ### Dependências internas
@@ -485,17 +522,20 @@ ai-supply-chain-copilot/
 | `src.ai.service` | `src.ai.tools` |
 | `src.api.main` | `src.ai.service` |
 | `src.api.main` | `src.database.connection` |
-| `src.database.create_tables` | `src.database.connection` |
-| `src.etl.load_products` | `src.database.connection` |
-| `src.etl.load_warehouses` | `src.database.connection` |
-| `src.main` | `src.database.create_tables` |
-| `src.main` | `src.etl.load_products` |
-| `src.main` | `src.etl.load_warehouses` |
+| `src.database.create_inventory_tables` | `src.database.connection` |
+| `src.database.create_transportation_tables` | `src.database.connection` |
+| `src.etl.inventory.load_products` | `src.database.connection` |
+| `src.etl.inventory.load_warehouses` | `src.database.connection` |
+| `src.main` | `src.database.create_inventory_tables` |
+| `src.main` | `src.etl.inventory.load_products` |
+| `src.main` | `src.etl.inventory.load_warehouses` |
 | `tests.test_ai_client` | `src.ai.client` |
 | `tests.test_ai_context` | `src.ai.context` |
 | `tests.test_ai_service` | `src.ai.service` |
 | `tests.test_ai_tools` | `src.ai.tools` |
 | `tests.test_api_copilot` | `src.api.main` |
+| `tests.test_transportation_tables` | `src.database.connection` |
+| `tests.test_transportation_tables` | `src.database.create_transportation_tables` |
 
 ### Dependências externas
 
@@ -526,17 +566,20 @@ flowchart LR
     src_ai_service["src.ai.service"] --> src_ai_tools["src.ai.tools"]
     src_api_main["src.api.main"] --> src_ai_service["src.ai.service"]
     src_api_main["src.api.main"] --> src_database_connection["src.database.connection"]
-    src_database_create_tables["src.database.create_tables"] --> src_database_connection["src.database.connection"]
-    src_etl_load_products["src.etl.load_products"] --> src_database_connection["src.database.connection"]
-    src_etl_load_warehouses["src.etl.load_warehouses"] --> src_database_connection["src.database.connection"]
-    src_main["src.main"] --> src_database_create_tables["src.database.create_tables"]
-    src_main["src.main"] --> src_etl_load_products["src.etl.load_products"]
-    src_main["src.main"] --> src_etl_load_warehouses["src.etl.load_warehouses"]
+    src_database_create_inventory_tables["src.database.create_inventory_tables"] --> src_database_connection["src.database.connection"]
+    src_database_create_transportation_tables["src.database.create_transportation_tables"] --> src_database_connection["src.database.connection"]
+    src_etl_inventory_load_products["src.etl.inventory.load_products"] --> src_database_connection["src.database.connection"]
+    src_etl_inventory_load_warehouses["src.etl.inventory.load_warehouses"] --> src_database_connection["src.database.connection"]
+    src_main["src.main"] --> src_database_create_inventory_tables["src.database.create_inventory_tables"]
+    src_main["src.main"] --> src_etl_inventory_load_products["src.etl.inventory.load_products"]
+    src_main["src.main"] --> src_etl_inventory_load_warehouses["src.etl.inventory.load_warehouses"]
     tests_test_ai_client["tests.test_ai_client"] --> src_ai_client["src.ai.client"]
     tests_test_ai_context["tests.test_ai_context"] --> src_ai_context["src.ai.context"]
     tests_test_ai_service["tests.test_ai_service"] --> src_ai_service["src.ai.service"]
     tests_test_ai_tools["tests.test_ai_tools"] --> src_ai_tools["src.ai.tools"]
     tests_test_api_copilot["tests.test_api_copilot"] --> src_api_main["src.api.main"]
+    tests_test_transportation_tables["tests.test_transportation_tables"] --> src_database_connection["src.database.connection"]
+    tests_test_transportation_tables["tests.test_transportation_tables"] --> src_database_create_transportation_tables["src.database.create_transportation_tables"]
 ```
 
 ## 10. Observações automáticas do repositório

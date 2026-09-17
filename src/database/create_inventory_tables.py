@@ -94,7 +94,7 @@ def criar_tabela_movimentacoes_estoque(cursor):
     )
 
 
-def criar_tabelas():
+def criar_tabelas_inventory():
     """
     Cria todas as tabelas do módulo de gestão de estoque.
     """
@@ -118,4 +118,4 @@ def criar_tabelas():
 
 
 if __name__ == "__main__":
-    criar_tabelas()
+    criar_tabelas_inventory()

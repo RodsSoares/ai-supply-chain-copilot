@@ -1,471 +1,699 @@
-# Transportation Analytics --- Context, Architecture & Development Charter
+Transportation Analytics Architecture
 
-**Project:** AI Supply Chain Copilot\
-**Module / use case:** Transportation Analytics\
-**Status:** Pre-development context freeze\
-**Date:** 2026-09-16
+Document: 06_transportation_architecture.md
+Project: AI Supply Chain Copilot
+Status: Phase 0 --- Bounded Transportation Extension
+Last updated: 2026-09-16
 
-------------------------------------------------------------------------
+1. Purpose
 
-## 1. Purpose
+Transportation is a bounded analytics extension of the existing AI
+Supply Chain Copilot.
 
-Transportation is **not a new standalone product**. It is a bounded
-extension of the existing **AI Supply Chain Copilot** whose primary
-purposes are:
+Its purpose is to:
 
-1.  consolidate advanced SQL through realistic Transportation Planning
-    problems;
-2.  translate Rodrigo's prior planning/domain experience into a modern
-    analytics implementation;
-3.  add a second analytical domain to the Copilot, alongside Inventory;
-4.  prove that the Copilot architecture is extensible without rebuilding
-    the application;
-5.  expose deterministic Transportation analytics as tools that can
-    later be selected and interpreted by an LLM.
+strengthen advanced SQL skills through realistic Supply Chain
+problems;
 
-The intended portfolio story is:
+rebuild classes of transportation-planning problems previously
+encountered professionally using 100% synthetic data;
 
-> **Business problem → Data/SQL → Analytics → Decision Support →
-> LLM/Tool Calling**
+demonstrate a strong deterministic analytics layer;
 
-and, at the broader Copilot level:
+prove that the Copilot architecture can support a second Supply
+Chain domain without breaking Inventory;
 
-> **Analytics → Decision Intelligence → AI Copilot → Agentic Execution**
+expose Transportation analytics through compatible API/tool
+contracts;
 
-Transportation stops after the SQL/analytics capability is connected to
-the Copilot and extensibility is demonstrated. Further
-optimization/productization belongs in backlog.
+allow the LLM layer to interpret deterministic analytical results in
+business language.
 
-------------------------------------------------------------------------
+Transportation is not intended to become a standalone product.
 
-## 2. Origin of the business problem
+Transportation is an analytics extensibility case, not a
+transportation optimization product.
 
-The case is inspired by classes of Transportation Planning problems
-Rodrigo previously solved through an advanced Excel planning model.
+The target portfolio narrative is:
 
-The original model connected concepts such as:
+I took classes of transportation-planning problems I had solved
+professionally and rebuilt them with a modern analytics architecture
+using fully synthetic data, then integrated those capabilities into an
+existing AI Supply Chain Copilot to demonstrate architectural
+extensibility.
 
--   demand/forecast;
--   destinations and routes;
--   transportation capacity;
--   vehicle size/category;
--   required frequency / number of trips;
--   capacity utilization;
--   route rates;
--   transportation budget;
--   cost per piece (`R$/PÇ`);
--   planning assumptions and scenarios;
--   seasonality;
--   operational/financial consolidation;
--   environmental/GHG-related calculations.
+2. Clean-Room and Confidentiality Rules
 
-The goal is **not to reproduce the original spreadsheet**.
+This project must reconstruct the problem class, not any previous
+proprietary implementation.
 
-The spreadsheet is evidence of the type of analytical reasoning and
-planning problems involved. Transportation will rebuild those problem
-classes using a new data model and synthetic data.
+Allowed
 
-------------------------------------------------------------------------
+generic transportation-planning concepts;
 
-## 3. Confidentiality and clean-room rule
+generic Supply Chain domain knowledge;
 
-The public/project implementation must not expose or reproduce
-confidential or company-specific information.
+analytical reasoning;
 
-### Do not reuse
+synthetic planning rules;
 
--   company name or branding;
--   real distribution centers;
--   real stores/destinations;
--   real routes;
--   real carriers;
--   real tariffs;
--   real costs;
--   real volumes;
--   real identifiers/codes;
--   proprietary commercial rules;
--   original datasets;
--   copied spreadsheet formulas or implementation details where they
-    encode proprietary logic.
+synthetic entities and datasets;
 
-### What may be reused
+independently designed formulas and schemas;
 
-The project may reuse **general domain knowledge and classes of business
-questions**, such as:
+public/common KPIs and analytical techniques.
 
--   how forecast affects transportation requirements;
--   capacity and utilization reasoning;
--   relationship between volume, trips and costs;
--   transportation cost normalization;
--   budget variance reasoning;
--   planning-vs-actual analysis;
--   generic sustainability reasoning.
+Prohibited
 
-All entities and observations in the new implementation must be
-**synthetic**.
+Do not expose or reproduce:
 
-The principle is:
+former employer names in the public project;
 
-> **Rebuild the problem, not the spreadsheet.**
+real operational data;
 
-------------------------------------------------------------------------
+real routes;
 
-## 4. Architectural principle
+real distribution centers or stores;
 
-Transportation is a new analytical capability inside the existing
+real carriers;
+
+real tariffs or costs;
+
+real volumes;
+
+real identifiers;
+
+proprietary commercial rules;
+
+copied formulas or spreadsheet logic;
+
+confidential operating constraints.
+
+Core rule:
+
+Rebuild the problem, not the spreadsheet.
+
+The goal is not historical reproduction. It is to create a credible
+synthetic analytical domain inspired by real classes of planning
+problems.
+
+3. Scope
+
+The Transportation domain will cover a bounded planning and analytics
+chain:
+
+Forecast Demand
+      ↓
+Route Characteristics
+      ↓
+Planning Policy
+      ↓
+Vehicle / Capacity Choice
+      ↓
+Required Trips
+      ↓
+Capacity Utilization
+      ↓
+Transportation Cost
+      ↓
+R$/Piece
+      ↓
+Plan vs Actual
+      ↓
+Variance / Driver Analysis
+      ↓
+Prioritization
+
+The emphasis is on analytics and decision support, not mathematical
+optimization.
+
+4. Architectural Position
+
+Transportation becomes a second analytical domain inside the existing
 Copilot.
+
+Data / Synthetic ERP
+        ↓
+Canonical Data Layer
+        ↓
+Decision / Analytics Layer
+        ├── Inventory
+        └── Transportation
+                ↓
+         API / Tool Contracts
+                ↓
+          LLM / Copilot
+
+For natural-language analytical questions:
+
+User Question
+      ↓
+LLM Intent / Tool Selection
+      ↓
+Transportation Analytical Tool
+      ↓
+SQL / Deterministic Analytics
+      ↓
+Structured Result
+      ↓
+LLM Interpretation
+      ↓
+Business Answer
+
+Core architectural rule
+
+LLM ≠ Calculator.
+
+Authoritative calculations belong to SQL and deterministic analytics.
+
+The LLM may:
+
+identify intent;
+
+select tools;
+
+synthesize results;
+
+explain drivers;
+
+translate analytical output into business language.
+
+The LLM must not become the source of truth for KPI calculations.
+
+5. Planning Policy v0
+
+The Transportation planning model uses a deliberately simplified,
+synthetic policy.
+
+It captures enough business realism to generate meaningful analytical
+problems without attempting to reproduce a historical operation.
+
+5.1 Service Frequency
+
+The planning preference is to serve each destination:
+
+at least 2 times per week whenever economically reasonable.
+
+This is a target, not an absolute hard constraint.
+
+If maintaining two deliveries per week is economically unjustifiable for
+a specific demand/route configuration, a lower frequency may be
+accepted.
+
+5.2 Short Routes
+
+For short routes, the policy generally favors smaller vehicles.
+
+Business rationale:
+
+increase delivery frequency;
+
+improve replenishment flexibility;
+
+support more frequent destination service;
+
+accept that this may produce a somewhat higher transportation cost
+per piece.
+
+Therefore:
+
+Short route → frequency/flexibility receives greater weight.
+
+5.3 Long Routes
+
+For long routes, the policy generally favors larger vehicles.
+
+Business rationale:
+
+exploit vehicle capacity;
+
+spread trip cost across more units;
+
+reduce transportation cost per piece;
+
+capture scale benefits on longer movements.
+
+Therefore:
+
+Long route → scale/unit economics receives greater weight.
+
+5.4 Economic Exception
+
+The target service frequency may be relaxed when the incremental
+transportation cost is not economically justified.
+
+For the MVP, this exception will be implemented using a simple,
+explicit, synthetic and testable rule.
+
+The project does not attempt to discover or recreate the exact
+historical decision rule.
+
+5.5 Non-Linear Vehicle Economics
+
+Vehicle capacity and trip cost do not increase proportionally.
+
+A larger vehicle may carry substantially more volume without costing
+proportionally more because transportation contains cost components that
+do not scale linearly with vehicle capacity.
+
+Therefore, vehicle selection cannot be modeled as:
+
+cost ∝ capacity
+
+Instead, each route/vehicle combination has its own synthetic tariff.
+
+5.6 Trips Are Derived
+
+planned_trips is not an arbitrary primary planning input.
+
+It is derived from:
+
+forecast demand;
+
+vehicle capacity;
+
+route characteristics;
+
+target frequency;
+
+vehicle selection;
+
+economic feasibility rules.
+
+A simplified conceptual relationship is:
+
+Forecast
+   +
+Route
+   +
+Vehicle Capacity
+   +
+Service Policy
+   +
+Route/Vehicle Tariff
+        ↓
+Vehicle Configuration
+        ↓
+Planned Trips
+
+planned_trips may be materialized in the plan for analytics, but it
+remains a derived planning output.
+
+6. Planning Policy vs Optimization
+
+The MVP must not evolve into a vehicle-routing or fleet-optimization
+engine.
+
+The Planning Policy exists primarily to produce a realistic and
+explainable planning scenario.
 
 Conceptually:
 
-``` text
-                         AI SUPPLY CHAIN COPILOT
-                                  |
-                           LLM / Tool Calling
-                                  |
-                    Decision / Analytics Layer
-                         /               \
-                  Inventory          Transportation
-                         \               /
-                         Canonical Data Layer
-                                  |
-                              Data / ERP
-```
+Forecast
+    ↓
+Route Characteristics
+    ↓
+Eligible / Preferred Vehicle Logic
+    ↓
+Target Service Frequency
+    ↓
+Economic Feasibility
+    ↓
+Vehicle + Trips
+    ↓
+Capacity Utilization
+    ↓
+Planned Cost
+    ↓
+R$/Piece
 
-The intended proof is that a second business domain can be introduced
-while preserving the existing Copilot architecture and Inventory
-capability.
+The analytical system can compare valid alternatives, but the objective
+is not to build a globally optimal mathematical transportation plan.
 
-### Extensibility criterion
+A lower-cost configuration is not automatically the correct
+configuration if it violates the synthetic service policy.
 
-The project succeeds architecturally when:
+7. PLAN and ACTUAL
 
--   Inventory continues to work;
--   Transportation has its own deterministic analytics;
--   Transportation capabilities follow compatible contracts/tool
-    patterns;
--   the LLM can route natural-language questions to the appropriate
-    analytical capability;
--   adding Transportation does not require rebuilding the Copilot.
+The model explicitly separates planned and realized operations.
 
-------------------------------------------------------------------------
-
-## 5. Separation of responsibilities
-
-A core architectural rule is:
-
-> **LLM ≠ Calculator.**
-
-The LLM should not be responsible for computing authoritative
-transportation KPIs from raw records.
-
-The intended flow is:
-
-``` text
-Natural-language question
-        ↓
-LLM / intent + tool selection
-        ↓
-Transportation analytical tool
-        ↓
-SQL / deterministic analytics
-        ↓
-Structured output
-        ↓
-LLM interpretation/explanation
-```
-
-Example:
-
-``` text
-User:
-"Why did transportation cost increase in August?"
-
-        ↓
-
-Tool:
-analyze_transport_cost_variance(...)
-
-        ↓
-
-Structured analytics:
-- total cost change
-- volume change
-- R$/piece change
-- volume effect
-- unit-cost effect
-
-        ↓
-
-LLM:
-business-language explanation
-```
-
-SQL/analytics owns the calculation. The LLM owns interpretation,
-synthesis and natural-language interaction.
-
-This also follows the broader project principle:
-
-> **Context ≠ Policy.**
-
-Critical rules, contracts and calculations should live in
-deterministic/enforceable layers rather than merely in prompts.
-
-------------------------------------------------------------------------
-
-## 6. Analytical model: PLAN and ACTUAL
-
-Transportation should not be merely historical reporting. The original
-planning problem was fundamentally prospective:
-
-> **Given the demand we expect, what transportation operation will we
-> need?**
-
-The synthetic model should therefore distinguish at least two analytical
-worlds:
-
-``` text
 PLAN
-demand_forecast
-planned_capacity
-planned_trips
-planned_costs
 
-          ↕ comparison
+Generated from:
+
+demand forecast;
+
+route characteristics;
+
+vehicle capacities;
+
+route/vehicle tariffs;
+
+Planning Policy v0.
+
+Produces analytical outputs such as:
+
+selected vehicle;
+
+planned trips;
+
+planned capacity;
+
+planned utilization;
+
+planned transportation cost;
+
+planned R$/piece.
 
 ACTUAL
-shipments
-actual_trips
-actual_volume
-actual_costs
-```
 
-This enables both forward-looking planning and plan-vs-actual analysis.
+Represents synthetic realized operations:
 
-------------------------------------------------------------------------
+actual transported pieces;
 
-## 7. Candidate synthetic data model
+actual trips;
 
-Exact schema should be finalized during implementation rather than
-over-designed in advance.
+actual transportation cost;
 
-Likely entities include:
+potentially actual vehicle configuration where required.
 
-``` text
-distribution_centers
-destinations
+This separation enables:
+
+Plan vs Actual analytics
+
+including volume, trip, utilization and cost variances.
+
+8. Minimum Synthetic Data Model
+
+The initial model should remain small.
+
 routes
-carriers
+
+route_id
+origin_id
+destination_id
+distance_km
+route_profile       -- SHORT / LONG
+
 vehicle_types
-route_rates
+
+vehicle_type_id
+vehicle_name
+capacity_pieces
+
+route_vehicle_rates
+
+route_id
+vehicle_type_id
+effective_from
+effective_to
+rate_per_trip
+
+The temporal fields allow future synthetic tariff changes without
+redesigning the schema.
+
 demand_forecast
+
+period
+route_id
+forecast_pieces
+
+transport_plan
+
+period
+route_id
+vehicle_type_id
 planned_trips
-shipments
+planned_capacity
+planned_utilization
+planned_cost
+planned_cost_per_piece
+
+transport_plan is a derived/materialized analytical output.
+
+transport_actual
+
+period
+route_id
+actual_pieces
 actual_trips
-planning_assumptions
-calendar
-```
+actual_cost
 
-Possible conceptual relationships:
+Additional fields should only be introduced when required by a concrete
+business question.
 
-``` text
-destinations
-     ↓
-demand_forecast
-     ↓
-routes ───────────── carriers
-     ↓
-vehicle_types
-     ↓
-route_rates
-     ↓
-planned_trips
-     ↓
-planned_transport_cost
-```
+9. Core Planning Calculations
 
-### Route rates
+For a candidate vehicle configuration:
 
-Rates should not simply be a `cost` column embedded in `routes`.
+Capacity-Driven Trips
 
-A generic model may include:
+[ Trips_{capacity} = \left{=tex}\lceil{=tex}
+\frac{ForecastPieces}{VehicleCapacity}{=tex}
+\right{=tex}\rceil{=tex} ]
 
-``` text
-route_rates
-- route_id
-- carrier_id
-- vehicle_type_id
-- effective_from
-- effective_to
-- rate
-- rate_type
-```
+Offered Capacity
 
-This supports rate changes, vehicle/capacity choices and temporal
-analysis.
+[ OfferedCapacity = PlannedTrips \times {=tex}VehicleCapacity ]
 
-------------------------------------------------------------------------
+Capacity Utilization
 
-## 8. Core planning chain
+[ Utilization = \frac{ForecastPieces}{OfferedCapacity}{=tex} ]
 
-The principal business flow to preserve is:
+Planned Transportation Cost
 
-``` text
-Demand forecast
-      ↓
-Consolidation by destination / route / period
-      ↓
-Required transportation volume
-      ↓
-Vehicle capacity
-      ↓
-Required trips / frequency
-      ↓
-Expected capacity utilization
-      ↓
-Applicable rate
-      ↓
-Planned transportation cost
-      ↓
-R$/piece
-      ↓
-Budget / variance / decision
-```
+[ PlannedCost = PlannedTrips \times {=tex}RatePerTrip ]
 
-This is the backbone of the Transportation case.
+Cost per Piece
 
-------------------------------------------------------------------------
+[ R$/Piece = \frac{TransportationCost}{TransportedPieces}{=tex} ]
 
-## 9. Canonical business questions
+These formulas are deterministic and must be tested independently of the
+LLM.
 
-The SQL work should be driven by business questions rather than by
-isolated syntax exercises.
+The final number of planned trips may also reflect the target service
+frequency and economic-exception rule.
 
-### BQ-01 --- Transportation cost variance
+10. Why R$/Piece Is a Core KPI
 
-**Canonical question:**
+R$/Piece is not a cosmetic metric.
 
-> **Did transportation cost increase because we moved more volume, or
-> because transporting each unit became more expensive?**
+It normalizes transportation spending by transported volume and answers
+an important executive question:
 
-Portuguese business formulation:
+Did transportation cost increase because we moved more volume, or
+because transporting each unit became more expensive?
 
-> **O custo aumentou porque transportamos mais ou porque ficou mais caro
-> transportar?**
+For example:
 
-This is a central question of the case.
+cost +15%, pieces +20% → R$/piece decreases → unit economics
+improved;
 
-The primary normalization metric is:
+cost +15%, pieces +5% → R$/piece increases → unit economics
+deteriorated;
 
-``` text
-R$/PÇ = Total Transportation Cost / Pieces Transported
-```
+cost +15%, pieces +15% → R$/piece approximately stable → increase
+is largely volume-driven.
 
-Cost alone is insufficient because transportation cost naturally changes
-with business volume.
+R$/piece is therefore a protagonist of the Transportation analytical
+layer.
 
-Interpretation examples:
-
--   cost ↑ while pieces grow faster → unit transportation efficiency may
-    have improved;
--   cost ↑ while pieces grow more slowly → `R$/PÇ` deteriorated;
--   cost and pieces grow proportionally → cost increase is largely
-    volume-driven.
-
-------------------------------------------------------------------------
-
-## 10. Cost variance decomposition
-
-A useful analytical extension is to explicitly decompose cost variance.
+11. Cost Variance Decomposition
 
 Let:
 
-``` text
-C = transportation cost
-V = transported volume/pieces
-U = unit transportation cost (R$/piece)
+[ C = V \times {=tex}U ]
 
-C = V × U
-```
+where:
 
-For baseline period `0` and current period `1`:
+C = transportation cost;
 
-``` text
-Volume Effect = (V1 - V0) × U0
+V = transported pieces;
 
-Unit Cost Effect = V1 × (U1 - U0)
+U = transportation cost per piece.
 
-Δ Cost = Volume Effect + Unit Cost Effect
-```
+Between period 0 and period 1:
 
-This allows the system to explain not only that cost changed, but how
-much of the change came from:
+Volume Effect
 
--   business/volume growth;
--   deterioration or improvement in unit transportation cost.
+[ VolumeEffect = (V_1 - V_0) \times {=tex}U_0 ]
 
-A later diagnostic layer can investigate **why `R$/PÇ` changed**.
+Unit Cost Effect
 
-Candidate drivers include:
+[ UnitCostEffect = V_1 \times {=tex}(U_1 - U_0) ]
 
-``` text
-R$/PÇ change
-    |
-    +-- rate changes
-    +-- capacity utilization
-    +-- frequency / number of trips
-    +-- route mix
-    +-- vehicle mix
-    +-- modal mix
-```
+Reconciliation
 
-Do not prematurely implement a sophisticated causal decomposition. Start
-with a transparent, explainable variance model.
+[ \Delta {=tex}Cost = VolumeEffect + UnitCostEffect ]
 
-------------------------------------------------------------------------
+Example:
 
-## 11. Other business questions
+January
+1,000,000 pieces × R$0.50 = R$500,000
 
-### Demand and capacity
+February
+1,200,000 pieces × R$0.55 = R$660,000
 
--   How much volume must each route transport by week/month?
--   How many trips are required to serve forecast demand?
--   What is expected capacity utilization by route?
--   Which routes are approaching or exceeding available capacity?
--   Which routes are persistently underutilized?
--   Is demand on a route increasing or decreasing?
--   Is a capacity issue temporary or persistent?
+Cost change = +R$160,000
+Volume effect = +R$100,000
+Unit-cost effect = +R$60,000
 
-### Cost and budget
+Interpretation:
 
--   What is projected transportation spend for the next period?
--   Which routes account for the largest share of the transportation
-    budget?
--   Which routes have the fastest cost growth?
--   Which routes have deteriorating `R$/PÇ`?
--   How much of a cost increase is explained by volume versus unit cost?
--   Which routes are driving budget variance?
--   Did a rate change materially affect cost?
--   Is the chosen vehicle/capacity economically appropriate for the
-    forecast volume?
+R$100k of the increase came from additional transported volume;
 
-### Plan vs. actual
+R$60k came from deterioration in transportation cost per piece.
 
--   Where is actual volume diverging from forecast?
--   Where are actual trips exceeding planned trips?
--   Where is actual utilization worse than planned?
--   Which routes are generating unfavorable cost variance?
--   Is the deviation isolated or persistent?
+This decomposition should remain simple, transparent and explainable.
 
-### Prioritization
+12. Driver Hierarchy
 
-A capstone question should be:
+The analytical hierarchy should distinguish detection from diagnosis.
 
-> **Which routes should be prioritized for operational review in the
-> next period, and why?**
+BQ-00 --- What operation is required for the forecast?
 
-Candidate output:
+Forecast
+→ Vehicle / Capacity
+→ Trips
+→ Utilization
+→ Cost
+→ R$/Piece
 
-``` text
+BQ-01 --- Why did transportation cost change?
+
+Primary decomposition:
+
+Cost Change
+├── Volume Effect
+└── Unit-Cost Effect
+
+BQ-02 --- Why did R$/Piece change?
+
+Potential diagnostic drivers:
+
+R$/Piece
+├── route/vehicle tariff
+├── capacity utilization
+├── trips / service frequency
+├── vehicle mix
+├── route mix
+└── volume crossing a capacity threshold
+
+The MVP should avoid claiming causal precision beyond what the
+deterministic data supports.
+
+The objective is explainable driver analysis, not an unnecessarily
+complex causal model.
+
+13. Capacity Threshold Effect
+
+Transportation cost can behave discontinuously.
+
+Example:
+
+Vehicle capacity: 10,000 pieces
+Rate per trip: R$3,000
+
+For 9,900 pieces:
+
+1 trip
+Cost = R$3,000
+R$/piece ≈ R$0.303
+
+For 10,100 pieces:
+
+2 trips
+Cost = R$6,000
+R$/piece ≈ R$0.594
+
+A small increase in volume can therefore create a large cost increase
+when demand crosses a capacity threshold.
+
+This illustrates why:
+
+volume change alone does not explain transportation cost behavior.
+
+The analytical layer should be able to distinguish volume growth from
+operational effects such as additional trips and lower utilization.
+
+14. Canonical Business Questions
+
+The dataset and SQL exercises should be driven by business questions
+rather than isolated syntax drills.
+
+Demand and Capacity
+
+What is the forecast volume by route and period?
+
+How many trips are required to serve forecast demand?
+
+What capacity will be offered?
+
+What is expected capacity utilization by route?
+
+Which routes are approaching capacity thresholds?
+
+Which routes are persistently underutilized?
+
+Which routes require additional trips after relatively small demand
+changes?
+
+Is route demand increasing or decreasing?
+
+Service Policy
+
+Which destinations achieve the target service frequency?
+
+Where does maintaining target frequency materially increase
+R$/piece?
+
+Which routes operate below target frequency because of economic
+rules?
+
+Are short routes achieving the intended higher-frequency profile?
+
+Are long routes capturing expected scale benefits?
+
+Cost and Budget
+
+What is projected transportation spend?
+
+Which routes account for the largest share of transportation cost?
+
+Which routes have the fastest cost growth?
+
+Which routes show deteriorating R$/piece?
+
+How much of cost growth comes from volume versus unit-cost
+deterioration?
+
+Which routes drive the largest share of total cost variance?
+
+Did a tariff change materially affect a route?
+
+Where is low utilization increasing unit cost?
+
+Plan vs Actual
+
+Where is actual volume diverging from forecast?
+
+Where are actual trips above plan?
+
+Where is actual utilization worse than planned?
+
+Which routes generate unfavorable cost variance?
+
+Are deviations isolated or persistent?
+
+Prioritization
+
+Capstone question:
+
+Which routes should be prioritized for operational review in the
+next period, and why?
+
+Candidate analytical output:
+
 route_id
 forecast_volume
 planned_trips
@@ -477,186 +705,204 @@ cost_per_piece_change_pct
 utilization_change
 network_cost_share
 priority_rank
-```
 
-The prioritization logic should remain explainable.
+Prioritization logic must remain transparent and explainable.
 
-------------------------------------------------------------------------
+15. Advanced SQL Learning Objectives
 
-## 12. SQL learning objectives
+Phase 0 uses Transportation as a vehicle for learning SQL through
+realistic analytical problems.
 
-Transportation is the bounded Phase 0 of the current learning roadmap.
+Target concepts:
 
-The project should consolidate SQL through real analytical problems,
-including:
+JOIN;
 
--   `JOIN`;
--   `GROUP BY`;
--   conditional aggregation;
--   `CASE WHEN`;
--   subqueries where appropriate;
--   CTEs;
--   chained CTEs;
--   `ROW_NUMBER()`;
--   `RANK()` / `DENSE_RANK()`;
--   `LAG()` / `LEAD()`;
--   `SUM() OVER (...)`;
--   `AVG() OVER (...)`;
--   rolling/moving averages;
--   temporal comparisons;
--   cumulative/network-share calculations;
--   basic query-performance reasoning;
--   indexes;
--   understanding query plans;
--   avoiding unnecessary scans.
+GROUP BY;
 
-The direction is deliberately:
+SUM, AVG, COUNT;
 
-``` text
-Business Question
-      ↓
-Required analytical reasoning
-      ↓
-SQL technique
-```
+conditional aggregation;
 
-not:
+CASE WHEN;
 
-``` text
-SQL technique
-      ↓
-invent an artificial exercise
-```
+subqueries where useful;
 
-------------------------------------------------------------------------
+CTEs;
 
-## 13. Example progression
+chained CTEs;
 
-A single business problem can progress in difficulty.
+ROW_NUMBER();
 
-### Level 1 --- Aggregation
+RANK() / DENSE_RANK();
 
-> How much volume must each route transport per week?
+LAG() / LEAD();
+
+SUM() OVER(...);
+
+AVG() OVER(...);
+
+rolling averages;
+
+temporal comparisons;
+
+cumulative calculations;
+
+network-share calculations;
+
+plan-vs-actual variance analysis;
+
+basic index reasoning;
+
+query-plan awareness;
+
+avoiding unnecessary scans.
+
+Core learning principle:
+
+Business Question → Analytical Reasoning → SQL Technique
+
+Not:
+
+SQL Technique → Artificial Exercise
+
+The target is approximately 10--15 high-quality business queries,
+not a large collection of generic exercises.
+
+16. SQL Learning Progression
+
+A single business problem may evolve through increasingly advanced SQL.
+
+Level 1 --- Aggregation
+
+Question:
+
+What is forecast volume by route and period?
 
 Concepts:
 
-``` text
 JOIN
 GROUP BY
 SUM
-```
 
-### Level 2 --- Capacity
+Level 2 --- Capacity
 
-> How many trips does each route require?
+Question:
 
-Adds:
+How many trips does each candidate vehicle require?
 
--   capacity;
--   division/rounding;
--   business rules.
+Concepts:
 
-### Level 3 --- Utilization
+JOIN
+division
+rounding / ceiling logic
+business rules
 
-> What is expected vehicle utilization?
+Level 3 --- Utilization and Cost
 
-Adds derived metrics.
+Question:
 
-### Level 4 --- Temporal comparison
+What utilization, planned cost and R$/piece result from each
+configuration?
 
-> Is demand increasing or decreasing?
+Concepts:
 
-Adds:
+derived metrics
+CASE
+multiple joins
 
-``` text
+Level 4 --- Temporal Comparison
+
+Question:
+
+How did cost and R$/piece change versus the previous period?
+
+Concept:
+
 LAG()
-```
 
-### Level 5 --- Trend
+Level 5 --- Trend
 
-> Is the increase temporary or persistent?
+Question:
 
-Adds:
+Is deterioration temporary or persistent?
 
-``` text
-AVG() OVER (...)
+Concepts:
+
+AVG() OVER(...)
 rolling windows
-```
 
-### Level 6 --- Prioritization
+Level 6 --- Contribution and Prioritization
 
-> Which routes represent the highest operational/cost risk?
+Question:
 
-Adds:
+Which routes explain the network variance and deserve attention first?
 
-``` text
+Concepts:
+
 chained CTEs
 CASE
+SUM() OVER(...)
 RANK()
 multiple KPIs
-```
 
-------------------------------------------------------------------------
+The capstone should combine several of these concepts in one explainable
+analytical flow.
 
-## 14. SQL exit criterion
+17. SQL Exit Criterion
 
-The objective is **not to master all of SQL** or become a database
-specialist.
+Phase 0 SQL is considered sufficient when the user can independently
+reason through:
 
-Transportation is complete as a SQL learning phase when Rodrigo can
-independently reason through a sufficiently complex business question
-approximately as:
+Business Problem
+      ↓
+Required Grain
+      ↓
+Required Tables
+      ↓
+Joins
+      ↓
+Aggregation
+      ↓
+Window / Temporal Comparison
+      ↓
+Business Rule
+      ↓
+Analytical Result
+      ↓
+Business Interpretation
 
-``` text
-business problem
-    ↓
-grain
-    ↓
-required tables / joins
-    ↓
-aggregation
-    ↓
-windowing / temporal comparison
-    ↓
-business rule
-    ↓
-result
-    ↓
-business interpretation
-```
+The objective is not memorizing syntax.
 
-A practical target is approximately **10--15 high-quality business
-queries**, not hundreds of generic exercises.
+The user should be able to explain:
 
-The capstone should combine several advanced SQL concepts into a
-route-prioritization / cost-driver analysis that Rodrigo can both
-**build and explain**.
+why the query has its chosen grain;
 
-------------------------------------------------------------------------
+why each join exists;
 
-## 15. Candidate analytical tools for the Copilot
+why a window function is needed;
 
-Only after deterministic Transportation analytics are working should
-they be exposed as Copilot capabilities.
+how the business rule is represented;
 
-Candidate tool concepts:
+what the output means operationally;
 
-``` text
+what the query does not prove.
+
+18. Candidate Transportation Analytical Tools
+
+Names are provisional and should only be implemented when supported by
+completed deterministic analytics.
+
+Potential tools:
+
 analyze_transport_cost_variance(...)
 rank_transport_cost_drivers(...)
 analyze_capacity_utilization(...)
 forecast_route_capacity(...)
 rank_cost_per_piece_deterioration(...)
 analyze_plan_vs_actual(...)
-```
 
-Names and contracts are provisional.
+Example structured output:
 
-Tools should return structured outputs suitable for LLM interpretation.
-
-Example conceptual response:
-
-``` json
 {
   "cost_change_pct": 18.4,
   "volume_change_pct": 12.1,
@@ -664,294 +910,434 @@ Example conceptual response:
   "volume_effect": 420000,
   "unit_cost_effect": 190000
 }
-```
 
-The LLM should not recreate these calculations from prose or raw rows.
+The LLM receives structured analytical results and produces a business
+explanation.
 
-------------------------------------------------------------------------
+Tool contracts should remain stable, explicit and testable.
 
-## 16. Testing expectations
+19. Testing Strategy
 
-Transportation should follow the existing engineering discipline of the
-Copilot.
+Testing precedes trust in LLM interpretation.
 
-At minimum:
+Deterministic Analytics
 
--   deterministic analytics should have tests;
--   KPI formulas should have known expected outputs;
--   edge cases should be explicit;
--   tool contracts should be tested before LLM integration;
--   existing Inventory regressions must remain green;
--   integration of Transportation must not silently alter existing
-    behavior.
+Test:
 
-Project workflow preference:
+trip calculations;
 
-``` text
-python -m pytest <target>
+capacity calculations;
+
+utilization;
+
+transportation cost;
+
+R$/piece;
+
+cost variance decomposition;
+
+plan-vs-actual calculations;
+
+ranking/prioritization rules.
+
+Edge Cases
+
+Include cases such as:
+
+zero volume;
+
+missing tariff;
+
+unavailable vehicle for route;
+
+capacity threshold crossing;
+
+low utilization;
+
+frequency-policy exception;
+
+tariff effective-date boundary;
+
+first period with no previous-period comparison.
+
+Tool Contracts
+
+Test:
+
+expected schema;
+
+required fields;
+
+types;
+
+deterministic values;
+
+error behavior.
+
+Regression
+
+Transportation integration must not silently alter Inventory behavior.
+
+Preferred workflow:
+
+python -m pytest <target> -q
 python -m pytest -q
-```
 
-Never rely solely on LLM-generated interpretation as evidence that an
-analytical calculation is correct.
+A plausible LLM explanation is not evidence that the analytical
+calculation is correct.
 
-------------------------------------------------------------------------
+20. Optional GHG Extension
 
-## 17. Sustainability / GHG
+Environmental impact existed as a dimension in the broader class of
+transportation-planning problems.
 
-The source planning model contained a GHG/environmental dimension
-involving concepts such as distance, vehicle category, consumption and
-emissions factors.
+A future bounded extension may use synthetic data such as:
 
-This can become a **small optional extension** if it fits naturally
-after the core Transportation capability is complete.
+distance;
 
-Potential question:
+vehicle category;
 
-> Can a transportation decision be compared on both financial cost and
-> environmental impact?
+fuel consumption;
+
+emission factor;
+
+estimated emissions.
+
+This could enable a question such as:
+
+How do candidate transportation decisions compare on cost and
+estimated environmental impact?
 
 However:
 
--   this is not part of the minimum Phase 0 exit criterion;
--   it must not delay SQL completion;
--   it must not turn Transportation into a separate sustainability
-    product.
+GHG is not part of the Phase 0 minimum exit criterion.
 
-Kyntra's broader sustainability principle remains relevant, but scope
-discipline takes priority here.
+It must not delay:
 
-------------------------------------------------------------------------
+advanced SQL completion;
 
-## 18. Explicit non-goals
+deterministic Transportation analytics;
 
-For this phase, do **not** turn Transportation into:
+Copilot integration;
 
--   a standalone SaaS;
--   a full TMS;
--   a route optimizer;
--   a vehicle-routing optimization engine;
--   a carrier marketplace;
--   a real-time tracking platform;
--   a digital twin;
--   a new agentic product;
--   a large frontend project;
--   an excuse to refactor the entire Copilot;
--   a new repository unless technically justified by the existing
-    project structure;
--   a research project on every possible logistics KPI.
+transition to the next roadmap phase.
 
-Interesting extensions go to backlog.
+21. Explicit Non-Goals
 
-------------------------------------------------------------------------
+Transportation must not become:
 
-## 19. Scope-control rule
+a standalone SaaS;
 
-Rodrigo tends to identify valuable adjacent product opportunities while
-implementing projects. These ideas should be preserved without
-interrupting the current learning/reemployment roadmap.
+a full TMS;
 
-Use:
+a route optimizer;
 
-``` text
-Good adjacent idea
-       ↓
-     BACKLOG
-       ↓
-continue current bounded scope
-```
+a vehicle-routing optimization engine;
 
-For Transportation:
+a carrier marketplace;
 
-``` text
-Synthetic Transportation problem
+a real-time tracking platform;
+
+a digital twin;
+
+a new agentic product;
+
+a large frontend project;
+
+a reason to refactor the entire Copilot;
+
+a separate repository without a strong technical reason;
+
+an exhaustive logistics KPI research project;
+
+a reconstruction of a previous employer's proprietary planning
+model.
+
+Interesting adjacent ideas go to the backlog.
+
+22. Scope-Control Rule
+
+The development path is:
+
+Synthetic Transportation Problem
         ↓
 Advanced SQL
         ↓
-Deterministic analytics + tests
+Deterministic Analytics + Tests
         ↓
-Copilot integration
+Copilot Integration
         ↓
-LLM/tool calling
+LLM / Tool Calling
         ↓
-Extensibility demonstrated
+Extensibility Demonstrated
         ↓
 STOP
-```
 
-------------------------------------------------------------------------
+Any adjacent idea that is not necessary for this chain:
 
-## 20. Relationship to the current career roadmap
+Good Idea
+   ↓
+BACKLOG
+   ↓
+Continue Current Scope
 
-Transportation is **Phase 0**, not the destination.
+The word STOP is intentional.
 
-Current sequence:
+Transportation exists to complete Phase 0, not to delay the broader
+career roadmap.
 
-``` text
-PHASE 0
-Transportation + Advanced SQL
-        ↓
-PHASE 1
-Bounded refactor of My LinkedIn Agentic AI System
-        ↓
-PHASE 2
-Practical RAG
-        ↓
-PHASE 3
-Evals + Observability
-        ↓
-Active applications / interview-driven gap closure
-```
+23. Relationship to Career Roadmap
 
-Active applications should begin by early October 2026 without waiting
-for mastery of every remaining topic.
+Transportation is Phase 0.
 
-Later/parallel topics include:
+After its bounded completion:
 
--   APIs;
--   security/auth/RBAC;
--   Docker;
--   one cloud platform;
--   n8n hands-on;
--   gaps discovered from real vacancies/interviews.
+Phase 1
 
-Currently frozen/backlog:
+Bounded refactor of My LinkedIn Agentic AI System to consolidate:
 
--   AI Solution Factory;
--   AI Supervisor;
--   Copilot Studio;
--   Power Automate;
--   unnecessary Transportation product expansion.
+agentic architecture;
 
-------------------------------------------------------------------------
+LangGraph;
 
-## 21. Portfolio narrative
+state;
 
-Transportation should help demonstrate continuity between Rodrigo's
-prior planning experience and his current AI/engineering development.
+contracts;
 
-Historical capability:
+structured outputs;
 
-``` text
-Business problem
-      ↓
-Planning model
-      ↓
-Advanced Excel
-      ↓
-Analytical decision support
-```
+tool calling;
 
-Modern implementation:
+routing;
 
-``` text
-Business problem
-      ↓
-Synthetic canonical data
-      ↓
-SQL analytics
-      ↓
-Deterministic decision support
-      ↓
-API / Tool
-      ↓
-LLM interpretation
-```
+human-in-the-loop;
 
-The story is not:
+testing.
 
-> "I learned some advanced SQL commands."
+Phase 2
 
-It is:
+Practical RAG:
 
-> **"I took classes of transportation-planning problems I had solved
-> professionally and rebuilt them with a modern analytics architecture
-> using fully synthetic data, then integrated those capabilities into an
-> existing AI Supply Chain Copilot to demonstrate architectural
-> extensibility."**
+ingestion;
 
-------------------------------------------------------------------------
+parsing;
 
-## 22. Key design principles
+chunking;
 
-Keep these visible during development:
+metadata;
 
-1.  **Business question before SQL syntax.**
-2.  **Rebuild the problem, not the original spreadsheet.**
-3.  **Synthetic data only.**
-4.  **LLM ≠ Calculator.**
-5.  **Deterministic analytics before natural-language interpretation.**
-6.  **Context ≠ Policy.**
-7.  **Plan and Actual are distinct analytical concepts.**
-8.  **R\$/PÇ is a core normalization KPI, not a cosmetic metric.**
-9.  **Explain cost variance, don't merely report it.**
-10. **Prove extensibility by adding Transportation without breaking
-    Inventory.**
-11. **Tests before trusting AI interpretation.**
-12. **Concept before code.**
-13. **Finish the bounded scope before adding adjacent capabilities.**
-14. **Portfolio value comes from the business reasoning + architecture,
-    not feature count.**
+embeddings;
 
-------------------------------------------------------------------------
+vector store;
 
-## 23. First development step
+retrieval;
 
-When development resumes, do **not** begin with LLM integration.
+grounding;
 
-Start by defining the minimum synthetic Transportation data model
-necessary to answer the first canonical business questions.
+hybrid retrieval / reranking when justified.
 
-Recommended first vertical slice:
+Phase 3
 
-``` text
-Synthetic routes + periods + volumes + costs
-        ↓
-calculate R$/piece
-        ↓
-compare periods
-        ↓
-use LAG()
-        ↓
-decompose total cost variance
-        ↓
-test expected results
-```
+Evals + Observability:
 
-First canonical analytical question:
+golden dataset;
 
-> **Did transportation cost increase because we moved more volume, or
-> because transporting each unit became more expensive?**
+retrieval evaluation;
 
-Only after the deterministic analytical foundation is correct should the
-capability move toward the Copilot/tool layer.
+generation evaluation;
 
-------------------------------------------------------------------------
+regression;
 
-## 24. Definition of Done --- Transportation Phase 0
+tracing;
 
-Transportation is considered complete when:
+latency;
 
--   the data used is fully synthetic;
--   the core planning model is documented;
--   approximately 10--15 meaningful business queries cover the intended
-    advanced SQL concepts;
--   `R$/PÇ` and cost-variance analysis are implemented and tested;
--   capacity/utilization and plan-vs-actual analyses exist at an
-    appropriate bounded level;
--   at least one meaningful prioritization/capstone query combines
-    advanced SQL concepts;
--   Rodrigo can explain the analytical logic and SQL reasoning;
--   deterministic Transportation analytics are exposed through
-    compatible Copilot tool/API contracts;
--   the LLM can answer selected Transportation questions by invoking
-    those capabilities;
--   existing Inventory behavior remains intact;
--   tests pass;
--   the project demonstrates a second Supply Chain analytical domain;
--   no unnecessary standalone Transportation product has been created.
+token usage;
 
-At that point:
+cost;
 
-> **STOP Transportation and move to the bounded refactor of My LinkedIn
-> Agentic AI System.**
+one observability platform.
+
+Active job applications should not wait for mastery of every later
+topic.
+
+24. Portfolio Value
+
+The value of this extension is not the number of features.
+
+It demonstrates a combination of:
+
+Business Reasoning
+        +
+Supply Chain Domain Knowledge
+        +
+Data Modeling
+        +
+Advanced SQL
+        +
+Deterministic Analytics
+        +
+Testing
+        +
+API / Tool Contracts
+        +
+LLM Interpretation
+        +
+Software Extensibility
+
+The desired architectural story is:
+
+Historical approach
+Business Problem
+→ Planning Model
+→ Advanced Spreadsheet
+→ Analytical Decision Support
+
+Modern reconstruction
+Business Problem
+→ Synthetic Canonical Data
+→ SQL Analytics
+→ Deterministic Decision Support
+→ API / Tool
+→ LLM Interpretation
+
+The technology changes.
+
+The underlying ability to structure and solve complex business problems
+remains central.
+
+25. Design Principles
+
+Business question before SQL syntax.
+
+Rebuild the problem, not the spreadsheet.
+
+Synthetic data only.
+
+LLM ≠ Calculator.
+
+Deterministic analytics before natural-language interpretation.
+
+Context ≠ Policy.
+
+PLAN and ACTUAL are distinct.
+
+R$/Piece is a core normalization KPI.
+
+Explain cost variance; do not merely report it.
+
+Vehicle economics are non-linear.
+
+Trips are derived from planning decisions.
+
+Service frequency is a business trade-off, not merely a capacity
+calculation.
+
+Short routes favor frequency/flexibility; long routes favor
+scale/unit economics.
+
+Planning Policy exists to support analytics, not to become an
+optimization product.
+
+Prove extensibility by adding Transportation without breaking
+Inventory.
+
+Tests before trusting AI interpretation.
+
+Concept before code.
+
+Finish bounded scope before adjacent capabilities.
+
+Portfolio value = business reasoning + architecture, not feature
+count.
+
+26. First Development Sequence
+
+With architecture and scope frozen, implementation should proceed in
+this order:
+
+1. Create minimal synthetic schema
+2. Create small deterministic synthetic dataset
+3. Validate planning-policy calculations
+4. Start business-question-driven SQL exercises
+5. Progress from aggregation to advanced analytical SQL
+6. Implement deterministic Transportation analytics
+7. Add tests
+8. Expose selected analytics through Copilot-compatible contracts
+9. Integrate LLM/tool calling
+10. Run Inventory + Transportation regression
+11. Document demonstrated extensibility
+12. STOP
+
+Documentation should not become the work itself.
+
+After this architecture document is accepted, the emphasis moves to
+implementation and learning.
+
+27. Definition of Done --- Transportation Phase 0
+
+Transportation Phase 0 is complete when:
+
+all data and entities are fully synthetic;
+
+no confidential or proprietary historical information is
+exposed;
+
+Planning Policy v0 is implemented using explicit synthetic
+rules;
+
+planned_trips is treated as a derived planning result;
+
+non-linear route/vehicle tariffs are represented;
+
+short-route and long-route planning profiles are represented;
+
+target service frequency is represented without becoming an
+absolute universal constraint;
+
+the core planning model is documented;
+
+approximately 10--15 meaningful business-driven SQL queries are
+completed;
+
+advanced SQL concepts are demonstrated in realistic analytical
+questions;
+
+R$/piece is implemented and tested;
+
+volume vs unit-cost variance decomposition is implemented and
+tested;
+
+capacity/utilization analytics are implemented;
+
+capacity-threshold effects can be analyzed;
+
+bounded Plan vs Actual analytics are implemented;
+
+a transparent route-prioritization capstone is completed;
+
+the analytical logic and SQL can be explained independently;
+
+deterministic Transportation analytics are exposed through
+compatible Copilot API/tool contracts;
+
+selected natural-language Transportation questions invoke
+deterministic tools;
+
+LLM output interprets structured results rather than
+recalculating authoritative KPIs;
+
+existing Inventory behavior remains intact;
+
+targeted and full regression tests pass;
+
+the Copilot demonstrably supports a second Supply Chain
+analytical domain;
+
+no unnecessary standalone Transportation product has been
+created.
+
+Then:
+
+STOP Transportation expansion and move to the bounded LinkedIn
+Agentic refactor.

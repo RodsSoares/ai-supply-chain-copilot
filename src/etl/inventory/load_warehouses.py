@@ -5,7 +5,7 @@ import pandas as pd
 from src.database.connection import conectar_banco
 
 
-CAMINHO_DEPOSITOS = Path("data/raw/depositos.csv")
+CAMINHO_DEPOSITOS = Path("data/raw/inventory/depositos.csv")
 
 
 def extrair_depositos() -> pd.DataFrame:

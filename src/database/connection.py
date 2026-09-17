@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 
 
-CAMINHO_BANCO = Path("database/inventory.db")
+CAMINHO_BANCO = Path("database/supply_chain.db")
 
 
 def conectar_banco() -> sqlite3.Connection:

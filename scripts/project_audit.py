@@ -57,7 +57,7 @@ PIPELINE_PRINCIPAL = [
 
 
 ARTEFATOS_PROJETO = {
-    "Banco SQLite": "database/inventory.db",
+    "Banco SQLite": "database/supply_chain.db",
     "Arquivo analítico": "output/inventory_analysis.csv",
     "Relatório Excel": "reports/excel/indicadores_r1.xlsx",
     "Dashboard Power BI": (

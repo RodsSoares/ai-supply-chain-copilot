@@ -1,6 +1,6 @@
-from src.database.create_tables import criar_tabelas
-from src.etl.load_products import main as carregar_produtos
-from src.etl.load_warehouses import main as carregar_depositos
+from src.database.create_inventory_tables import criar_tabelas_inventory
+from src.etl.inventory.load_products import main as carregar_produtos
+from src.etl.inventory.load_warehouses import main as carregar_depositos
 
 
 def main() -> None:
@@ -10,7 +10,7 @@ def main() -> None:
 
     print("\n=== AI Supply Chain Copilot ===\n")
 
-    criar_tabelas()
+    criar_tabelas_inventory()
     carregar_produtos()
     carregar_depositos()
 
