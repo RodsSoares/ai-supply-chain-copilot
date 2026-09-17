@@ -14,4 +14,6 @@ def conectar_banco() -> sqlite3.Connection:
 
     conexao.row_factory = sqlite3.Row
 
+    conexao.execute("PRAGMA foreign_keys = ON")
+
     return conexao

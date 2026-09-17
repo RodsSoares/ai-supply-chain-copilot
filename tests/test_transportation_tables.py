@@ -36,6 +36,8 @@ def test_criar_tabelas_transportation(tmp_path, monkeypatch):
         "route_vehicle_options",
         "route_vehicle_rates",
         "forecast_raw",
+        "demand_forecast",
+        "planned_trips",
     }
 
     assert tabelas_esperadas.issubset(tabelas)

@@ -96,6 +96,44 @@ def criar_tabela_forecast_raw(cursor):
     )
 
 
+def criar_tabela_demand_forecast(cursor):
+    """Cria a tabela canônica de forecast semanal por rota."""
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS demand_forecast (
+            week_start TEXT NOT NULL,
+            route_id TEXT NOT NULL,
+            forecast_pieces INTEGER NOT NULL CHECK (forecast_pieces >= 0),
+            PRIMARY KEY (week_start, route_id),
+            FOREIGN KEY (route_id) REFERENCES routes(route_id)
+        )
+        """
+    )
+
+
+def criar_tabela_planned_trips(cursor):
+    """Cria a tabela de viagens planejadas."""
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS planned_trips (
+            trip_id TEXT NOT NULL PRIMARY KEY,
+            week_start TEXT NOT NULL,
+            route_id TEXT NOT NULL,
+            vehicle_type_id TEXT NOT NULL,
+            planned_pieces INTEGER NOT NULL CHECK (planned_pieces > 0),
+            planned_capacity INTEGER NOT NULL CHECK (planned_capacity > 0),
+            planned_cost REAL NOT NULL CHECK (planned_cost > 0),
+
+            FOREIGN KEY (route_id)
+                REFERENCES routes(route_id),
+
+            FOREIGN KEY (vehicle_type_id)
+                REFERENCES vehicle_types(vehicle_type_id)
+        )
+        """
+    )
+
+
 def criar_tabelas_transportation():
     """Cria todas as tabelas iniciais do domínio Transportation."""
     with conectar_banco() as conexao:
@@ -106,5 +144,13 @@ def criar_tabelas_transportation():
         criar_tabela_route_vehicle_options(cursor)
         criar_tabela_route_vehicle_rates(cursor)
         criar_tabela_forecast_raw(cursor)
+        criar_tabela_demand_forecast(cursor)
+        criar_tabela_planned_trips(cursor)
 
         conexao.commit()
+        
+
+if __name__ == "__main__":
+    criar_tabelas_transportation()
+
+
