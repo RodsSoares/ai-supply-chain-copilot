@@ -214,3 +214,34 @@ def salvar_viagens_planejadas(
                 for viagem in viagens
             ],
         )
+
+
+def materializar_plano_completo() -> int:
+    """Reconstrói e persiste o plano completo de Transportation."""
+    with conectar_banco() as conexao:
+        combinacoes = conexao.execute(
+            """
+            SELECT
+                route_id,
+                week_start
+            FROM demand_forecast
+            ORDER BY week_start, route_id
+            """
+        ).fetchall()
+
+    viagens_planejadas = []
+
+    for combinacao in combinacoes:
+        viagens = gerar_plano_planejado(
+            route_id=combinacao["route_id"],
+            week_start=combinacao["week_start"],
+        )
+        viagens_planejadas.extend(viagens)
+
+    with conectar_banco() as conexao:
+        conexao.execute("DELETE FROM planned_trips")
+
+    salvar_viagens_planejadas(viagens_planejadas)
+
+    return len(viagens_planejadas)
+

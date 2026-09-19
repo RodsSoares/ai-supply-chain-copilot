@@ -6,6 +6,7 @@ import src.database.connection as connection
 from src.analytics.transportation.planning import (
     analisar_alternativas_planejamento,
     gerar_plano_planejado,
+    materializar_plano_completo,
     salvar_viagens_planejadas,
     selecionar_plano,
 )
@@ -166,4 +167,49 @@ def test_salvar_viagens_planejadas(banco_planejamento):
     assert resultado["total_pieces"] == 7200
     assert resultado["total_capacity"] == 10000
     assert resultado["total_cost"] == 1700.0
-    
+
+
+def test_materializar_plano_completo(banco_planejamento):
+    """Testa a materialização completa do plano de Transportation."""
+    quantidade_viagens = materializar_plano_completo()
+
+    with connection.conectar_banco() as conexao:
+        resultado = conexao.execute(
+            """
+            SELECT
+                COUNT(*) AS trip_count,
+                SUM(planned_pieces) AS total_pieces,
+                SUM(planned_capacity) AS total_capacity,
+                SUM(planned_cost) AS total_cost
+            FROM planned_trips
+            """
+        ).fetchone()
+
+    assert quantidade_viagens == 2
+    assert resultado["trip_count"] == 2
+    assert resultado["total_pieces"] == 7200
+    assert resultado["total_capacity"] == 10000
+    assert resultado["total_cost"] == 1700.0
+
+
+def test_materializar_plano_completo_e_idempotente(banco_planejamento):
+    """Testa que materializações sucessivas não duplicam viagens."""
+    primeira_execucao = materializar_plano_completo()
+    segunda_execucao = materializar_plano_completo()
+
+    with connection.conectar_banco() as conexao:
+        resultado = conexao.execute(
+            """
+            SELECT
+                COUNT(*) AS trip_count,
+                SUM(planned_pieces) AS total_pieces,
+                SUM(planned_cost) AS total_cost
+            FROM planned_trips
+            """
+        ).fetchone()
+
+    assert primeira_execucao == 2
+    assert segunda_execucao == 2
+    assert resultado["trip_count"] == 2
+    assert resultado["total_pieces"] == 7200
+    assert resultado["total_cost"] == 1700.0
