@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from src.ai.service import responder
 from src.database.connection import conectar_banco
 
+from src.analytics.transportation.sql_analysis import analisar_mudancas_operacionais
+
 
 CAMINHO_INVENTARIO = Path("output/inventory_analysis.csv")
 
@@ -184,6 +186,30 @@ def obter_dashboard() -> dict[str, int | float]:
             2,
         ),
     }
+
+
+@app.get("/transportation/routes/{route_id}/changes")
+def obter_mudancas_transporte(route_id: str) -> list[dict]:
+    """
+    Retorna a evolução semanal das mudanças operacionais
+    de uma rota de transporte.
+    """
+
+    resultados = analisar_mudancas_operacionais()
+
+    rota = [
+        registro
+        for registro in resultados
+        if registro["route_id"] == route_id
+    ]
+
+    if not rota:
+        raise HTTPException(
+            status_code=404,
+            detail="Rota não encontrada.",
+        )
+
+    return rota
 
 
 @app.post("/copilot")

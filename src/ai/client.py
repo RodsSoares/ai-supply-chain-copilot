@@ -3,8 +3,7 @@ import os
 from typing import Any
 
 from openai import OpenAI
-
-from src.ai.prompts import SYSTEM_PROMPT
+from pydantic import BaseModel
 
 
 MODO_CLIENTE = os.getenv(
@@ -88,6 +87,7 @@ def validar_limites_contexto(
 def montar_requisicao(
     pergunta: str,
     contexto: Any | None = None,
+    instrucoes: str = "",
 ) -> dict[str, Any]:
     """
     Monta a estrutura lógica que será enviada ao LLM.
@@ -102,7 +102,7 @@ def montar_requisicao(
     validar_limites_contexto(contexto)
 
     return {
-        "system_prompt": SYSTEM_PROMPT,
+        "system_prompt": instrucoes,
         "contexto": contexto,
         "pergunta": pergunta,
     }
@@ -111,6 +111,7 @@ def montar_requisicao(
 def gerar_resposta(
     pergunta: str,
     contexto: Any | None = None,
+    instrucoes: str = "",
 ) -> str:
     """
     Gera uma resposta utilizando o cliente de IA configurado.
@@ -124,6 +125,7 @@ def gerar_resposta(
     requisicao = montar_requisicao(
         pergunta=pergunta,
         contexto=contexto,
+        instrucoes=instrucoes,
     )
 
     if MODO_CLIENTE == "fake":
@@ -136,8 +138,9 @@ def gerar_resposta(
         return gerar_resposta_real(
             pergunta=requisicao["pergunta"],
             contexto=requisicao["contexto"],
-        )
-
+            instrucoes=requisicao["system_prompt"],
+    )
+    
     raise RuntimeError(
         f"Modo de cliente não suportado: {MODO_CLIENTE}"
     )
@@ -146,6 +149,7 @@ def gerar_resposta(
 def gerar_resposta_real(
     pergunta: str,
     contexto: Any | None = None,
+    instrucoes: str = "",
 ) -> str:
     """
     Gera uma resposta utilizando o provedor real de IA.
@@ -170,12 +174,72 @@ def gerar_resposta_real(
 
     resposta = cliente.responses.create(
         model=MODELO_LLM,
-        instructions=SYSTEM_PROMPT,
+        instructions=instrucoes,
         input=entrada,
         max_output_tokens=LIMITE_TOKENS_RESPOSTA,
     )
 
     return resposta.output_text
+
+
+def gerar_resposta_estruturada(
+    pergunta: str,
+    instrucoes: str,
+    modelo_saida: type[BaseModel],
+) -> BaseModel:
+    """
+    Gera uma resposta estruturada validada por um modelo Pydantic.
+
+    Esta função mantém o client agnóstico ao domínio.
+    O contrato de saída é definido pelo chamador.
+    """
+
+    validar_configuracao_cliente()
+
+    if not pergunta.strip():
+        raise ValueError("A pergunta não pode estar vazia.")
+
+    if MODO_CLIENTE == "fake":
+        raise RuntimeError(
+            "Structured Output não está disponível no modo fake."
+        )
+
+    if MODO_CLIENTE == "real":
+        return gerar_resposta_estruturada_real(
+            pergunta=pergunta,
+            instrucoes=instrucoes,
+            modelo_saida=modelo_saida,
+        )
+
+    raise RuntimeError(
+        f"Modo de cliente não suportado: {MODO_CLIENTE}"
+    )
+
+
+def gerar_resposta_estruturada_real(
+    pergunta: str,
+    instrucoes: str,
+    modelo_saida: type[BaseModel],
+) -> BaseModel:
+    """
+    Gera uma resposta estruturada utilizando o provedor real de IA.
+    """
+
+    cliente = OpenAI()
+
+    resposta = cliente.responses.parse(
+        model=MODELO_LLM,
+        instructions=instrucoes,
+        input=pergunta,
+        text_format=modelo_saida,
+    )
+
+    if resposta.output_parsed is None:
+        raise RuntimeError(
+            "O provedor não retornou uma resposta estruturada válida."
+        )
+
+    return resposta.output_parsed
 
 
 def gerar_resposta_fake(

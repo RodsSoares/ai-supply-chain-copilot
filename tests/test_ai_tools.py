@@ -133,3 +133,68 @@ def test_listar_inventario_gera_erro_de_timeout(monkeypatch):
         match="não respondeu em até 10 segundos",
     ):
         tools.listar_inventario()
+
+
+def test_analisar_mudancas_transporte_retorna_json(monkeypatch):
+    """
+    Deve consultar o endpoint de mudanças de transporte
+    e converter a resposta JSON para objetos Python.
+    """
+
+    class RespostaFake:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            return False
+
+        def read(self):
+            return (
+                b'[{"route_id":"R001",'
+                b'"week_start":"2026-08-24",'
+                b'"operational_event":"INITIAL"}]'
+            )
+
+    def urlopen_fake(requisicao, timeout):
+        assert (
+            requisicao.full_url
+            == "http://127.0.0.1:8000/"
+            "transportation/routes/R001/changes"
+        )
+        assert timeout == 10
+
+        return RespostaFake()
+
+    monkeypatch.setattr(
+        "src.ai.tools.urlopen",
+        urlopen_fake,
+    )
+
+    from src.ai.tools import analisar_mudancas_transporte
+
+    resultado = analisar_mudancas_transporte("R001")
+
+    assert resultado == [
+        {
+            "route_id": "R001",
+            "week_start": "2026-08-24",
+            "operational_event": "INITIAL",
+        }
+    ]
+
+
+def test_analisar_mudancas_transporte_rejeita_route_id_vazio():
+    """
+    Deve rejeitar route_id vazio antes de consultar a API.
+    """
+
+    from src.ai.tools import analisar_mudancas_transporte
+
+    try:
+        analisar_mudancas_transporte("   ")
+    except ValueError as erro:
+        assert str(erro) == "route_id não pode ser vazio."
+    else:
+        raise AssertionError(
+            "Era esperado ValueError para route_id vazio."
+        )

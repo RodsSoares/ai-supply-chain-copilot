@@ -1,9 +1,8 @@
-from src.ai.context import (
+from src.ai.inventory_context import (
+    LIMITE_REGISTROS_CONTEXTO,
     calcular_agregacao_fornecedores,
     preparar_contexto,
 )
-
-from src.ai.context import LIMITE_REGISTROS_CONTEXTO
 
 def test_preparar_contexto_respeita_limite_de_registros() -> None:
     inventario = [

@@ -12,6 +12,10 @@ API_BASE_URL = os.getenv(
 
 URL_INVENTARIO = f"{API_BASE_URL}/inventory"
 
+URL_MUDANCAS_TRANSPORTE = (
+    f"{API_BASE_URL}/transportation/routes/{{route_id}}/changes"
+)
+
 TIMEOUT_SEGUNDOS = 10
 
 
@@ -30,6 +34,75 @@ def listar_inventario() -> Any:
 
     requisicao = Request(
         URL_INVENTARIO,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "AI-Supply-Chain-Copilot",
+        },
+        method="GET",
+    )
+
+    URL_MUDANCAS_TRANSPORTE = (
+    f"{API_BASE_URL}/transportation/routes/{{route_id}}/changes"
+)
+
+    try:
+        with urlopen(
+            requisicao,
+            timeout=TIMEOUT_SEGUNDOS,
+        ) as resposta:
+            conteudo = resposta.read().decode("utf-8")
+
+    except HTTPError as erro:
+        raise RuntimeError(
+            f"A API retornou o erro HTTP {erro.code}: {erro.reason}"
+        ) from erro
+
+    except URLError as erro:
+        raise ConnectionError(
+            "Não foi possível acessar a API. "
+            "Confirme se o servidor FastAPI está em execução."
+        ) from erro
+
+    except TimeoutError as erro:
+        raise ConnectionError(
+            f"A API não respondeu em até {TIMEOUT_SEGUNDOS} segundos."
+        ) from erro
+
+    try:
+        return json.loads(conteudo)
+
+    except json.JSONDecodeError as erro:
+        raise ValueError(
+            "A API respondeu, mas o conteúdo retornado não é um JSON válido."
+        ) from erro
+
+
+def analisar_mudancas_transporte(route_id: str) -> Any:
+    """
+    Consulta as mudanças operacionais de uma rota de transporte.
+
+    Args:
+        route_id: Identificador da rota de transporte.
+
+    Returns:
+        Histórico de mudanças operacionais da rota convertido
+        de JSON para objetos Python.
+
+    Raises:
+        ValueError: Quando route_id é vazio ou a resposta não contém JSON válido.
+        ConnectionError: Quando não é possível acessar a API.
+        RuntimeError: Quando a API retorna erro HTTP.
+    """
+
+    if not route_id or not route_id.strip():
+        raise ValueError("route_id não pode ser vazio.")
+
+    url = URL_MUDANCAS_TRANSPORTE.format(
+        route_id=route_id.strip()
+    )
+
+    requisicao = Request(
+        url,
         headers={
             "Accept": "application/json",
             "User-Agent": "AI-Supply-Chain-Copilot",

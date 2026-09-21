@@ -144,9 +144,10 @@ def test_gerar_resposta_fake_contexto_nao_lista():
     assert "Registros disponíveis para análise: 1." in resultado
 
 
-def test_montar_requisicao_inclui_system_prompt():
+def test_montar_requisicao_preserva_instrucoes():
     """
-    Verifica se a requisição inclui o system prompt oficial.
+    Verifica se a requisição preserva as instruções
+    recebidas pelo cliente.
     """
 
     contexto = {
@@ -156,14 +157,18 @@ def test_montar_requisicao_inclui_system_prompt():
         "registros": [],
     }
 
+    instrucoes = "Instruções de teste."
+
     requisicao = client.montar_requisicao(
         pergunta="Analise o estoque.",
         contexto=contexto,
+        instrucoes=instrucoes,
     )
 
-    assert requisicao["system_prompt"] == client.SYSTEM_PROMPT
-    assert requisicao["system_prompt"].strip() != ""
-
+    assert requisicao["system_prompt"] == instrucoes
+    assert requisicao["contexto"] == contexto
+    assert requisicao["pergunta"] == "Analise o estoque."
+    
 
 def test_montar_requisicao_preserva_pergunta_e_contexto():
     """
@@ -436,6 +441,8 @@ def test_gerar_resposta_real_utiliza_responses_api(monkeypatch):
         ],
     }
 
+    instrucoes = "Instruções de teste."
+
     class RespostaFake:
         output_text = "Resposta real simulada."
 
@@ -448,7 +455,7 @@ def test_gerar_resposta_real_utiliza_responses_api(monkeypatch):
             max_output_tokens,
         ):
             assert model == client.MODELO_LLM
-            assert instructions == client.SYSTEM_PROMPT
+            assert instructions == instrucoes
             assert max_output_tokens == client.LIMITE_TOKENS_RESPOSTA
 
             assert "Contexto fornecido pelo sistema:" in input
@@ -470,6 +477,174 @@ def test_gerar_resposta_real_utiliza_responses_api(monkeypatch):
     resposta = client.gerar_resposta_real(
         pergunta="Quais produtos apresentam prioridade alta?",
         contexto=contexto,
+        instrucoes=instrucoes,
     )
 
     assert resposta == "Resposta real simulada."
+
+
+def test_gerar_resposta_estruturada_rejeita_modo_fake(monkeypatch):
+    """
+    Verifica se Structured Output não é executado
+    no modo fake.
+    """
+
+    from pydantic import BaseModel
+
+    class SaidaTeste(BaseModel):
+        categoria: str
+
+    monkeypatch.setattr(
+        client,
+        "MODO_CLIENTE",
+        "fake",
+    )
+
+    try:
+        client.gerar_resposta_estruturada(
+            pergunta="Classifique esta pergunta.",
+            instrucoes="Retorne uma classificação.",
+            modelo_saida=SaidaTeste,
+        )
+
+        assert False, "Era esperado um RuntimeError"
+
+    except RuntimeError as erro:
+        assert str(erro) == (
+            "Structured Output não está disponível no modo fake."
+        )
+
+
+def test_gerar_resposta_estruturada_rejeita_pergunta_vazia(monkeypatch):
+    """
+    Verifica se perguntas vazias são rejeitadas
+    antes da chamada ao provedor.
+    """
+
+    from pydantic import BaseModel
+
+    class SaidaTeste(BaseModel):
+        categoria: str
+
+    monkeypatch.setattr(
+        client,
+        "MODO_CLIENTE",
+        "fake",
+    )
+
+    try:
+        client.gerar_resposta_estruturada(
+            pergunta="   ",
+            instrucoes="Retorne uma classificação.",
+            modelo_saida=SaidaTeste,
+        )
+
+        assert False, "Era esperado um ValueError"
+
+    except ValueError as erro:
+        assert str(erro) == "A pergunta não pode estar vazia."
+
+
+def test_gerar_resposta_estruturada_real_utiliza_responses_parse(
+    monkeypatch,
+):
+    """
+    Verifica se o cliente estruturado utiliza Responses API
+    com o modelo Pydantic fornecido pelo chamador.
+    """
+
+    from pydantic import BaseModel
+
+    class SaidaTeste(BaseModel):
+        categoria: str
+
+    saida_esperada = SaidaTeste(
+        categoria="teste",
+    )
+
+    class RespostaFake:
+        output_parsed = saida_esperada
+
+    class ResponsesFake:
+        def parse(
+            self,
+            model,
+            instructions,
+            input,
+            text_format,
+        ):
+            assert model == client.MODELO_LLM
+            assert instructions == "Instruções de teste."
+            assert input == "Pergunta de teste."
+            assert text_format is SaidaTeste
+
+            return RespostaFake()
+
+    class OpenAIFake:
+        def __init__(self):
+            self.responses = ResponsesFake()
+
+    monkeypatch.setattr(
+        client,
+        "OpenAI",
+        OpenAIFake,
+    )
+
+    resultado = client.gerar_resposta_estruturada_real(
+        pergunta="Pergunta de teste.",
+        instrucoes="Instruções de teste.",
+        modelo_saida=SaidaTeste,
+    )
+
+    assert resultado == saida_esperada
+
+
+def test_gerar_resposta_estruturada_real_rejeita_saida_ausente(
+    monkeypatch,
+):
+    """
+    Verifica se a ausência de output estruturado válido
+    produz uma falha explícita.
+    """
+
+    from pydantic import BaseModel
+
+    class SaidaTeste(BaseModel):
+        categoria: str
+
+    class RespostaFake:
+        output_parsed = None
+
+    class ResponsesFake:
+        def parse(
+            self,
+            model,
+            instructions,
+            input,
+            text_format,
+        ):
+            return RespostaFake()
+
+    class OpenAIFake:
+        def __init__(self):
+            self.responses = ResponsesFake()
+
+    monkeypatch.setattr(
+        client,
+        "OpenAI",
+        OpenAIFake,
+    )
+
+    try:
+        client.gerar_resposta_estruturada_real(
+            pergunta="Pergunta de teste.",
+            instrucoes="Instruções de teste.",
+            modelo_saida=SaidaTeste,
+        )
+
+        assert False, "Era esperado um RuntimeError"
+
+    except RuntimeError as erro:
+        assert str(erro) == (
+            "O provedor não retornou uma resposta estruturada válida."
+        )

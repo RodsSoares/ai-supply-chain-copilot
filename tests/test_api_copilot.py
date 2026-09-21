@@ -108,3 +108,45 @@ def test_consultar_copilot_trata_erros_da_camada_de_ia(
     assert resposta.json() == {
         "detail": str(erro),
     }
+
+
+def test_obter_mudancas_transporte_retorna_historico_da_rota():
+    resposta = client.get(
+        "/transportation/routes/R001/changes"
+    )
+
+    assert resposta.status_code == 200
+
+    dados = resposta.json()
+
+    assert isinstance(dados, list)
+    assert len(dados) > 0
+
+    assert all(
+        registro["route_id"] == "R001"
+        for registro in dados
+    )
+
+    primeiro = dados[0]
+
+    assert primeiro["week_start"] == "2026-08-24"
+    assert primeiro["vehicle_type_id"] == "V002"
+    assert primeiro["planned_trips"] == 2
+    assert primeiro["offered_capacity"] == 10000
+    assert primeiro["planned_cost"] == 1700.0
+    assert primeiro["previous_vehicle_type_id"] is None
+    assert primeiro["previous_planned_trips"] is None
+    assert primeiro["previous_offered_capacity"] is None
+    assert primeiro["operational_event"] == "INITIAL"
+
+
+def test_obter_mudancas_transporte_retorna_404_para_rota_inexistente():
+    resposta = client.get(
+        "/transportation/routes/ROTA_INEXISTENTE/changes"
+    )
+
+    assert resposta.status_code == 404
+    assert resposta.json() == {
+        "detail": "Rota não encontrada."
+    }
+    
