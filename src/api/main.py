@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
@@ -37,6 +38,7 @@ class PerguntaCopilot(BaseModel):
     """
 
     pergunta: str
+    dominio: Literal["inventory", "transportation"] = "inventory"
 
 
 app = FastAPI(
@@ -221,7 +223,10 @@ def consultar_copilot(
     """
 
     try:
-        resposta = responder(entrada.pergunta)
+        resposta = responder(
+            entrada.pergunta,
+            dominio=entrada.dominio,
+        )
 
     except (ConnectionError, RuntimeError, ValueError) as erro:
         raise HTTPException(

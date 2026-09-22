@@ -44,7 +44,9 @@ em uma das capacidades analíticas autorizadas.
 Capacidades disponíveis:
 
 - network_overview:
-  visão geral da operação e do forecast de transporte.
+  detalhamento da operação planejada e do forecast de transporte
+  por rota e período. Use quando a pergunta exigir visão operacional
+  detalhada, e não apenas um resumo consolidado da rede.
 
 - economic_efficiency:
   eficiência econômica, utilização de capacidade, ociosidade
@@ -73,7 +75,9 @@ Capacidades disponíveis:
   pressão ou crescimento de custos na rede.
 
 - executive_summary:
-  resumo executivo da operação de transporte.
+  visão executiva consolidada da rede de transporte.
+  Use para perguntas gerais sobre como está a operação da rede,
+  desempenho consolidado, situação atual ou evolução executiva.
 
 - out_of_scope:
   pergunta que não pode ser respondida por nenhuma das

@@ -124,6 +124,9 @@ def analisar_evolucao_semanal() -> list[dict]:
 
     Mantém o grão rota + semana e compara cada semana
     com a semana anterior da mesma rota.
+
+    Inclui atributos operacionais necessários para explicar
+    deterministicamente mudanças nos indicadores econômicos.
     """
     query = """
         WITH operacao_base AS (
@@ -131,6 +134,8 @@ def analisar_evolucao_semanal() -> list[dict]:
                 f.route_id,
                 f.week_start,
                 f.forecast_pieces,
+                p.vehicle_type_id,
+                COUNT(p.trip_id) AS planned_trips,
                 SUM(p.planned_capacity) AS offered_capacity,
                 SUM(p.planned_cost) AS planned_cost
             FROM demand_forecast AS f
@@ -140,7 +145,8 @@ def analisar_evolucao_semanal() -> list[dict]:
             GROUP BY
                 f.route_id,
                 f.week_start,
-                f.forecast_pieces
+                f.forecast_pieces,
+                p.vehicle_type_id
         ),
 
         indicadores AS (
@@ -148,6 +154,10 @@ def analisar_evolucao_semanal() -> list[dict]:
                 route_id,
                 week_start,
                 forecast_pieces,
+                vehicle_type_id,
+                planned_trips,
+                offered_capacity,
+                planned_cost,
                 ROUND(
                     CAST(forecast_pieces AS REAL)
                     / offered_capacity,
@@ -166,6 +176,10 @@ def analisar_evolucao_semanal() -> list[dict]:
                 route_id,
                 week_start,
                 forecast_pieces,
+                vehicle_type_id,
+                planned_trips,
+                offered_capacity,
+                planned_cost,
                 utilization,
                 cost_per_piece,
 
@@ -173,6 +187,26 @@ def analisar_evolucao_semanal() -> list[dict]:
                     PARTITION BY route_id
                     ORDER BY week_start
                 ) AS previous_forecast_pieces,
+
+                LAG(vehicle_type_id) OVER (
+                    PARTITION BY route_id
+                    ORDER BY week_start
+                ) AS previous_vehicle_type_id,
+
+                LAG(planned_trips) OVER (
+                    PARTITION BY route_id
+                    ORDER BY week_start
+                ) AS previous_planned_trips,
+
+                LAG(offered_capacity) OVER (
+                    PARTITION BY route_id
+                    ORDER BY week_start
+                ) AS previous_offered_capacity,
+
+                LAG(planned_cost) OVER (
+                    PARTITION BY route_id
+                    ORDER BY week_start
+                ) AS previous_planned_cost,
 
                 LAG(utilization) OVER (
                     PARTITION BY route_id
@@ -191,15 +225,36 @@ def analisar_evolucao_semanal() -> list[dict]:
             route_id,
             week_start,
             forecast_pieces,
+            vehicle_type_id,
+            planned_trips,
+            offered_capacity,
+            planned_cost,
             utilization,
             cost_per_piece,
+
             previous_forecast_pieces,
+            previous_vehicle_type_id,
+            previous_planned_trips,
+            previous_offered_capacity,
+            previous_planned_cost,
             previous_utilization,
             previous_cost_per_piece,
 
             forecast_pieces
                 - previous_forecast_pieces
                 AS forecast_change,
+
+            planned_trips
+                - previous_planned_trips
+                AS planned_trips_change,
+
+            offered_capacity
+                - previous_offered_capacity
+                AS offered_capacity_change,
+
+            planned_cost
+                - previous_planned_cost
+                AS planned_cost_change,
 
             ROUND(
                 utilization - previous_utilization,

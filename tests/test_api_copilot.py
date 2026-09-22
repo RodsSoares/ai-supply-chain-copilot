@@ -16,8 +16,12 @@ def test_consultar_copilot_retorna_resposta(monkeypatch):
     pergunta = "Quais produtos apresentam prioridade alta?"
     resposta_fake = "Os produtos prioritários foram identificados."
 
-    def responder_fake(pergunta_recebida):
+    def responder_fake(
+        pergunta_recebida,
+        dominio="inventory",
+    ):
         assert pergunta_recebida == pergunta
+        assert dominio == "inventory"
         return resposta_fake
 
     monkeypatch.setattr(
@@ -30,6 +34,47 @@ def test_consultar_copilot_retorna_resposta(monkeypatch):
         "/copilot",
         json={
             "pergunta": pergunta,
+        },
+    )
+
+    assert resposta.status_code == 200
+
+    assert resposta.json() == {
+        "pergunta": pergunta,
+        "resposta": resposta_fake,
+    }
+
+
+def test_consultar_copilot_encaminha_dominio_transportation(
+    monkeypatch,
+):
+    """
+    Verifica se o endpoint /copilot encaminha explicitamente
+    o domínio Transportation para a camada de IA.
+    """
+
+    pergunta = "Como está a operação de transporte da rede?"
+    resposta_fake = "Resumo executivo da rede."
+
+    def responder_fake(
+        pergunta_recebida,
+        dominio="inventory",
+    ):
+        assert pergunta_recebida == pergunta
+        assert dominio == "transportation"
+        return resposta_fake
+
+    monkeypatch.setattr(
+        main,
+        "responder",
+        responder_fake,
+    )
+
+    resposta = client.post(
+        "/copilot",
+        json={
+            "pergunta": pergunta,
+            "dominio": "transportation",
         },
     )
 
@@ -88,7 +133,11 @@ def test_consultar_copilot_trata_erros_da_camada_de_ia(
     são convertidas para resposta HTTP 500.
     """
 
-    def responder_fake(pergunta):
+    def responder_fake(
+        pergunta,
+        dominio="inventory",
+    ):
+        assert dominio == "inventory"
         raise erro
 
     monkeypatch.setattr(

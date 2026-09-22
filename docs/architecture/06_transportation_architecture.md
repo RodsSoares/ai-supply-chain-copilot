@@ -2,7 +2,7 @@ Transportation Analytics Architecture
 
 Document: 06_transportation_architecture.md Project: AI Supply Chain
 Copilot Status: Phase 0 --- Bounded Transportation Extension Last
-updated: 2026-09-19
+updated: 2026-09-20
 
 Purpose
 
@@ -1143,12 +1143,12 @@ Documentation should not become the work itself.
 After this architecture document is accepted, the emphasis moves to
 implementation and learning.
 
-Current Implementation Checkpoint --- 2026-09-19
+Current Implementation Checkpoint --- 2026-09-20
 
-This section is the authoritative handoff point for resuming
-development. Earlier sections describe the target architecture and
-design space; this section records what is actually implemented now and
-the bounded sequence that remains.
+This section is the authoritative handoff point for resuming development.
+Earlier sections preserve the target architecture, learning rationale and
+historical design space. This section records what is actually implemented
+now and the bounded sequence that remains.
 
 Repository and environment
 
@@ -1167,20 +1167,20 @@ Transportation ETL lives under src/etl/transportation/.
 Transportation deterministic analytics live under
 src/analytics/transportation/.
 
-Prefer complete files for meaningful edits and incremental development:
+Preferred development workflow:
 
-concept -> implementation -> targeted test -> full regression
+concept -> implementation -> targeted test -> full regression at meaningful
+cross-cutting checkpoints
 
-Productivity rule for the remaining Phase 0 work:
+Productivity rule:
 
-Do not reopen completed SQL exercises or expand Transportation with
-adjacent capabilities unless a concrete requirement is necessary to
-complete Copilot integration.
+Do not reopen completed SQL exercises or expand Transportation with adjacent
+capabilities unless a concrete requirement is necessary to complete the
+bounded Copilot integration and Phase 0 exit.
 
 Implemented Transportation data
 
-The synthetic master-data and forecast pipeline are implemented and
-loaded.
+The synthetic master-data and forecast pipeline are implemented and loaded.
 
 Current Transportation tables:
 
@@ -1287,8 +1287,8 @@ How many trips would the service policy prefer?
 
 calcular_viagens_por_capacidade(...) represents the physical minimum.
 
-calcular_cenarios_planejamento(...) exposes two deterministic
-scenarios for each candidate vehicle.
+calcular_cenarios_planejamento(...) exposes two deterministic scenarios for
+each candidate vehicle.
 
 Economic scenario:
 
@@ -1318,22 +1318,22 @@ The explicit service premium is:
 
 service_premium = (service_cost_per_piece / economic_cost_per_piece) - 1
 
-The service premium quantifies the incremental unit cost required to buy
-the preferred service frequency instead of operating only at the
-physical capacity minimum.
+The service premium quantifies the incremental unit cost required to buy the
+preferred service frequency instead of operating only at the physical
+capacity minimum.
 
-The current architecture deliberately does not convert this metric into
-an arbitrary tolerance rule.
+The current architecture deliberately does not convert this metric into an
+arbitrary tolerance rule.
 
 Plan materialization
 
-The complete synthetic weekly plan is now materialized through:
+The complete synthetic weekly plan is materialized through:
 
 materializar_plano_completo()
 
-The materialization reads all route-week forecast combinations,
-generates the selected individual trips, clears the previous derived
-plan and persists the regenerated plan.
+The materialization reads all route-week forecast combinations, generates the
+selected individual trips, clears the previous derived plan and persists the
+regenerated plan.
 
 planned_trips remains a derived planning output.
 
@@ -1351,295 +1351,53 @@ R$778,000 planned transportation cost;
 
 zero forecast-versus-plan reconciliation divergences.
 
-Materialization is intentionally idempotent for this derived planning
-layer.
+Materialization is intentionally idempotent for this derived planning layer.
 
-Running the same materialization again must reproduce the same final
-state rather than accumulate duplicate trips.
+Running the same materialization again must reproduce the same final state
+rather than accumulate duplicate trips.
 
 This DELETE + rebuild behavior is appropriate for the current derived
 planning output. It must not be generalized to historical ACTUAL data.
 
 Advanced SQL checkpoint: COMPLETE for current Phase 0 scope
 
-Transportation SQL development was driven by business questions rather
-than isolated syntax drills.
-
 The implemented analytical module is:
 
 src/analytics/transportation/sql_analysis.py
 
-It currently contains ten deterministic analytical functions covering
-BQ-00 through BQ-09.
+It contains ten deterministic analytical capabilities covering BQ-00 through
+BQ-09:
 
-BQ-00 --- Operation required for forecast
+BQ-00 -> analisar_operacao_forecast()
 
-Implemented by:
+BQ-01 -> analisar_eficiencia_economica()
 
-analisar_operacao_forecast()
+BQ-02 -> analisar_evolucao_semanal()
 
-Core concepts:
+BQ-03 -> analisar_participacao_custo_rede()
 
-JOIN;
+BQ-04 -> analisar_ranking_custo_semanal()
 
-GROUP BY;
+BQ-05 -> analisar_concentracao_custo_rede()
 
-SUM;
+BQ-06 -> analisar_tendencia_recente()
 
-COUNT;
+BQ-07 -> analisar_mudancas_operacionais()
 
-route-week analytical grain.
+BQ-08 -> analisar_pressao_custo_rede()
 
-Purpose:
-
-Reconstruct the weekly transportation operation from forecast, planned
-trips and vehicle capacity/cost data.
-
-BQ-01 --- Economic efficiency
-
-Implemented by:
-
-analisar_eficiencia_economica()
-
-Core concepts:
-
-CTE;
-
-derived metrics;
-
-utilization;
-
-cost per piece;
-
-analytical ordering.
-
-Purpose:
-
-Compare route-week economic efficiency using deterministic
-transportation KPIs.
-
-BQ-02 --- Weekly evolution
-
-Implemented by:
-
-analisar_evolucao_semanal()
-
-Core concepts:
-
-chained CTEs;
-
-LAG();
-
-PARTITION BY route_id;
-
-temporal deltas.
-
-Purpose:
-
-Compare each route with its own previous weekly observation.
-
-BQ-03 --- Network cost share
-
-Implemented by:
-
-analisar_participacao_custo_rede()
-
-Core concepts:
-
-SUM() OVER();
-
-network total;
-
-route-week cost share.
-
-Purpose:
-
-Measure how much each route-week contributes to total network
-transportation cost.
-
-BQ-04 --- Weekly cost ranking
-
-Implemented by:
-
-analisar_ranking_custo_semanal()
-
-Core concept:
-
-RANK().
-
-Purpose:
-
-Rank route cost within each weekly operating context.
-
-BQ-05 --- Cumulative network cost concentration
-
-Implemented by:
-
-analisar_concentracao_custo_rede()
-
-Core concepts:
-
-ordered window;
-
-cumulative SUM() OVER(...).
-
-Purpose:
-
-Show how transportation cost becomes concentrated as the largest
-contributors are accumulated.
-
-BQ-06 --- Recent trend
-
-Implemented by:
-
-analisar_tendencia_recente()
-
-Core concepts:
-
-rolling AVG();
-
-ordered window frame;
-
-recent temporal context.
-
-Purpose:
-
-Distinguish isolated weekly movement from a more persistent recent
-pattern.
-
-BQ-07 --- Relevant operational changes
-
-Implemented by:
-
-analisar_mudancas_operacionais()
-
-Core concepts:
-
-LAG();
-
-CASE;
-
-temporal comparison;
-
-deterministic change detection.
-
-Purpose:
-
-Identify operational changes that can explain KPI movement without
-asking the LLM to infer facts from raw rows.
-
-BQ-08 --- Cost pressure / network relevance
-
-Implemented by:
-
-analisar_pressao_custo_rede()
-
-Core concepts:
-
-multiple analytical windows;
-
-ranking;
-
-network share;
-
-combined deterministic indicators.
-
-Purpose:
-
-Combine cost pressure and network relevance into an explainable
-analytical view.
-
-BQ-09 --- Weekly executive network summary
-
-Implemented by:
-
-analisar_resumo_executivo_semanal()
-
-Core concepts:
-
-CTEs;
-
-aggregation;
-
-windows;
-
-temporal comparison;
-
-executive analytical grain.
-
-Purpose:
-
-Produce a deterministic weekly network-level summary suitable for
-downstream decision support.
-
-SQL exit decision
+BQ-09 -> analisar_resumo_executivo_semanal()
 
 The Advanced SQL learning block is considered COMPLETE for the current
 bounded Transportation scope.
 
-The objective was never syntax memorization.
-
-The demonstrated target is the ability to reason through:
-
-Business Problem
--> Required Grain
--> Required Tables
--> Joins
--> Aggregation
--> Window / Temporal Comparison
--> Business Rule
--> Analytical Result
--> Business Interpretation
-
-No BQ-10 or additional SQL exercise should be added merely to increase
-query count.
-
-New SQL should only be introduced if required by the remaining Copilot
-integration.
-
-Excel -> SQL mental model consolidated
-
-The Transportation work established the following transferable mapping:
-
-Analytical problem      Excel mental model      SQL mental model
-
-Combine related data    XLOOKUP / PROCV         JOIN
-
-Consolidate many rows   Pivot / SUMIFS          GROUP BY + aggregation
-
-Intermediate analytical Helper sheet            CTE
-stage
-
-Compare with previous   Previous physical row   LAG() over a logical
-period                                          window
-
-Share of total          Row value / absolute    SUM() OVER()
-total cell
-
-Ranking                 ORDEM / ORDEM.EQ        RANK()
-
-Cumulative value        Progressive range       Running SUM() OVER()
-
-Rolling average         Moving cell range       AVG() OVER(...)
-
-Detect operational      IF + previous row       LAG() + CASE
-change
-
-Core paradigm shift:
-
-Excel tends to encourage cell/position-oriented reasoning.
-
-SQL encourages set/relation/grain/transformation-oriented reasoning.
-
-The analytical reasoning remains transferable; the expression mechanism
-changes.
+No BQ-10 or additional SQL exercise should be added merely to increase query
+count. New SQL should only be introduced if a concrete integration
+requirement makes it necessary.
 
 Golden analytical case: R001 capacity-threshold transition
 
-The R001 weekly evolution provides a strong calibration example for
-future Copilot integration.
-
-Week 2026-10-05
+Week 2026-10-05:
 
 forecast: 9,700 pieces;
 
@@ -1655,7 +1413,7 @@ utilization: 97%;
 
 cost per piece: approximately R$0.1753.
 
-Week 2026-10-12
+Week 2026-10-12:
 
 forecast: 10,300 pieces;
 
@@ -1671,7 +1429,7 @@ utilization: 51.5%;
 
 cost per piece: approximately R$0.2233.
 
-Deterministic causal chain supported by the planning data
+Deterministic causal chain supported by the planning data:
 
 Forecast: 9,700 -> 10,300 (+600)
 -> previous 10,000-piece offered capacity is no longer sufficient
@@ -1681,228 +1439,416 @@ Forecast: 9,700 -> 10,300 (+600)
 -> planned cost: R$1,700 -> R$2,300
 -> R$/Piece: ~0.1753 -> ~0.2233
 
-This is a useful example of a capacity-threshold effect: a relatively
-small increase in demand can trigger a discrete operational
-configuration change and a non-linear KPI response.
-
-Golden / calibration answer for the Copilot
-
-A utilização da R001 caiu de 97% para 51,5% porque o forecast
-ultrapassou a capacidade semanal de 10.000 peças do plano anterior,
-provocando a mudança de 2 LIGHT_TRUCKS para 2 MEDIUM_TRUCKS. A
-capacidade oferecida dobrou para 20.000 peças, enquanto a demanda
-cresceu apenas 600 peças.
-
-This example should be used as a behavioral reference for the next
-integration step.
-
 The LLM must not independently recalculate these authoritative values.
 
-Decision-support contract for the next layer
+AI / Copilot multidomain integration: IMPLEMENTED
 
-The architecture now has a clear responsibility boundary:
+The Copilot now supports Inventory and Transportation as separate analytical
+domains without asking the LLM to choose between them.
+
+Domain-selection rule
+
+The domain is selected explicitly by the calling layer / frontend.
+
+The LLM must NOT decide whether a question belongs to Inventory or
+Transportation when the user interface already provides that information.
+
+This preserves deterministic application behavior, avoids unnecessary token
+usage and prevents an LLM call from solving a routing problem already solved
+by the UI.
+
+Compact rule:
+
+UI defines the domain.
+LLM interprets the intent inside the selected domain.
+Dispatcher selects the authorized deterministic capability.
+SQL calculates.
+Analytics detects.
+AI explains.
+Human decides.
+
+This extends, rather than replaces, the core rule:
+
+LLM != Calculator.
+
+Current AI structure
+
+src/
+ai/
+client.py
+inventory_context.py
+prompts.py
+service.py
+tools.py
+transportation_context.py
+transportation_dispatcher.py
+transportation_router.py
+
+The previous src/ai/context.py has been renamed to:
+
+src/ai/inventory_context.py
+
+This makes the Inventory-specific responsibility explicit and leaves the AI
+layer structurally ready for multiple domains.
+
+Prompts
+
+src/ai/prompts.py now separates:
+
+SYSTEM_PROMPT
+
+INVENTORY_PROMPT
+
+TRANSPORTATION_PROMPT
+
+SYSTEM_PROMPT contains global Copilot behavior and the rule that deterministic
+engines remain authoritative for calculations and classifications.
+
+INVENTORY_PROMPT contains Inventory-specific interpretation rules.
+
+TRANSPORTATION_PROMPT contains Transportation planning scope and requires the
+LLM to interpret deterministic analytical results without recalculating trips,
+capacity, cost or detected operational events.
+
+Structured Output capability
+
+src/ai/client.py now supports structured LLM responses using Pydantic models.
+
+The Transportation router uses this capability to transform an open-ended
+natural-language question into a constrained analytical intent.
+
+Structured Output is intentionally not simulated with heuristic fake routing.
+In fake mode, the structured-output client raises an explicit RuntimeError;
+router behavior is tested by monkeypatching the structured response at the
+router boundary.
+
+Transportation Router
+
+Implemented in:
+
+src/ai/transportation_router.py
+
+The router is the probabilistic interpretation boundary.
+
+It receives the original Transportation question and maps potentially
+unbounded natural-language phrasing into one of a finite set of configured
+analytical capabilities.
+
+Current intent contract:
+
+network_overview
+
+economic_efficiency
+
+weekly_evolution
+
+cost_share
+
+cost_ranking
+
+cost_concentration
+
+recent_trend
+
+operational_changes
+
+cost_pressure
+
+executive_summary
+
+out_of_scope
+
+The structured model also supports:
+
+route_id: str | None
+
+The ten analytical intents correspond to the completed deterministic
+Transportation capabilities. They are the configured analytical questions /
+capabilities available to the Copilot; they are not calculations performed by
+the LLM.
+
+out_of_scope is a mandatory guardrail.
+
+If a question cannot be answered by one of the available Transportation
+capabilities, the router must return out_of_scope rather than force the
+question into a valid analytical intent.
+
+When intent == out_of_scope:
+
+route_id must be null;
+
+no Transportation analytical BQ is executed;
+
+the explanatory LLM call is not executed.
+
+Calibration example:
+
+"Qual é o chocolate mais gostoso?"
+
+when submitted inside the Transportation domain must be classified as
+out_of_scope rather than coerced into a Transportation analysis.
+
+Transportation Dispatcher
+
+Implemented in:
+
+src/ai/transportation_dispatcher.py
+
+The dispatcher is deterministic.
+
+It does not interpret natural language and does not call an LLM.
+
+Its responsibility is to map an already validated Transportation intent to
+the corresponding authorized deterministic analytical function.
+
+Current mapping:
+
+network_overview -> analisar_operacao_forecast
+
+economic_efficiency -> analisar_eficiencia_economica
+
+weekly_evolution -> analisar_evolucao_semanal
+
+cost_share -> analisar_participacao_custo_rede
+
+cost_ranking -> analisar_ranking_custo_semanal
+
+cost_concentration -> analisar_concentracao_custo_rede
+
+recent_trend -> analisar_tendencia_recente
+
+operational_changes -> analisar_mudancas_operacionais
+
+cost_pressure -> analisar_pressao_custo_rede
+
+executive_summary -> analisar_resumo_executivo_semanal
+
+out_of_scope is deliberately NOT part of the dispatcher analytical mapping.
+
+If route_id is present and the analytical result is a list, the dispatcher
+filters the deterministic result to that route.
+
+Important boundary:
+
+Router answers:
+"What analytical capability does this Transportation question require?"
+
+Dispatcher answers:
+"Which authorized deterministic function executes that capability?"
+
+Analytics / SQL answers:
+"What is the authoritative result?"
+
+Transportation Context
+
+Implemented in:
+
+src/ai/transportation_context.py
+
+preparar_contexto_transporte(...) does not recalculate metrics and does not
+create conclusions.
+
+It structures the official deterministic analytical output for downstream LLM
+interpretation.
+
+The context records:
+
+dominio = transportation;
+
+tipo_analise;
+
+summary metadata such as total_registros and route_ids;
+
+the original deterministic resultado.
+
+Service orchestration
+
+src/ai/service.py is now multidomain.
+
+Public orchestration contract:
+
+responder(pergunta, dominio="inventory")
+
+Supported domains:
+
+inventory
+
+transportation
+
+Inventory remains the default to preserve backward compatibility.
+
+Inventory flow:
+
+explicit domain = inventory
+-> Inventory tool/data
+-> Inventory context
+-> SYSTEM_PROMPT + INVENTORY_PROMPT
+-> explanatory LLM response
+
+Transportation flow:
+
+explicit domain = transportation
+-> Transportation router / structured LLM intent
+-> out_of_scope guardrail OR valid intent
+-> deterministic dispatcher
+-> deterministic SQL / analytics
+-> Transportation context
+-> SYSTEM_PROMPT + TRANSPORTATION_PROMPT
+-> explanatory LLM response using the ORIGINAL user question
+
+The second LLM call receives the original question so that the business
+explanation remains aligned with what the user actually asked.
+
+API / Tool integration
+
+Transportation has a bounded API/tool integration for operational changes.
+
+The existing integration includes a route-level Transportation changes
+endpoint and the corresponding AI tool contract.
+
+The architecture deliberately does NOT create ten HTTP endpoints merely
+because ten deterministic SQL analytical functions exist.
+
+The dispatcher may invoke the completed deterministic analytics directly
+inside the application boundary.
+
+This avoids infrastructure scope creep while preserving explicit,
+testable analytical capabilities.
+
+Architectural responsibility boundary
+
+The implemented end-to-end responsibility model is:
+
+Frontend / calling layer
+-> selects Inventory or Transportation explicitly
+
+Transportation Router / LLM
+-> interprets the question inside the already-selected Transportation domain
+
+Pydantic Structured Output
+-> constrains the probabilistic interpretation to an explicit intent contract
+
+Transportation Dispatcher
+-> selects the authorized deterministic capability
 
 SQL / Deterministic Analytics
--> establishes facts and detects measurable changes
+-> calculates authoritative values and detects measurable changes
+
+Transportation Context
+-> structures the official result without recalculation
 
 LLM / Copilot
--> interprets structured facts and explains them in business language
+-> explains the deterministic result in business language
 
 Human
 -> evaluates context and makes the decision
 
-Compact principle:
+Canonical compact principle:
 
-SQL calculates. Analytics detects. AI explains. Human decides.
+UI defines the domain.
+LLM interprets the intent.
+Dispatcher selects the capability.
+SQL calculates.
+Analytics detects.
+AI explains.
+Human decides.
 
-This does not replace the existing rule:
+Testing checkpoint --- 2026-09-20
 
-LLM != Calculator.
+The multidomain increment has targeted tests covering:
 
-It operationalizes it.
+Inventory backward compatibility;
 
-The next Copilot integration should therefore pass structured
-deterministic results to the LLM rather than raw operational data
-whenever the required analytical fact is already available.
+prompt forwarding;
 
-Expected explanation flow:
+Structured Output client behavior;
 
-User Question
--> Intent / Tool Selection
--> Transportation Analytical Tool
--> Deterministic SQL / Analytics
--> Structured Result
--> LLM Interpretation
--> Business Explanation
--> Human Decision
+Transportation router contract and behavior;
 
-A strong answer should:
+out_of_scope routing;
 
-state the relevant deterministic facts;
+deterministic dispatcher mapping;
 
-identify the observed operational change;
+route_id filtering;
 
-connect that change to the KPI movement only when supported by the
-deterministic data;
+out_of_scope blocking before analytics;
 
-explain the result in business language;
+Transportation context construction;
 
-avoid inventing unsupported causes or recommendations.
+multidomain service orchestration;
 
-Testing checkpoint
+invalid domain rejection;
 
-Planning-policy and planning-materialization tests are implemented.
-
-Advanced SQL deterministic tests are implemented in:
-
-tests/test_transportation_sql_analysis.py
-
-Current SQL analytical checkpoint:
-
-BQ-00 through BQ-09 implemented;
-
-10 core SQL business-question tests passing.
+Transportation API/tool integration.
 
 Current full project regression checkpoint:
 
-77 passed
+104 passed
 
 Canonical regression command:
 
 python -m pytest -q
 
-Transportation integration must continue to preserve existing Inventory
-behavior.
+This 104-passed checkpoint validates that the multidomain Transportation AI
+integration did not break the existing project behavior covered by the
+regression suite.
 
-A plausible LLM explanation is not evidence that the analytical
-calculation is correct.
+The testing workflow remains:
+
+localized change
+-> localized tests
+-> continue
+
+meaningful feature / cross-cutting checkpoint
+-> full regression
+
+A plausible LLM explanation is not evidence that the analytical calculation
+is correct.
 
 The deterministic layer remains the source of truth.
 
-Project audit checkpoint --- 2026-09-19
-
-The current project audit reports:
-
-37 Python files;
-
-6,399 total lines;
-
-4,983 effective code lines;
-
-211 functions;
-
-5 classes;
-
-0 TODO/FIXME comments;
-
-0 syntax-error files;
-
-heuristic overall project health: 9.2/10.
-
-Relevant current Transportation structure:
-
-src/
-  analytics/
-    transportation/
-      planning.py
-      sql_analysis.py
-  decision/
-    transportation/
-      planning_policy.py
-  etl/
-    transportation/
-      load_forecast.py
-      load_master_data.py
-  database/
-    create_transportation_tables.py
-
-scripts/
-  materialize_transportation_plan.py
-
-tests/
-  test_transportation_planning.py
-  test_transportation_planning_policy.py
-  test_transportation_sql_analysis.py
-  test_transportation_tables.py
-
-Relevant existing Copilot layer:
-
-src/
-  ai/
-    client.py
-    context.py
-    prompts.py
-    service.py
-    tools.py
-  api/
-    main.py
-
-Architectural observation:
-
-Transportation deterministic logic exists as a bounded domain, while the
-current AI/Copilot layer still needs to expose and consume selected
-Transportation capabilities.
-
-That is the next meaningful architectural increment.
-
-No broad refactor is justified before that integration.
-
 Known bounded follow-up items
 
-The following items remain known but must not distract from the
-immediate integration path.
+The following items remain known but must not distract from Phase 0 closure.
 
 Tariff effective-date enforcement
 
-The rate schema supports effective_from / effective_to, but the
-current vehicle-alternative query does not yet need multiple historical
-rate versions.
+The rate schema supports effective_from / effective_to, but the current
+vehicle-alternative query does not yet need multiple historical rate versions.
 
-The current single-rate synthetic dataset is safe.
-
-Temporal rate selection should be enforced before multiple historical
-rates per route/vehicle are introduced.
+Temporal rate selection should be enforced before multiple historical rates
+per route/vehicle are introduced.
 
 Zero forecast
 
 Zero forecast is allowed by the current forecast schema.
 
-Metric logic involving cost_per_piece requires an explicit zero-volume
-policy before that edge case becomes part of a relied-upon analytical
-path.
+Metric logic involving cost_per_piece requires an explicit zero-volume policy
+before that edge case becomes part of a relied-upon analytical path.
 
 ETL idempotency
 
-Master/forecast ETLs currently use append semantics and are not intended
-to be blindly rerun against already-loaded primary keys.
+Master/forecast ETLs currently use append semantics and are not intended to be
+blindly rerun against already-loaded primary keys.
 
-Do not use pandas if_exists="replace", because that would destroy
-schema constraints.
+Do not use pandas if_exists="replace", because that would destroy schema
+constraints.
 
-Define explicit idempotency/upsert behavior only when a concrete
-requirement makes it necessary.
+Define explicit idempotency/upsert behavior only when a concrete requirement
+makes it necessary.
 
 Plan vs Actual
 
 transport_actual is not implemented.
 
-Plan-vs-Actual remains a valid future Transportation capability
-described by the target architecture, but it is not required before
-demonstrating the current bounded extensibility objective.
-
-It must not delay Copilot integration.
-
-If a later business question or portfolio requirement makes
-Plan-vs-Actual necessary, implement it as a separate bounded increment
-with deterministic tests.
+Plan-vs-Actual remains a valid future Transportation capability, but it is not
+required for the current bounded Phase 0 exit unless a concrete portfolio or
+integration requirement makes it necessary.
 
 Service-premium calibration
 
 Do not reopen service-premium calibration unless a concrete business
 requirement makes it necessary.
-
-Do not manufacture synthetic complexity merely to produce more granular
-premium values.
 
 GHG / sustainability extension
 
@@ -1910,74 +1856,89 @@ Remains optional and outside the current minimum exit path.
 
 Remaining bounded sequence from this checkpoint
 
-The current sequence is intentionally short.
-
 Planning + Materialization
 DONE
-↓
+->
 Advanced SQL BQ-00 -> BQ-09
 DONE
-↓
+->
 Deterministic Analytics + Tests
-DONE for current integration scope
-↓
-Expose selected Transportation analytics through Copilot-compatible Tool Contract
+DONE
+->
+Transportation API / Tool Contract
+DONE for current bounded integration
+->
+Multidomain AI Layer
+DONE
+->
+Structured Transportation Intent Routing
+DONE
+->
+Deterministic Transportation Dispatcher
+DONE
+->
+out_of_scope Guardrail
+DONE
+->
+Inventory + Transportation Full Regression
+DONE - 104 passed
+->
+Validate selected real-LLM Transportation natural-language behavior,
+including the R001 golden case
 NEXT
-↓
-Integrate LLM / Tool Calling
-↓
-Validate R001 golden case and selected natural-language questions
-↓
-Run full Inventory + Transportation regression
-↓
-Document demonstrated extensibility
-↓
-STOP
-
-Do not add additional SQL BQs, frontend expansion, optimization,
-detailed service-policy calibration, Plan-vs-Actual, GHG or unrelated
-Transportation features unless they become necessary to complete this
-chain.
+->
+Document final demonstrated extensibility / Phase 0 exit
+->
+STOP Transportation expansion
 
 Immediate next development increment
 
-The next increment is:
+The next increment is no longer architectural expansion.
 
-Transportation Analytics -> Tool Contract -> LLM ->
-Decision-Support Answer -> Tests
+The architecture required to demonstrate a second Supply Chain analytical
+domain is now implemented and regression-safe.
 
-Before changing code, inspect the current integration surface:
+The next bounded validation should exercise selected Transportation questions
+with the real LLM path and verify behavior against deterministic expected
+facts.
 
-src/ai/tools.py
+Priority validation cases should include:
 
-src/ai/service.py
+R001 capacity-threshold explanation;
 
-src/ai/context.py
+at least one network-level analytical question;
 
-src/ai/prompts.py
+at least one route-filtered question;
 
-src/api/main.py
+at least one out-of-scope question.
 
-The objective is not to redesign the existing Copilot.
+Validation criteria:
 
-The objective is to expose a small number of completed Transportation
-deterministic capabilities through compatible contracts and prove that
-the existing architecture can support a second Supply Chain analytical
-domain.
+the router selects an authorized analytical intent;
 
-Preferred first integration target:
+route_id is extracted only when supported by the question;
 
-R001-style temporal/operational explanation, where deterministic
-analytics provides the facts and the LLM converts them into a concise
-business explanation.
+the dispatcher invokes the expected deterministic capability;
 
-The first implementation should remain narrow enough to test end-to-end
-before adding more Transportation intents.
+authoritative KPI values come from deterministic analytics;
+
+the final explanation answers the original question;
+
+the LLM does not invent unsupported causes;
+
+out_of_scope stops before analytical execution and before the explanatory LLM
+call.
+
+Do not add more Transportation analytical capabilities merely to expand the
+demo.
+
+If these validations pass, update the final Phase 0 portfolio narrative and
+STOP Transportation expansion.
 
 Resume instruction
 
-When a new development session starts, this file should be treated as
-the Transportation source of truth.
+When a new development session starts, this file should be treated as the
+Transportation source of truth.
 
 Resume from this Current Implementation Checkpoint, not from older
 aspirational sequences.
@@ -1988,26 +1949,25 @@ python -m pytest -q
 
 Expected checkpoint result at the time of this update:
 
-77 passed
+104 passed
 
 If regression remains green:
 
-inspect the existing Copilot integration surface;
+validate selected real-LLM Transportation questions;
 
-define the minimum Transportation tool contract;
+validate the R001 golden case;
 
-implement the bounded integration;
+make only corrections required by those validations;
 
-run targeted tests;
+run targeted tests for any correction;
 
-run full regression;
+run full regression if a cross-cutting correction is made;
 
-validate the R001 golden example;
+document final Phase 0 extensibility;
 
-continue only as far as required to demonstrate extensibility.
+STOP.
 
-Do not reopen completed Advanced SQL learning work without a concrete
-need.
+Do not reopen completed Advanced SQL learning work without a concrete need.
 
 Definition of Done --- Transportation Phase 0
 
@@ -2030,51 +1990,51 @@ short-route and long-route planning profiles are represented;
 target service frequency is represented without becoming an absolute
 universal constraint;
 
-Capacity Requirement and Service Target remain semantically
-distinct;
+Capacity Requirement and Service Target remain semantically distinct;
 
 the core planning model is documented;
 
-BQ-00 through BQ-09 provide a meaningful business-driven Advanced
-SQL set;
+BQ-00 through BQ-09 provide a meaningful business-driven Advanced SQL set;
 
-advanced SQL concepts are demonstrated in realistic analytical
-questions;
+advanced SQL concepts are demonstrated in realistic analytical questions;
 
 R$/Piece is implemented and tested;
 
 capacity/utilization analytics are implemented;
 
-capacity-threshold effects can be detected and explained from
-deterministic evidence;
+capacity-threshold effects can be detected and explained from deterministic
+evidence;
 
-the analytical logic and SQL can be explained independently of the
-LLM;
+the analytical logic and SQL can be explained independently of the LLM;
 
 selected deterministic Transportation analytics are exposed through
-compatible Copilot tool/API contracts;
+compatible Copilot contracts;
 
-selected natural-language Transportation questions invoke
-deterministic analytics;
+selected natural-language Transportation questions invoke deterministic
+analytics;
 
 LLM output interprets structured results rather than recalculating
 authoritative KPIs;
 
-the R001 capacity-threshold case is validated as a
-golden/calibration example;
+the R001 capacity-threshold case is validated as a golden/calibration example;
 
 existing Inventory behavior remains intact;
 
 targeted and full regression tests pass;
 
-the Copilot demonstrably supports a second Supply Chain analytical
-domain;
+the Copilot demonstrably supports a second Supply Chain analytical domain;
 
 no unnecessary standalone Transportation product has been created.
 
+At this checkpoint, all architecture/integration criteria above are
+implemented and regression-tested. The remaining bounded exit work is
+behavioral validation of selected real-LLM Transportation questions,
+including R001, followed by final documentation of demonstrated
+extensibility.
+
 Plan-vs-Actual, historical tariff versions, GHG analysis and deeper
-Transportation optimization are not required for the current Phase 0
-exit unless a concrete integration requirement proves otherwise.
+Transportation optimization are not required for the current Phase 0 exit
+unless a concrete integration requirement proves otherwise.
 
 Then:
 

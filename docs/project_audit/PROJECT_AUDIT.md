@@ -1,21 +1,21 @@
 # Project Audit
 
-Gerado em: 19/09/2026 17:48:40
+Gerado em: 22/09/2026 13:23:50
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
-- Arquivos Python: **37**
-- Linhas totais: **6399**
-- Linhas efetivas de código: **4983**
-- Funções: **211**
-- Classes: **5**
-- Imports internos: **74**
-- Imports externos: **24**
-- Imports da biblioteca padrão: **33**
+- Arquivos Python: **43**
+- Linhas totais: **7672**
+- Linhas efetivas de código: **5979**
+- Funções: **264**
+- Classes: **17**
+- Imports internos: **101**
+- Imports externos: **33**
+- Imports da biblioteca padrão: **37**
 - TODOs/FIXMEs em comentários: **0**
-- Funções sem docstring: **44**
+- Funções sem docstring: **72**
 - Arquivos com erro de sintaxe: **0**
 
 ## 2. Como usar as opções True e False
@@ -68,10 +68,10 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 7.9/10 |
-| Complexidade estrutural | 8.9/10 |
+| Cobertura de docstrings | 7.3/10 |
+| Complexidade estrutural | 8.8/10 |
 | Integridade sintática | 10.0/10 |
-| Saúde geral | **9.2/10** |
+| Saúde geral | **9.0/10** |
 
 ## 6. Estrutura do projeto
 
@@ -158,10 +158,13 @@ ai-supply-chain-copilot/
 ├── src/
 │   ├── ai/
 │   │   ├── client.py
-│   │   ├── context.py
+│   │   ├── inventory_context.py
 │   │   ├── prompts.py
 │   │   ├── service.py
-│   │   └── tools.py
+│   │   ├── tools.py
+│   │   ├── transportation_context.py
+│   │   ├── transportation_dispatcher.py
+│   │   └── transportation_router.py
 │   ├── analytics/
 │   │   └── transportation/
 │   │       ├── planning.py
@@ -189,7 +192,10 @@ ai-supply-chain-copilot/
     ├── test_ai_context.py
     ├── test_ai_service.py
     ├── test_ai_tools.py
+    ├── test_ai_transportation_context.py
+    ├── test_ai_transportation_router.py
     ├── test_api_copilot.py
+    ├── test_transportation_dispatcher.py
     ├── test_transportation_planning.py
     ├── test_transportation_planning_policy.py
     ├── test_transportation_sql_analysis.py
@@ -211,14 +217,17 @@ ai-supply-chain-copilot/
 | `scripts/inventory_scoring.py` | 123 | 6 | 0 | 0 |
 | `scripts/inventory_validation.py` | 78 | 2 | 0 | 0 |
 | `scripts/materialize_transportation_plan.py` | 17 | 1 | 0 | 0 |
-| `src/ai/client.py` | 255 | 7 | 0 | 0 |
-| `src/ai/context.py` | 144 | 2 | 0 | 0 |
-| `src/ai/prompts.py` | 239 | 0 | 0 | 0 |
-| `src/ai/service.py` | 32 | 1 | 0 | 0 |
-| `src/ai/tools.py` | 81 | 1 | 0 | 0 |
+| `src/ai/client.py` | 319 | 9 | 0 | 0 |
+| `src/ai/inventory_context.py` | 144 | 2 | 0 | 0 |
+| `src/ai/prompts.py` | 286 | 0 | 0 | 0 |
+| `src/ai/service.py` | 129 | 3 | 0 | 0 |
+| `src/ai/tools.py` | 154 | 2 | 0 | 0 |
+| `src/ai/transportation_context.py` | 45 | 1 | 0 | 0 |
+| `src/ai/transportation_dispatcher.py` | 70 | 1 | 0 | 0 |
+| `src/ai/transportation_router.py` | 120 | 1 | 1 | 0 |
 | `src/analytics/transportation/planning.py` | 247 | 7 | 0 | 0 |
 | `src/analytics/transportation/sql_analysis.py` | 627 | 10 | 0 | 0 |
-| `src/api/main.py` | 209 | 8 | 1 | 0 |
+| `src/api/main.py` | 235 | 9 | 1 | 0 |
 | `src/database/connection.py` | 19 | 1 | 0 | 0 |
 | `src/database/create_inventory_tables.py` | 121 | 5 | 0 | 0 |
 | `src/database/create_transportation_tables.py` | 156 | 8 | 0 | 0 |
@@ -228,11 +237,14 @@ ai-supply-chain-copilot/
 | `src/etl/transportation/load_forecast.py` | 69 | 5 | 0 | 0 |
 | `src/etl/transportation/load_master_data.py` | 94 | 9 | 0 | 0 |
 | `src/main.py` | 21 | 1 | 0 | 0 |
-| `tests/test_ai_client.py` | 475 | 22 | 3 | 0 |
-| `tests/test_ai_context.py` | 127 | 5 | 0 | 0 |
-| `tests/test_ai_service.py` | 238 | 13 | 0 | 0 |
-| `tests/test_ai_tools.py` | 135 | 14 | 1 | 0 |
-| `tests/test_api_copilot.py` | 110 | 6 | 0 | 0 |
+| `tests/test_ai_client.py` | 650 | 30 | 13 | 0 |
+| `tests/test_ai_context.py` | 126 | 5 | 0 | 0 |
+| `tests/test_ai_service.py` | 285 | 20 | 0 | 0 |
+| `tests/test_ai_tools.py` | 200 | 20 | 2 | 0 |
+| `tests/test_ai_transportation_context.py` | 71 | 3 | 0 | 0 |
+| `tests/test_ai_transportation_router.py` | 186 | 11 | 0 | 0 |
+| `tests/test_api_copilot.py` | 152 | 8 | 0 | 0 |
+| `tests/test_transportation_dispatcher.py` | 146 | 7 | 0 | 0 |
 | `tests/test_transportation_planning.py` | 215 | 6 | 0 | 0 |
 | `tests/test_transportation_planning_policy.py` | 263 | 19 | 0 | 0 |
 | `tests/test_transportation_sql_analysis.py` | 580 | 12 | 0 | 0 |
@@ -330,15 +342,17 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `validar_configuracao_cliente` | 25–53 | `—` | SIM |
-| `validar_limites_contexto` | 56–85 | `contexto` | SIM |
-| `montar_requisicao` | 88–108 | `pergunta, contexto` | SIM |
-| `gerar_resposta` | 111–143 | `pergunta, contexto` | SIM |
-| `gerar_resposta_real` | 146–178 | `pergunta, contexto` | SIM |
-| `gerar_resposta_fake` | 181–207 | `pergunta, contexto` | SIM |
-| `obter_quantidade_registros` | 210–226 | `contexto` | SIM |
+| `validar_configuracao_cliente` | 24–52 | `—` | SIM |
+| `validar_limites_contexto` | 55–84 | `contexto` | SIM |
+| `montar_requisicao` | 87–108 | `pergunta, contexto, instrucoes` | SIM |
+| `gerar_resposta` | 111–146 | `pergunta, contexto, instrucoes` | SIM |
+| `gerar_resposta_real` | 149–182 | `pergunta, contexto, instrucoes` | SIM |
+| `gerar_resposta_estruturada` | 185–216 | `pergunta, instrucoes, modelo_saida` | SIM |
+| `gerar_resposta_estruturada_real` | 219–242 | `pergunta, instrucoes, modelo_saida` | SIM |
+| `gerar_resposta_fake` | 245–271 | `pergunta, contexto` | SIM |
+| `obter_quantidade_registros` | 274–290 | `contexto` | SIM |
 
-### `src/ai/context.py`
+### `src/ai/inventory_context.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
@@ -353,13 +367,38 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `responder` | 6–20 | `pergunta` | SIM |
+| `responder` | 26–48 | `pergunta, dominio` | SIM |
+| `responder_inventory` | 51–70 | `pergunta` | SIM |
+| `responder_transportation` | 73–114 | `pergunta` | SIM |
 
 ### `src/ai/tools.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `listar_inventario` | 18–69 | `—` | SIM |
+| `listar_inventario` | 22–77 | `—` | SIM |
+| `analisar_mudancas_transporte` | 80–142 | `route_id` | SIM |
+
+### `src/ai/transportation_context.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `preparar_contexto_transporte` | 4–45 | `tipo_analise, resultado_analitico` | SIM |
+
+### `src/ai/transportation_dispatcher.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `executar_intencao_transporte` | 32–70 | `intencao` | SIM |
+
+### `src/ai/transportation_router.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `rotear_pergunta_transporte` | 100–120 | `pergunta` | SIM |
+
+| Classe | Linhas | Docstring |
+|---|---:|---|
+| `TransportationIntent` | 23–34 | SIM |
 
 ### `src/analytics/transportation/planning.py`
 
@@ -392,18 +431,19 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `carregar_inventario` | 14–29 | `—` | SIM |
-| `raiz` | 51–59 | `—` | SIM |
-| `verificar_saude` | 63–70 | `—` | SIM |
-| `listar_produtos` | 74–105 | `—` | SIM |
-| `buscar_produto` | 109–144 | `sku` | SIM |
-| `listar_inventario` | 148–157 | `—` | SIM |
-| `obter_dashboard` | 161–186 | `—` | SIM |
-| `consultar_copilot` | 190–209 | `entrada` | SIM |
+| `carregar_inventario` | 16–31 | `—` | SIM |
+| `raiz` | 53–61 | `—` | SIM |
+| `verificar_saude` | 65–72 | `—` | SIM |
+| `listar_produtos` | 76–107 | `—` | SIM |
+| `buscar_produto` | 111–146 | `sku` | SIM |
+| `listar_inventario` | 150–159 | `—` | SIM |
+| `obter_dashboard` | 163–188 | `—` | SIM |
+| `obter_mudancas_transporte` | 192–212 | `route_id` | SIM |
+| `consultar_copilot` | 216–235 | `entrada` | SIM |
 
 | Classe | Linhas | Docstring |
 |---|---:|---|
-| `PerguntaCopilot` | 32–37 | SIM |
+| `PerguntaCopilot` | 34–39 | SIM |
 
 ### `src/database/connection.py`
 
@@ -506,55 +546,80 @@ ai-supply-chain-copilot/
 | `test_gerar_resposta_fake_sem_contexto` | 88–103 | `—` | SIM |
 | `test_gerar_resposta_fake_conta_lista_de_registros` | 106–125 | `—` | SIM |
 | `test_gerar_resposta_fake_contexto_nao_lista` | 128–144 | `—` | SIM |
-| `test_montar_requisicao_inclui_system_prompt` | 147–165 | `—` | SIM |
-| `test_montar_requisicao_preserva_pergunta_e_contexto` | 168–196 | `—` | SIM |
-| `test_montar_requisicao_rejeita_pergunta_vazia` | 199–212 | `—` | SIM |
-| `test_obter_quantidade_registros_contexto_estruturado` | 215–234 | `—` | SIM |
-| `test_validar_configuracao_cliente_aceita_modo_fake` | 237–254 | `monkeypatch` | SIM |
-| `test_validar_configuracao_cliente_bloqueia_real_sem_autorizacao` | 257–281 | `monkeypatch` | SIM |
-| `test_validar_configuracao_cliente_real_exige_api_key` | 284–311 | `monkeypatch` | SIM |
-| `test_validar_configuracao_cliente_rejeita_modo_invalido` | 314–329 | `monkeypatch` | SIM |
-| `test_validar_limites_contexto_aceita_contexto_pequeno` | 332–349 | `—` | SIM |
-| `test_validar_limites_contexto_rejeita_contexto_excessivo` | 352–374 | `monkeypatch` | SIM |
-| `test_montar_requisicao_bloqueia_contexto_excessivo` | 377–402 | `monkeypatch` | SIM |
-| `test_limite_tokens_resposta_possui_valor_controlado` | 405–412 | `—` | SIM |
-| `test_gerar_resposta_real_utiliza_responses_api` | 415–475 | `monkeypatch` | SIM |
-| `create` | 443–458 | `self, model, instructions, input, max_output_tokens` | NÃO |
-| `__init__` | 461–462 | `self` | NÃO |
+| `test_montar_requisicao_preserva_instrucoes` | 147–170 | `—` | SIM |
+| `test_montar_requisicao_preserva_pergunta_e_contexto` | 173–201 | `—` | SIM |
+| `test_montar_requisicao_rejeita_pergunta_vazia` | 204–217 | `—` | SIM |
+| `test_obter_quantidade_registros_contexto_estruturado` | 220–239 | `—` | SIM |
+| `test_validar_configuracao_cliente_aceita_modo_fake` | 242–259 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_bloqueia_real_sem_autorizacao` | 262–286 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_real_exige_api_key` | 289–316 | `monkeypatch` | SIM |
+| `test_validar_configuracao_cliente_rejeita_modo_invalido` | 319–334 | `monkeypatch` | SIM |
+| `test_validar_limites_contexto_aceita_contexto_pequeno` | 337–354 | `—` | SIM |
+| `test_validar_limites_contexto_rejeita_contexto_excessivo` | 357–379 | `monkeypatch` | SIM |
+| `test_montar_requisicao_bloqueia_contexto_excessivo` | 382–407 | `monkeypatch` | SIM |
+| `test_limite_tokens_resposta_possui_valor_controlado` | 410–417 | `—` | SIM |
+| `test_gerar_resposta_real_utiliza_responses_api` | 420–483 | `monkeypatch` | SIM |
+| `create` | 450–465 | `self, model, instructions, input, max_output_tokens` | NÃO |
+| `__init__` | 468–469 | `self` | NÃO |
+| `test_gerar_resposta_estruturada_rejeita_modo_fake` | 486–515 | `monkeypatch` | SIM |
+| `test_gerar_resposta_estruturada_rejeita_pergunta_vazia` | 518–545 | `monkeypatch` | SIM |
+| `test_gerar_resposta_estruturada_real_utiliza_responses_parse` | 548–599 | `monkeypatch` | SIM |
+| `parse` | 569–581 | `self, model, instructions, input, text_format` | NÃO |
+| `__init__` | 584–585 | `self` | NÃO |
+| `test_gerar_resposta_estruturada_real_rejeita_saida_ausente` | 602–650 | `monkeypatch` | SIM |
+| `parse` | 619–626 | `self, model, instructions, input, text_format` | NÃO |
+| `__init__` | 629–630 | `self` | NÃO |
 
 | Classe | Linhas | Docstring |
 |---|---:|---|
-| `RespostaFake` | 439–440 | NÃO |
-| `ResponsesFake` | 442–458 | NÃO |
-| `OpenAIFake` | 460–462 | NÃO |
+| `RespostaFake` | 446–447 | NÃO |
+| `ResponsesFake` | 449–465 | NÃO |
+| `OpenAIFake` | 467–469 | NÃO |
+| `SaidaTeste` | 494–495 | NÃO |
+| `SaidaTeste` | 526–527 | NÃO |
+| `SaidaTeste` | 558–559 | NÃO |
+| `RespostaFake` | 565–566 | NÃO |
+| `ResponsesFake` | 568–581 | NÃO |
+| `OpenAIFake` | 583–585 | NÃO |
+| `SaidaTeste` | 612–613 | NÃO |
+| `RespostaFake` | 615–616 | NÃO |
+| `ResponsesFake` | 618–626 | NÃO |
+| `OpenAIFake` | 628–630 | NÃO |
 
 ### `tests/test_ai_context.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `test_preparar_contexto_respeita_limite_de_registros` | 8–20 | `—` | NÃO |
-| `test_calcular_agregacao_fornecedores_preserva_empate` | 22–50 | `—` | NÃO |
-| `test_calcular_agregacao_fornecedores_sem_dados` | 53–62 | `—` | NÃO |
-| `test_preparar_contexto_inclui_agregacao_fornecedores` | 65–113 | `—` | NÃO |
-| `test_preparar_contexto_vazio_mantem_estrutura` | 116–127 | `—` | NÃO |
+| `test_preparar_contexto_respeita_limite_de_registros` | 7–19 | `—` | NÃO |
+| `test_calcular_agregacao_fornecedores_preserva_empate` | 21–49 | `—` | NÃO |
+| `test_calcular_agregacao_fornecedores_sem_dados` | 52–61 | `—` | NÃO |
+| `test_preparar_contexto_inclui_agregacao_fornecedores` | 64–112 | `—` | NÃO |
+| `test_preparar_contexto_vazio_mantem_estrutura` | 115–126 | `—` | NÃO |
 
 ### `tests/test_ai_service.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `test_responder_orquestra_fluxo_corretamente` | 4–50 | `monkeypatch` | NÃO |
+| `test_responder_orquestra_fluxo_corretamente` | 4–52 | `monkeypatch` | NÃO |
 | `listar_inventario_fake` | 18–19 | `—` | NÃO |
 | `preparar_contexto_fake` | 21–23 | `inventario` | NÃO |
-| `gerar_resposta_fake` | 25–28 | `pergunta, contexto` | NÃO |
-| `test_responder_propaga_erro_da_tool` | 53–74 | `monkeypatch` | SIM |
-| `listar_inventario_fake` | 59–60 | `—` | NÃO |
-| `test_responder_propaga_erro_do_client` | 77–114 | `monkeypatch` | SIM |
-| `listar_inventario_fake` | 90–91 | `—` | NÃO |
-| `gerar_resposta_fake` | 93–94 | `pergunta, contexto` | NÃO |
-| `test_preparar_contexto_retorna_resumo_e_registros` | 117–148 | `—` | SIM |
-| `test_preparar_contexto_ordena_por_prioridade_e_valor` | 151–186 | `—` | SIM |
-| `test_preparar_contexto_trata_campos_ausentes` | 189–211 | `—` | SIM |
-| `test_preparar_contexto_identifica_contexto_parcial` | 214–238 | `—` | SIM |
+| `gerar_resposta_fake` | 25–30 | `pergunta, contexto, instrucoes` | NÃO |
+| `test_responder_propaga_erro_da_tool` | 55–76 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 61–62 | `—` | NÃO |
+| `test_responder_propaga_erro_do_client` | 79–116 | `monkeypatch` | SIM |
+| `listar_inventario_fake` | 92–93 | `—` | NÃO |
+| `gerar_resposta_fake` | 95–96 | `pergunta, contexto, instrucoes` | NÃO |
+| `test_preparar_contexto_retorna_resumo_e_registros` | 119–150 | `—` | SIM |
+| `test_preparar_contexto_ordena_por_prioridade_e_valor` | 153–188 | `—` | SIM |
+| `test_preparar_contexto_trata_campos_ausentes` | 191–213 | `—` | SIM |
+| `test_preparar_contexto_identifica_contexto_parcial` | 216–240 | `—` | SIM |
+| `test_responder_transportation_executa_fluxo_completo` | 242–259 | `monkeypatch` | NÃO |
+| `gerar_resposta_fake` | 251–256 | `pergunta, contexto, instrucoes` | NÃO |
+| `test_responder_transportation_bloqueia_out_of_scope` | 261–272 | `monkeypatch` | NÃO |
+| `dispatcher_nao_deve_ser_chamado` | 265–266 | `intencao` | NÃO |
+| `llm_nao_deve_ser_chamado` | 267–268 | `*args, **kwargs` | NÃO |
+| `test_responder_rejeita_dominio_invalido` | 274–280 | `—` | NÃO |
+| `test_responder_inventory_permanece_default` | 282–285 | `monkeypatch` | NÃO |
 
 ### `tests/test_ai_tools.py`
 
@@ -574,10 +639,41 @@ ai-supply-chain-copilot/
 | `urlopen_fake` | 103–110 | `requisicao, timeout` | NÃO |
 | `test_listar_inventario_gera_erro_de_timeout` | 121–135 | `monkeypatch` | SIM |
 | `urlopen_fake` | 126–127 | `requisicao, timeout` | NÃO |
+| `test_analisar_mudancas_transporte_retorna_json` | 138–183 | `monkeypatch` | SIM |
+| `__enter__` | 145–146 | `self` | NÃO |
+| `__exit__` | 148–149 | `self, exc_type, exc_value, traceback` | NÃO |
+| `read` | 151–156 | `self` | NÃO |
+| `urlopen_fake` | 158–166 | `requisicao, timeout` | NÃO |
+| `test_analisar_mudancas_transporte_rejeita_route_id_vazio` | 186–200 | `—` | SIM |
 
 | Classe | Linhas | Docstring |
 |---|---:|---|
 | `RespostaFake` | 9–33 | SIM |
+| `RespostaFake` | 144–156 | NÃO |
+
+### `tests/test_ai_transportation_context.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_preparar_contexto_transporte_lista` | 6–36 | `—` | NÃO |
+| `test_preparar_contexto_transporte_lista_vazia` | 39–53 | `—` | NÃO |
+| `test_preparar_contexto_transporte_resultado_nao_lista` | 56–71 | `—` | NÃO |
+
+### `tests/test_ai_transportation_router.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_transportation_intent_aceita_cost_ranking` | 9–20 | `—` | SIM |
+| `test_transportation_intent_aceita_rota_especifica` | 23–35 | `—` | SIM |
+| `test_transportation_intent_rejeita_intent_invalida` | 38–47 | `—` | SIM |
+| `test_transportation_intent_aceita_todas_as_capacidades` | 50–74 | `—` | SIM |
+| `test_rotear_pergunta_transporte_identifica_cost_ranking` | 77–113 | `monkeypatch` | SIM |
+| `gerar_resposta_estruturada_fake` | 85–100 | `pergunta, instrucoes, modelo_saida` | NÃO |
+| `test_rotear_pergunta_transporte_identifica_eficiencia` | 116–145 | `monkeypatch` | SIM |
+| `gerar_resposta_estruturada_fake` | 124–132 | `pergunta, instrucoes, modelo_saida` | NÃO |
+| `test_rotear_pergunta_transporte_extrai_route_id` | 148–177 | `monkeypatch` | SIM |
+| `gerar_resposta_estruturada_fake` | 156–164 | `pergunta, instrucoes, modelo_saida` | NÃO |
+| `test_transportation_intent_aceita_out_of_scope` | 180–186 | `—` | NÃO |
 
 ### `tests/test_api_copilot.py`
 
@@ -589,6 +685,20 @@ ai-supply-chain-copilot/
 | `test_consultar_copilot_rejeita_corpo_invalido` | 58–71 | `—` | SIM |
 | `test_consultar_copilot_trata_erros_da_camada_de_ia` | 82–110 | `monkeypatch, erro` | SIM |
 | `responder_fake` | 91–92 | `pergunta` | NÃO |
+| `test_obter_mudancas_transporte_retorna_historico_da_rota` | 113–140 | `—` | NÃO |
+| `test_obter_mudancas_transporte_retorna_404_para_rota_inexistente` | 143–151 | `—` | NÃO |
+
+### `tests/test_transportation_dispatcher.py`
+
+| Função | Linhas | Argumentos | Docstring |
+|---|---:|---|---|
+| `test_executar_intencao_transporte_executa_analise_correta` | 7–45 | `monkeypatch` | SIM |
+| `analisar_fake` | 26–27 | `—` | NÃO |
+| `test_executar_intencao_transporte_filtra_route_id` | 48–95 | `monkeypatch` | SIM |
+| `analisar_fake` | 71–72 | `—` | NÃO |
+| `test_executar_intencao_transporte_sem_route_id_nao_filtra` | 98–132 | `monkeypatch` | SIM |
+| `analisar_fake` | 112–113 | `—` | NÃO |
+| `test_executar_intencao_transporte_bloqueia_out_of_scope` | 135–146 | `—` | NÃO |
 
 ### `tests/test_transportation_planning.py`
 
@@ -664,15 +774,22 @@ ai-supply-chain-copilot/
 | `scripts.inventory_metrics` | `scripts.business_rules` |
 | `scripts.inventory_scoring` | `scripts.business_rules` |
 | `scripts.materialize_transportation_plan` | `src.analytics.transportation.planning` |
-| `src.ai.client` | `src.ai.prompts` |
 | `src.ai.service` | `src.ai.client` |
-| `src.ai.service` | `src.ai.context` |
+| `src.ai.service` | `src.ai.inventory_context` |
+| `src.ai.service` | `src.ai.prompts` |
 | `src.ai.service` | `src.ai.tools` |
+| `src.ai.service` | `src.ai.transportation_context` |
+| `src.ai.service` | `src.ai.transportation_dispatcher` |
+| `src.ai.service` | `src.ai.transportation_router` |
+| `src.ai.transportation_dispatcher` | `src.ai.transportation_router` |
+| `src.ai.transportation_dispatcher` | `src.analytics.transportation.sql_analysis` |
+| `src.ai.transportation_router` | `src.ai.client` |
 | `src.analytics.transportation.planning` | `src.database.connection` |
 | `src.analytics.transportation.planning` | `src.decision.transportation.planning_policy` |
 | `src.analytics.transportation.sql_analysis` | `src.database.connection` |
 | `src.api.main` | `src.ai.service` |
 | `src.api.main` | `src.database.connection` |
+| `src.api.main` | `src.analytics.transportation.sql_analysis` |
 | `src.database.create_inventory_tables` | `src.database.connection` |
 | `src.database.create_transportation_tables` | `src.database.connection` |
 | `src.etl.inventory.load_products` | `src.database.connection` |
@@ -683,10 +800,15 @@ ai-supply-chain-copilot/
 | `src.main` | `src.etl.inventory.load_products` |
 | `src.main` | `src.etl.inventory.load_warehouses` |
 | `tests.test_ai_client` | `src.ai.client` |
-| `tests.test_ai_context` | `src.ai.context` |
+| `tests.test_ai_context` | `src.ai.inventory_context` |
 | `tests.test_ai_service` | `src.ai.service` |
+| `tests.test_ai_service` | `src.ai.transportation_router` |
 | `tests.test_ai_tools` | `src.ai.tools` |
+| `tests.test_ai_transportation_context` | `src.ai.transportation_context` |
+| `tests.test_ai_transportation_router` | `src.ai.transportation_router` |
 | `tests.test_api_copilot` | `src.api.main` |
+| `tests.test_transportation_dispatcher` | `src.ai.transportation_dispatcher` |
+| `tests.test_transportation_dispatcher` | `src.ai.transportation_router` |
 | `tests.test_transportation_planning` | `src.database.connection` |
 | `tests.test_transportation_planning` | `src.analytics.transportation.planning` |
 | `tests.test_transportation_planning` | `src.database.create_transportation_tables` |
@@ -723,14 +845,21 @@ flowchart LR
     scripts_inventory_metrics["scripts.inventory_metrics"] --> scripts_business_rules["scripts.business_rules"]
     scripts_inventory_scoring["scripts.inventory_scoring"] --> scripts_business_rules["scripts.business_rules"]
     scripts_materialize_transportation_plan["scripts.materialize_transportation_plan"] --> src_analytics_transportation_planning["src.analytics.transportation.planning"]
-    src_ai_client["src.ai.client"] --> src_ai_prompts["src.ai.prompts"]
     src_ai_service["src.ai.service"] --> src_ai_client["src.ai.client"]
-    src_ai_service["src.ai.service"] --> src_ai_context["src.ai.context"]
+    src_ai_service["src.ai.service"] --> src_ai_inventory_context["src.ai.inventory_context"]
+    src_ai_service["src.ai.service"] --> src_ai_prompts["src.ai.prompts"]
     src_ai_service["src.ai.service"] --> src_ai_tools["src.ai.tools"]
+    src_ai_service["src.ai.service"] --> src_ai_transportation_context["src.ai.transportation_context"]
+    src_ai_service["src.ai.service"] --> src_ai_transportation_dispatcher["src.ai.transportation_dispatcher"]
+    src_ai_service["src.ai.service"] --> src_ai_transportation_router["src.ai.transportation_router"]
+    src_ai_transportation_dispatcher["src.ai.transportation_dispatcher"] --> src_ai_transportation_router["src.ai.transportation_router"]
+    src_ai_transportation_dispatcher["src.ai.transportation_dispatcher"] --> src_analytics_transportation_sql_analysis["src.analytics.transportation.sql_analysis"]
+    src_ai_transportation_router["src.ai.transportation_router"] --> src_ai_client["src.ai.client"]
     src_analytics_transportation_planning["src.analytics.transportation.planning"] --> src_database_connection["src.database.connection"]
     src_analytics_transportation_planning["src.analytics.transportation.planning"] --> src_decision_transportation_planning_policy["src.decision.transportation.planning_policy"]
     src_analytics_transportation_sql_analysis["src.analytics.transportation.sql_analysis"] --> src_database_connection["src.database.connection"]
     src_api_main["src.api.main"] --> src_ai_service["src.ai.service"]
+    src_api_main["src.api.main"] --> src_analytics_transportation_sql_analysis["src.analytics.transportation.sql_analysis"]
     src_api_main["src.api.main"] --> src_database_connection["src.database.connection"]
     src_database_create_inventory_tables["src.database.create_inventory_tables"] --> src_database_connection["src.database.connection"]
     src_database_create_transportation_tables["src.database.create_transportation_tables"] --> src_database_connection["src.database.connection"]
@@ -742,10 +871,15 @@ flowchart LR
     src_main["src.main"] --> src_etl_inventory_load_products["src.etl.inventory.load_products"]
     src_main["src.main"] --> src_etl_inventory_load_warehouses["src.etl.inventory.load_warehouses"]
     tests_test_ai_client["tests.test_ai_client"] --> src_ai_client["src.ai.client"]
-    tests_test_ai_context["tests.test_ai_context"] --> src_ai_context["src.ai.context"]
+    tests_test_ai_context["tests.test_ai_context"] --> src_ai_inventory_context["src.ai.inventory_context"]
     tests_test_ai_service["tests.test_ai_service"] --> src_ai_service["src.ai.service"]
+    tests_test_ai_service["tests.test_ai_service"] --> src_ai_transportation_router["src.ai.transportation_router"]
     tests_test_ai_tools["tests.test_ai_tools"] --> src_ai_tools["src.ai.tools"]
+    tests_test_ai_transportation_context["tests.test_ai_transportation_context"] --> src_ai_transportation_context["src.ai.transportation_context"]
+    tests_test_ai_transportation_router["tests.test_ai_transportation_router"] --> src_ai_transportation_router["src.ai.transportation_router"]
     tests_test_api_copilot["tests.test_api_copilot"] --> src_api_main["src.api.main"]
+    tests_test_transportation_dispatcher["tests.test_transportation_dispatcher"] --> src_ai_transportation_dispatcher["src.ai.transportation_dispatcher"]
+    tests_test_transportation_dispatcher["tests.test_transportation_dispatcher"] --> src_ai_transportation_router["src.ai.transportation_router"]
     tests_test_transportation_planning["tests.test_transportation_planning"] --> src_analytics_transportation_planning["src.analytics.transportation.planning"]
     tests_test_transportation_planning["tests.test_transportation_planning"] --> src_database_connection["src.database.connection"]
     tests_test_transportation_planning["tests.test_transportation_planning"] --> src_database_create_transportation_tables["src.database.create_transportation_tables"]
