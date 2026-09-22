@@ -1,7 +1,7 @@
 Transportation Analytics Architecture
 
 Document: 06_transportation_architecture.md Project: AI Supply Chain
-Copilot Status: Phase 0 --- Bounded Transportation Extension Last
+Copilot Status: Phase 0 --- CLOSED / Bounded Transportation Extension Last
 updated: 2026-09-20
 
 Purpose
@@ -1783,13 +1783,13 @@ Transportation API/tool integration.
 
 Current full project regression checkpoint:
 
-104 passed
+105 passed
 
 Canonical regression command:
 
 python -m pytest -q
 
-This 104-passed checkpoint validates that the multidomain Transportation AI
+This 105-passed checkpoint validates that the multidomain Transportation AI
 integration did not break the existing project behavior covered by the
 regression suite.
 
@@ -1881,162 +1881,88 @@ out_of_scope Guardrail
 DONE
 ->
 Inventory + Transportation Full Regression
-DONE - 104 passed
+DONE - 105 passed
 ->
-Validate selected real-LLM Transportation natural-language behavior,
-including the R001 golden case
-NEXT
+Selected real-LLM Transportation validation
+DONE for the current portfolio milestone
 ->
-Document final demonstrated extensibility / Phase 0 exit
+Document demonstrated extensibility / Phase 0 exit
+DONE
 ->
 STOP Transportation expansion
 
-Immediate next development increment
+Phase 0 Closure --- 2026-09-22
 
-The next increment is no longer architectural expansion.
+Transportation Phase 0 is CLOSED for the current portfolio milestone.
 
-The architecture required to demonstrate a second Supply Chain analytical
-domain is now implemented and regression-safe.
+Transportation successfully demonstrates:
 
-The next bounded validation should exercise selected Transportation questions
-with the real LLM path and verify behavior against deterministic expected
-facts.
+advanced SQL applied to a realistic synthetic Supply Chain problem;
 
-Priority validation cases should include:
+deterministic Transportation planning and analytics;
 
-R001 capacity-threshold explanation;
+explicit separation between authoritative calculations and LLM interpretation;
 
-at least one network-level analytical question;
+structured LLM intent routing through Pydantic;
 
-at least one route-filtered question;
+deterministic capability dispatch;
 
-at least one out-of-scope question.
+domain-specific context preparation;
 
-Validation criteria:
+multidomain AI orchestration;
 
-the router selects an authorized analytical intent;
+explicit Inventory / Transportation domain selection;
 
-route_id is extracted only when supported by the question;
+Inventory backward compatibility;
 
-the dispatcher invokes the expected deterministic capability;
+bounded API/tool integration;
 
-authoritative KPI values come from deterministic analytics;
+end-to-end frontend/API/Copilot integration;
 
-the final explanation answers the original question;
+architectural extensibility across two distinct Supply Chain domains.
 
-the LLM does not invent unsupported causes;
-
-out_of_scope stops before analytical execution and before the explanatory LLM
-call.
-
-Do not add more Transportation analytical capabilities merely to expand the
-demo.
-
-If these validations pass, update the final Phase 0 portfolio narrative and
-STOP Transportation expansion.
-
-Resume instruction
-
-When a new development session starts, this file should be treated as the
-Transportation source of truth.
-
-Resume from this Current Implementation Checkpoint, not from older
-aspirational sequences.
-
-Current regression baseline:
+Final full regression checkpoint:
 
 python -m pytest -q
 
-Expected checkpoint result at the time of this update:
+105 passed
 
-104 passed
+Portfolio conclusion
 
-If regression remains green:
+Transportation fulfilled its intended role as an architectural extensibility case for the AI Supply Chain Copilot.
 
-validate selected real-LLM Transportation questions;
+No further Transportation expansion is required for the current portfolio milestone.
 
-validate the R001 golden case;
+The following remain valid optional future extensions, not blockers or open Phase 0 requirements:
 
-make only corrections required by those validations;
+Plan vs Actual;
 
-run targeted tests for any correction;
+historical tariff-version enforcement;
 
-run full regression if a cross-cutting correction is made;
+explicit zero-volume policy;
 
-document final Phase 0 extensibility;
+ETL idempotency/upsert behavior where required;
 
-STOP.
+GHG / sustainability analytics;
 
-Do not reopen completed Advanced SQL learning work without a concrete need.
+deeper Transportation optimization;
 
-Definition of Done --- Transportation Phase 0
+additional analytical capabilities only when justified by a concrete business or integration requirement.
 
-Transportation Phase 0 is complete when:
+Canonical architectural principle
 
-all data and entities used by Transportation are fully synthetic;
+UI defines the domain.
+LLM interprets the intent.
+Dispatcher selects the capability.
+SQL calculates.
+Analytics detects.
+AI explains.
+Human decides.
 
-no confidential or proprietary historical information is exposed;
+Resume instruction
 
-Planning Policy v0 is implemented using explicit synthetic rules;
+If Transportation is revisited in a future development session, this document remains the source of truth.
 
-planned_trips is treated as a derived planning result;
+Do not reopen completed Phase 0 work without a concrete new requirement.
 
-plan materialization is deterministic and idempotent;
-
-non-linear route/vehicle tariffs are represented;
-
-short-route and long-route planning profiles are represented;
-
-target service frequency is represented without becoming an absolute
-universal constraint;
-
-Capacity Requirement and Service Target remain semantically distinct;
-
-the core planning model is documented;
-
-BQ-00 through BQ-09 provide a meaningful business-driven Advanced SQL set;
-
-advanced SQL concepts are demonstrated in realistic analytical questions;
-
-R$/Piece is implemented and tested;
-
-capacity/utilization analytics are implemented;
-
-capacity-threshold effects can be detected and explained from deterministic
-evidence;
-
-the analytical logic and SQL can be explained independently of the LLM;
-
-selected deterministic Transportation analytics are exposed through
-compatible Copilot contracts;
-
-selected natural-language Transportation questions invoke deterministic
-analytics;
-
-LLM output interprets structured results rather than recalculating
-authoritative KPIs;
-
-the R001 capacity-threshold case is validated as a golden/calibration example;
-
-existing Inventory behavior remains intact;
-
-targeted and full regression tests pass;
-
-the Copilot demonstrably supports a second Supply Chain analytical domain;
-
-no unnecessary standalone Transportation product has been created.
-
-At this checkpoint, all architecture/integration criteria above are
-implemented and regression-tested. The remaining bounded exit work is
-behavioral validation of selected real-LLM Transportation questions,
-including R001, followed by final documentation of demonstrated
-extensibility.
-
-Plan-vs-Actual, historical tariff versions, GHG analysis and deeper
-Transportation optimization are not required for the current Phase 0 exit
-unless a concrete integration requirement proves otherwise.
-
-Then:
-
-STOP Transportation expansion and move to the bounded LinkedIn Agentic
-refactor.
+The next roadmap phase should proceed outside Transportation.

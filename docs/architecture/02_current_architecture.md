@@ -1,722 +1,432 @@
-      # Current Architecture
+Current Architecture
 
-      ## Purpose
+Purpose
 
-      This document describes the current technical architecture of the **AI Supply Chain Copilot v1.1.0**.
+This document describes the current technical architecture of the AI Supply Chain Copilot after the bounded Transportation multidomain increment completed in September 2026.
 
-      Unlike the System Overview, which presents the application from a high-level business and system perspective, this document focuses on how the currently implemented software components are organized and interact.
+The v1.1.0 cloud deployment remains the public baseline. This document focuses on the currently implemented software architecture, including Inventory and Transportation.
 
-      Cloud hosting and deployment-specific concerns are documented separately in `05_cloud_deployment.md`.
+Cloud hosting and deployment-specific concerns are documented separately in 05_cloud_deployment.md.
 
-      ---
+Current Development Stage
 
-      # Current Development Stage
+The AI Supply Chain Copilot is a functional portfolio application with:
 
-      The AI Supply Chain Copilot is currently a functional cloud-deployed portfolio application.
+synthetic Supply Chain data;
 
-      The implemented architecture includes:
+ETL and data standardization;
 
-      - synthetic ERP-style source data;
-      - ETL and data standardization;
-      - SQLite relational persistence;
-      - deterministic Supply Chain analytics;
-      - configurable business rules;
-      - decision-support logic;
-      - REST API through FastAPI;
-      - Power BI integration;
-      - AI service orchestration;
-      - deterministic context preparation;
-      - Fake and Real LLM clients;
-      - Streamlit conversational frontend;
-      - automated testing;
-      - structured LLM evaluation;
-      - public cloud deployment.
+SQLite relational persistence;
 
-      The application follows a layered architecture designed to keep deterministic business processing separated from Generative AI interpretation and presentation responsibilities.
+deterministic Inventory analytics and decision support;
 
-      ---
+deterministic Transportation planning and analytics;
 
-      # Current Logical Architecture
+configurable business rules;
 
-      The current implementation contains two complementary data paths within the same application architecture.
+REST API through FastAPI;
 
-      ```mermaid
-      flowchart TD
+Power BI integration for Inventory;
 
-      ERP[Synthetic ERP Inventory Dataset]
+multidomain AI service orchestration;
 
-      ANALYTICS[Deterministic Analytics Layer]
+domain-specific context preparation;
 
-      CONFIG[Business Rules Configuration]
+Pydantic Structured Output for Transportation intent routing;
 
-      DECISION[Decision Support Layer]
+deterministic Transportation capability dispatch;
 
-      OUTPUT[Analytical Artifact<br/>output/inventory_analysis.csv]
+Fake and Real LLM clients;
 
-      API[FastAPI REST API]
+Streamlit conversational frontend;
 
-      BI[Power BI]
+explicit Inventory / Transportation domain selection;
 
-      AISERVICE[AI Service]
+automated testing;
 
-      CONTEXT[Context Builder]
+structured LLM evaluation;
 
-      CLIENT[LLM Client]
+public cloud deployment of the v1.1.0 baseline.
 
-      OPENAI[OpenAI API]
+The architecture deliberately separates deterministic business processing from probabilistic interpretation.
 
-      FRONTEND[Streamlit Frontend]
+Current Logical Architecture
 
-      USER[User]
+flowchart TD
 
-      MASTER[Synthetic Master / Structured Data]
+    USER[User]
+    FE[Streamlit Frontend]
+    DOMAIN[Explicit Domain Selection]
+    API[FastAPI REST API]
+    SERVICE[Multidomain AI Service]
 
-      ETL[ETL / Standardization]
+    subgraph INVENTORY[Inventory Domain]
+        INVDATA[Inventory Analytical Data]
+        INVAN[Deterministic Inventory Analytics]
+        INVCTX[Inventory Context]
+        BI[Power BI]
+        INVDATA --> INVAN
+        INVAN --> INVCTX
+        INVAN --> BI
+    end
 
-      DB[(SQLite)]
+    subgraph TRANSPORTATION[Transportation Domain]
+        TRDB[(SQLite Transportation Data)]
+        ROUTER[LLM Intent Router]
+        CONTRACT[Pydantic Structured Output]
+        DISP[Deterministic Dispatcher]
+        TRAN[SQL / Deterministic Analytics]
+        TRCTX[Transportation Context]
+        ROUTER --> CONTRACT
+        CONTRACT -->|authorized intent| DISP
+        DISP --> TRAN
+        TRDB --> TRAN
+        TRAN --> TRCTX
+    end
 
-      RELATIONAL[Relational Consumers]
+    CLIENT[LLM Client]
+    OAI[OpenAI API]
 
-      ERP --> ANALYTICS
-      CONFIG --> ANALYTICS
-      ANALYTICS --> DECISION
-      DECISION --> OUTPUT
+    USER --> FE
+    FE --> DOMAIN
+    DOMAIN --> API
+    API --> SERVICE
 
-      OUTPUT --> API
-      OUTPUT --> BI
+    SERVICE -->|inventory| INVCTX
+    SERVICE -->|transportation| ROUTER
+    CONTRACT -->|out_of_scope| SERVICE
+    TRCTX --> SERVICE
 
-      API --> AISERVICE
-      AISERVICE --> CONTEXT
-      CONTEXT --> CLIENT
+    SERVICE --> CLIENT
+    CLIENT --> OAI
+    OAI --> CLIENT
+    CLIENT --> SERVICE
 
-      CLIENT --> OPENAI
-      OPENAI --> CLIENT
+    SERVICE --> API
+    API --> FE
+    FE --> USER
 
-      CLIENT --> AISERVICE
-      AISERVICE --> API
+The user or calling layer explicitly selects inventory or transportation.
 
-      USER --> FRONTEND
-      FRONTEND --> API
-      API --> FRONTEND
-      FRONTEND --> USER
+The LLM is not used to decide which domain should handle the request. This keeps domain selection deterministic, avoids unnecessary token consumption and removes probabilistic behavior from a decision already known by the interface.
 
-      MASTER --> ETL
-      ETL --> DB
-      DB --> RELATIONAL
-      ```
+Multidomain Orchestration
 
-      The current architecture contains two distinct but complementary data paths.
+The public service contract is conceptually:
 
-      The **analytical inventory path** processes the synthetic ERP inventory dataset through deterministic analytics, business rules and decision-support logic. The resulting analytical artifact is materialized in `output/inventory_analysis.csv` and consumed by the REST API, Power BI and AI capabilities.
+responder(pergunta, dominio="inventory")
 
-      The **relational path** uses ETL and SQLite to maintain structured master and inventory-related entities for relational application capabilities.
+Supported domains:
 
-      These paths coexist within the same application but currently serve different persistence and consumption responsibilities.
+inventory;
 
-      ---
+transportation.
 
-      # Architectural Layers
+Inventory remains the default for backward compatibility.
 
-      ## Data Source Layer
+Inventory Path
 
-      The application uses synthetic ERP-style operational data inspired by realistic Supply Chain scenarios.
+domain=inventory → Inventory data/tool → Inventory context → system/domain prompt → explanatory LLM response
 
-      The source data is intentionally fictional and reproducible, allowing realistic analytical behavior without exposing confidential corporate information.
+The existing Inventory behavior remains intact.
 
-      ---
+Transportation Path
 
-      ## ETL Layer
+domain=transportation → Transportation router → Structured Output → dispatcher → SQL/deterministic analytics → Transportation context → explanatory LLM response
 
-      The ETL layer currently supports the relational data path.
+The final explanatory LLM call receives the original user question so that the response remains aligned with the user's business intent.
 
-      Its responsibilities include:
+Transportation Intent Boundary
 
-      - source-data ingestion;
-      - data cleaning;
-      - column standardization;
-      - type normalization;
-      - transformation into application-ready structures;
-      - preparation for relational persistence.
+The Transportation router answers:
 
-      This layer isolates source-format concerns from the structured relational model maintained in SQLite.
+What analytical capability does this Transportation question require?
 
-      The primary analytical inventory path is separate: it processes the synthetic ERP inventory dataset through deterministic analytical components and materializes its consolidated output in `output/inventory_analysis.csv`.
+The router uses an explicit structured contract rather than unrestricted free-form interpretation.
 
-      ---
+Its output may contain an authorized Transportation analytical intent and supported parameters such as route_id, or it may classify the request as out_of_scope.
 
-      ## Persistence Layer
+out_of_scope is a guardrail: it stops execution before deterministic Transportation analytics and before the final explanatory LLM call.
 
-      The current implementation uses two persistence mechanisms with different responsibilities.
+Deterministic Dispatcher
 
-      ### Analytical Artifact
+The Transportation dispatcher answers:
 
-      The primary inventory analytical workflow materializes its consolidated output in:
+Which authorized deterministic function executes this validated capability?
 
-      `output/inventory_analysis.csv`
+It maps the structured intent to completed deterministic analytical functions.
 
-      This file contains deterministic analytical and decision-support information and is consumed by downstream capabilities including:
+The dispatcher does not calculate KPIs and does not ask the LLM to calculate them.
 
-      - the FastAPI `/inventory` endpoint;
-      - Power BI;
-      - AI context preparation through backend application services.
+When a supported route_id is present and the analytical result is route-grained, the dispatcher applies the bounded route filtering defined by the Transportation contract.
 
-      ### Relational Persistence
+This preserves an explicit chain of responsibility:
 
-      SQLite provides the relational persistence layer for structured master and inventory-related entities.
+Router interprets → Dispatcher selects → SQL/Analytics calculates.
 
-      Current relational concepts include:
+Domain Context Layer
 
-      - products;
-      - warehouses;
-      - inventory parameters;
-      - inventory movements.
+Inventory Context
 
-      SQLite therefore remains an implemented persistence technology, but it should not be interpreted as the source of the current 300-SKU analytical artifact consumed by `/inventory`.
+The Inventory context builder supplies controlled deterministic Inventory facts to the LLM.
 
-      The detailed physical relational schema is documented in `03_data_model.md`.
+Transportation Context
 
-      ---
+src/ai/transportation_context.py structures the official deterministic Transportation result for downstream interpretation.
 
-      ## Analytics Layer
+It does not recalculate metrics or invent conclusions.
 
-      The Analytics Layer processes the synthetic ERP inventory dataset and produces deterministic Supply Chain metrics and structured business information.
+The context includes domain metadata, analysis type, result metadata and the original deterministic analytical result.
 
-      Current analytical concepts include:
+API and Tool Integration
 
-      - inventory value;
-      - inventory coverage;
-      - lead-time analysis;
-      - rupture-risk indicators;
-      - financial impact;
-      - ABC-related prioritization;
-      - business aggregations.
+FastAPI remains the external integration contract between the frontend and backend.
 
-      Business-rule configuration supplies thresholds and parameters used by the deterministic analytical and decision-support logic.
+Transportation uses a bounded API/tool surface. The architecture does not create one HTTP endpoint for every deterministic SQL analytical function.
 
-      The resulting consolidated analytical information is materialized in `output/inventory_analysis.csv`.
+Completed deterministic analytical capabilities may be invoked internally through the dispatcher when they are already inside the trusted application boundary.
 
-      Exact numerical calculations remain under deterministic application control.
+This avoids infrastructure scope creep while keeping analytical capabilities explicit and testable.
 
-      ---
+Data and Persistence Architecture
 
-      ## Business Rules Configuration
+The project currently contains domain-specific data paths.
 
-      Business thresholds and classification parameters are externalized from the analytical implementation where appropriate.
+Inventory
 
-      Configuration allows business behavior to evolve without requiring unnecessary modifications to analytical source code.
+Inventory uses:
 
-      This follows the principle:
+synthetic ERP-style inventory source data;
 
-      `Business Parameter Change ≠ Source-Code Change`
+deterministic analytical processing;
 
-      Configuration is distinct from environment-specific runtime configuration and from sensitive application secrets.
+output/inventory_analysis.csv as the consolidated analytical artifact;
 
-      ---
+SQLite for structured relational reference entities;
 
-      ## Decision Support Layer
+Power BI and API/AI consumers.
 
-      The Decision Support Layer converts analytical outputs into deterministic classifications and recommended actions.
+Transportation
 
-      Current decision concepts include:
+Transportation uses synthetic relational and planning data in SQLite, including concepts such as:
 
-      - replenishment;
-      - excess inventory treatment;
-      - no-action classification;
-      - rupture risk;
-      - priority scoring;
-      - business-action value.
+routes;
 
-      The decision layer provides structured business information that can be consumed by APIs, Business Intelligence and AI components.
+vehicle types;
 
-      ---
+route/vehicle alternatives;
 
-      ## REST API Layer
+effective-dated route/vehicle tariffs;
 
-      FastAPI exposes application capabilities through HTTP endpoints.
+weekly forecast demand;
 
-      The API acts as an integration boundary between the backend and external consumers.
+derived planned trips.
 
-      Current consumers include:
+Transportation analytical functions query deterministic persisted data and derived planning results to calculate authoritative KPIs and detect measurable changes.
 
-      - Streamlit conversational frontend;
-      - AI Copilot interaction flow;
-      - analytical consumers where applicable.
+Detailed Transportation schema, planning policy, SQL questions and analytical capabilities are documented in 06_transportation_architecture.md.
 
-      The REST API contract allows consumers to interact with backend capabilities without depending on the internal implementation of analytical modules.
+LLM Responsibility
 
-      ---
+The LLM may:
 
-      ## Business Intelligence Layer
+interpret a Transportation question inside an already-selected domain;
 
-      Power BI consumes structured application outputs for visual analytical exploration.
+produce validated structured intent;
 
-      The dashboard provides management-oriented visualization of inventory, prioritization, risk and decision-support information.
+synthesize deterministic results;
 
-      Business Intelligence remains a consumer of deterministic application outputs rather than the source of business calculations.
+explain drivers supported by deterministic evidence;
 
-      ---
+communicate business meaning in natural language.
 
-      # AI Integration Architecture
+The LLM must not:
 
-      The AI layer follows a hybrid deterministic and generative architecture.
+select the business domain when the interface already knows it;
 
-      Its primary components are:
+become the source of truth for exact KPIs;
 
-      ```text
-      User Question
-            │
-            ▼
-      FastAPI
-            │
-            ▼
-      AI Service
-            │
-            ▼
-      Deterministic Context Preparation
-            │
-            ▼
-      LLM Client
-            │
-            ▼
-      External LLM
-            │
-            ▼
-      Generated Natural-Language Response
-      ```
+invent unsupported causes;
 
-      ---
+bypass the dispatcher to execute arbitrary analytics;
 
-      ## AI Service
+redefine deterministic business rules.
 
-      The AI Service orchestrates the AI-assisted request flow.
+The core principle remains:
 
-      Its responsibilities include coordinating:
+LLM ≠ Calculator.
 
-      - the incoming business question;
-      - deterministic application information;
-      - context preparation;
-      - LLM client execution;
-      - response delivery.
+Architectural Responsibility Boundary
 
-      The service separates orchestration from provider-specific LLM communication.
+The implemented end-to-end responsibility model is:
 
-      ---
+Frontend / Calling Layer
+        ↓
+Explicit Domain Selection
+        ↓
+Inventory ---------------- Transportation
+   ↓                            ↓
+Deterministic Data        LLM Intent Router
+   ↓                            ↓
+Inventory Context         Pydantic Contract
+                                ↓
+                         Deterministic Dispatcher
+                                ↓
+                         SQL / Deterministic Analytics
+                                ↓
+                         Transportation Context
+        └──────────────┬──────────────┘
+                       ↓
+                 Explanatory LLM
+                       ↓
+                 Business Answer
+                       ↓
+                     Human
 
-      ## Context Preparation
+Canonical compact principle:
 
-      The context layer prepares a controlled and bounded representation of business information for the LLM.
+UI defines the domain.
+LLM interprets the intent.
+Dispatcher selects the capability.
+SQL calculates.
+Analytics detects.
+AI explains.
+Human decides.
 
-      Its responsibilities include:
+Testing Architecture
 
-      - selecting relevant deterministic information;
-      - providing precomputed business aggregations;
-      - preserving deterministic extrema and tie handling;
-      - controlling context size;
-      - structuring information for model consumption.
+The project separates deterministic software correctness from probabilistic model behavior.
 
-      This reduces dependence on probabilistic model behavior for exact business calculations.
+Automated tests cover, among other responsibilities:
 
-      ---
+Inventory backward compatibility;
 
-      ## LLM Client
+multidomain service orchestration;
 
-      The LLM client isolates communication with the configured language-model implementation.
+invalid-domain rejection;
 
-      The architecture supports:
+prompt forwarding;
 
-      - Fake LLM execution;
-      - Real LLM execution.
+Structured Output client behavior;
 
-      Fake execution supports development and controlled testing without external model consumption.
+Transportation router contracts;
 
-      Real execution communicates with the external LLM provider when explicitly enabled through runtime configuration.
+out_of_scope behavior;
 
-      ---
+deterministic dispatcher mapping;
 
-      ## Deterministic versus Generative Responsibilities
+route filtering;
 
-      The architecture deliberately separates responsibilities between application code and the LLM.
+Transportation context construction;
 
-      ### Deterministic Application Responsibilities
+Transportation API/tool integration;
 
-      The application remains responsible for:
+deterministic Transportation analytics.
 
-      - calculations;
-      - aggregations;
-      - inventory metrics;
-      - scoring;
-      - business classifications;
-      - extrema;
-      - tie handling;
-      - decision rules;
-      - structured business context.
+Current full regression checkpoint:
 
-      ### Generative AI Responsibilities
+python -m pytest -q
 
-      The LLM is primarily responsible for:
+105 passed
 
-      - interpreting supplied business information;
-      - synthesizing findings;
-      - explaining results;
-      - communicating in natural language.
+Real-model behavior is evaluated separately from deterministic software correctness.
 
-      The core architectural principle is:
+A plausible LLM explanation is not evidence that the underlying analytical calculation is correct.
 
-      **Application code determines business facts; the LLM interprets and communicates them.**
+Current Limitations and Bounded Future Work
 
-      ---
+The application remains portfolio-grade rather than production-ready.
 
-      # Conversational Frontend
+Production-hardening opportunities include:
 
-      Streamlit provides the conversational presentation layer.
+managed relational persistence;
 
-      The frontend is responsible for:
+authentication and authorization;
 
-      - receiving user questions;
-      - calling the FastAPI backend;
-      - receiving structured responses;
-      - presenting natural-language answers.
+centralized observability;
 
-      The frontend does not implement the core deterministic business logic or directly access the external LLM provider.
+production-grade logging and alerting;
 
-      The backend address is supplied through environment-based runtime configuration using `API_BASE_URL`.
+centralized secrets management;
 
-      This allows the same frontend implementation to communicate with either a local or cloud backend.
+CI/CD automation;
 
-      ---
+containerization;
 
-      # Runtime Configuration
+scalability and resilience mechanisms;
 
-      The application separates source code from environment-specific runtime configuration.
+advanced API protection;
 
-      Relevant runtime controls include:
+additional AI governance controls.
 
-      | Variable | Responsibility |
-      |---|---|
-      | `API_BASE_URL` | Defines the backend consumed by the frontend |
-      | `LLM_MODE` | Selects Fake or Real LLM execution |
-      | `LLM_REAL_ENABLED` | Explicitly enables external LLM calls |
-      | `OPENAI_API_KEY` | Provides protected authentication for the external LLM provider |
+Transportation-specific future extensions may include:
 
-      `OPENAI_API_KEY` is treated as a secret rather than ordinary configuration and remains isolated from source code and the frontend.
+plan versus actual;
 
-      Detailed deployment and secret-handling architecture is documented in `05_cloud_deployment.md`.
+historical tariff-version enforcement;
 
-      ---
+explicit zero-volume policy;
 
-      # Current End-to-End Data Flow
+ETL idempotency/upsert behavior where required;
 
-      The current implementation contains two complementary data flows with different responsibilities.
+GHG/sustainability analytics;
 
-      ## Analytical Inventory Flow
+deeper optimization.
 
-      The primary analytical workflow is:
+These are future extensions, not blockers for the current Transportation portfolio milestone.
 
-      ```text
-      Synthetic ERP Inventory Dataset
-            │
-            ▼
-      Deterministic Analytics
-            │
-            ▼
-      Business Rules
-            │
-            ▼
-      Decision Support
-            │
-            ▼
-      output/inventory_analysis.csv
-      ```
+Document Relationships
 
-      The resulting analytical artifact supports multiple downstream consumers.
+Document
 
-      ### REST API
+Responsibility
 
-      ```text
-      output/inventory_analysis.csv
-            │
-            ▼
-      FastAPI /inventory
-            │
-            ▼
-      Structured JSON Response
-      ```
+01_system_overview.md
 
-      ### Business Intelligence
+High-level system and business view
 
-      ```text
-      output/inventory_analysis.csv
-            │
-            ▼
-      Power BI
-            │
-            ▼
-      Business User
-      ```
+03_data_model.md
 
-      ### Conversational AI
+Global data model and persistence structure
 
-      ```text
-      User
-      │
-      ▼
-      Streamlit
-      │
-      ▼
-      FastAPI
-      │
-      ▼
-      AI Service
-      │
-      ▼
-      Deterministic Context Preparation
-      │
-      ▼
-      LLM Client
-      │
-      ▼
-      External LLM
-      │
-      ▼
-      FastAPI
-      │
-      ▼
-      Streamlit
-      │
-      ▼
-      User
-      ```
+04_decision_log.md
 
-      The AI flow consumes deterministic application information rather than using the LLM as the source of business calculations.
+Significant architectural decisions
 
-      ---
+05_cloud_deployment.md
 
-      ## Relational Data Flow
+Cloud deployment architecture
 
-      The relational workflow is:
+06_transportation_architecture.md
 
-      ```text
-      Synthetic Master / Structured Data
-            │
-            ▼
-      ETL / Standardization
-            │
-            ▼
-      SQLite
-            │
-            ▼
-      Relational Consumers
-      ```
+Detailed bounded Transportation architecture
 
-      SQLite maintains structured master and inventory-related entities independently from the primary analytical inventory artifact.
+Document Information
 
-      For example, relational application capabilities such as product retrieval can consume data directly from SQLite.
+Property
 
-      ---
+Value
 
-      ## Data-Flow Boundary
+Document
 
-      The two paths currently coexist but should not be represented as a single sequential pipeline.
+Current Architecture
 
-      The analytical path is centered on:
+Directory
 
-      `Synthetic ERP Inventory → Analytics → Decision Support → inventory_analysis.csv`
+docs/architecture
 
-      The relational path is centered on:
+Baseline Application Version
 
-      `Structured Data → ETL → SQLite`
+v1.1.0
 
-      Both remain deterministic application components and can evolve independently while serving different application responsibilities.
+Current Increment
 
-      ---
+Inventory + Transportation multidomain architecture
 
-      # Testing and Validation Architecture
+Status
 
-      Automated testing is part of the current engineering architecture rather than an isolated final activity.
+Active
 
-      The current automated suite validates:
+Last Updated
 
-      - deterministic modules;
-      - API behavior;
-      - AI service orchestration;
-      - context controls;
-      - LLM client safeguards.
-
-      The current release is validated by **42 automated tests**.
-
-      Real LLM behavior was additionally evaluated through a structured Golden Set and comparative multi-model executions.
-
-      This separates two validation concerns:
-
-      - deterministic software correctness;
-      - probabilistic LLM behavior.
-
-      Cloud end-to-end validation adds a third concern by confirming that independently deployed components are correctly connected.
-
-      ---
-
-      # Cloud Runtime Architecture
-
-      The current application is deployed through independent managed services.
-
-      ```text
-      GitHub
-      │
-      ├──────────────► Streamlit Community Cloud
-      │                         │
-      │                         ▼
-      │                       User
-      │
-      └──────────────► Render / FastAPI
-                                    │
-                                    ▼
-                        Application Layers
-                                    │
-                                    ▼
-                              OpenAI API
-      ```
-
-      The public runtime flow is:
-
-      `User → Streamlit Community Cloud → FastAPI on Render → Application Layers → OpenAI API → FastAPI → Streamlit → User`
-
-      The local development machine is not required for the deployed application to remain accessible.
-
-      Detailed cloud architecture is documented in:
-
-      [`05_cloud_deployment.md`](05_cloud_deployment.md)
-
-      ---
-
-      # Architecture Principles
-
-      The current implementation follows these principles:
-
-      ## Separation of Concerns
-
-      Data ingestion, persistence, analytics, decision support, API integration, AI orchestration and presentation have distinct responsibilities.
-
-      ## Single Responsibility
-
-      Modules and layers are designed around focused responsibilities.
-
-      ## Low Coupling
-
-      Components interact through explicit interfaces and contracts rather than unnecessary knowledge of internal implementations.
-
-      ## High Cohesion
-
-      Related functionality remains grouped within the appropriate architectural layer.
-
-      ## Deterministic Business Logic
-
-      Exact business calculations and classifications remain under application control.
-
-      ## Configuration over Hardcoding
-
-      Business and environment-specific values are externalized where appropriate.
-
-      ## API-based Integration
-
-      Presentation layers communicate with backend capabilities through explicit REST contracts.
-
-      ## Incremental Evolution
-
-      New capabilities extend the existing architecture rather than requiring repeated redesign of the complete system.
-
-      ---
-
-      # Current Architectural Boundaries
-
-The current architecture separates responsibilities across two data paths that converge at application integration and consumption boundaries.
-
-```text
-                    ┌─────────────────────────────┐
-                    │ Analytical Inventory Path   │
-                    │                             │
-Synthetic ERP ─────►│ Analytics                   │
-                    │      ↓                      │
-                    │ Decision Support            │
-                    │      ↓                      │
-                    │ Analytical Artifact         │
-                    └──────────────┬──────────────┘
-                                   │
-                                   ▼
-                         Integration / API
-                           │             │
-                           ▼             ▼
-                    Business BI     AI Orchestration
-                                         │
-                                         ▼
-                                    Presentation
-
-
-                    ┌─────────────────────────────┐
-                    │ Relational Data Path        │
-                    │                             │
-Structured Data ───►│ ETL / Standardization      │
-                    │      ↓                      │
-                    │ SQLite                      │
-                    │      ↓                      │
-                    │ Relational Consumers        │
-                    └─────────────────────────────┘
-
-The analytical and relational paths have different persistence and processing responsibilities but remain part of the same application architecture.
-
-These boundaries are intended to support future evolution of individual technologies without unnecessarily changing unrelated layers.
-
-Examples include:
-
-- SQLite → managed relational database;
-- analytical CSV artifact → managed analytical persistence;
-- Streamlit → alternative frontend technology;
-- current LLM provider/model → alternative provider or model;
-- current managed hosting → alternative cloud infrastructure.
-
-Such changes may require adapter, persistence or configuration changes while preserving the application's core business architecture.
-
-      ---
-
-      # Current Limitations
-
-      Version v1.1.0 is a functional portfolio-grade architecture rather than a production-ready enterprise system.
-
-      Current production-hardening opportunities include:
-
-      - managed relational persistence;
-      - authentication and authorization;
-      - centralized observability;
-      - production-grade logging and alerting;
-      - centralized secrets management;
-      - CI/CD automation;
-      - containerization;
-      - scalability and resilience mechanisms;
-      - advanced API protection;
-      - additional AI governance controls.
-
-      These limitations are architectural evolution opportunities rather than blockers for the current portfolio objective.
-
-      ---
-
-      # Document Relationships
-
-      This document should be read together with:
-
-      | Document | Responsibility |
-      |---|---|
-      | `01_system_overview.md` | High-level system and business view |
-      | `03_data_model.md` | Data model and persistence structure |
-      | `04_decision_log.md` | Significant architectural decisions |
-      | `05_cloud_deployment.md` | Detailed cloud deployment architecture |
-
-      ---
-
-      # Document Information
-
-      | Property | Value |
-      |---|---|
-      | Document | Current Architecture |
-      | Directory | `docs/architecture` |
-      | Application Version | v1.1.0 |
-      | Status | Active |
-      | Last Updated | August 2026 |
+2026-09-22

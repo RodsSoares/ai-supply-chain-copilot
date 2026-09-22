@@ -1,24 +1,21 @@
-# Data Model
+Data Model
 
-## Purpose
+Purpose
 
-This document describes the current data architecture and data representations used by the **AI Supply Chain Copilot v1.1.0**.
+This document describes the current data architecture and data representations used by the AI Supply Chain Copilot, including the v1.1.0 Inventory baseline and the bounded Transportation multidomain increment.
 
 Its objective is to explain how operational source data is transformed into structured application data, persisted, analyzed and converted into deterministic business information.
 
 This document focuses on the data model and data lifecycle rather than application orchestration or cloud deployment.
 
----
+Data Architecture Overview
 
-# Data Architecture Overview
+The current application contains complementary Inventory and Transportation data paths with different responsibilities.
 
-The current application contains two complementary data paths with different responsibilities.
+Analytical Inventory Path
 
-## Analytical Inventory Path
+The primary analytical workflow used by the Inventory Analytics, REST API /inventory, Power BI and AI Copilot is based on the synthetic ERP inventory dataset.
 
-The primary analytical workflow used by the Inventory Analytics, REST API `/inventory`, Power BI and AI Copilot is based on the synthetic ERP inventory dataset.
-
-```mermaid
 flowchart LR
 
     ERP[sample_data/erp_inventory.csv]
@@ -39,23 +36,19 @@ flowchart LR
     OUTPUT --> API
     OUTPUT --> BI
     API --> AI
-```
 
 The synthetic ERP dataset contains the operational inventory information required by the analytical pipeline, including stock levels, consumption, costs, lead times, suppliers, warehouses and ABC classification.
 
 The deterministic analytical scripts transform this source information into the consolidated analytical artifact:
 
-`output/inventory_analysis.csv`
+output/inventory_analysis.csv
 
-This file currently acts as the operational analytical dataset consumed by the `/inventory` API endpoint and downstream analytical and AI capabilities.
+This file currently acts as the operational analytical dataset consumed by the /inventory API endpoint and downstream analytical and AI capabilities.
 
----
-
-## Relational Reference Data Path
+Relational Reference Data Path
 
 The project also maintains a SQLite relational model used for structured master and inventory-related entities.
 
-```mermaid
 flowchart LR
 
     MASTER[Synthetic Master Data]
@@ -69,41 +62,130 @@ flowchart LR
     MASTER --> ETL
     ETL --> DB
     DB --> PRODUCTS
-```
 
 The current SQLite database contains structured entities such as:
 
-- products;
-- warehouses;
-- inventory parameters;
-- inventory movements.
+products;
 
-For example, the `/products` API endpoint retrieves product master data directly from SQLite.
+warehouses;
 
----
+inventory parameters;
 
-## Current Architectural Distinction
+inventory movements.
+
+For example, the /products API endpoint retrieves product master data directly from SQLite.
+
+Current Architectural Distinction
 
 The analytical inventory dataset and the relational SQLite model currently coexist in the application but serve different responsibilities.
 
 The current analytical Copilot flow is primarily:
 
-`Synthetic ERP Inventory → Deterministic Analytics → inventory_analysis.csv → FastAPI → AI Context → LLM`
+Synthetic ERP Inventory → Deterministic Analytics → inventory_analysis.csv → FastAPI → AI Context → LLM
 
 The relational path is:
 
-`Master / Structured Data → ETL → SQLite → Relational Consumers`
+Master / Structured Data → ETL → SQLite → Relational Consumers
 
 Therefore, SQLite should not currently be interpreted as the exclusive persistence source for the 300-SKU analytical inventory dataset used by the Copilot.
 
 This distinction reflects the incremental evolution of the project and should remain explicit until the analytical and relational persistence models are unified in a future architectural milestone.
----
 
-# Data Representations
+Transportation Data Path
+
+Transportation adds a second analytical domain using synthetic relational and planning data persisted in SQLite.
+
+Its bounded data flow is:
+
+flowchart LR
+
+    MASTER[Routes / Vehicles / Tariffs]
+    FORECAST[Weekly Forecast]
+    POLICY[Planning Policy]
+    DB[(SQLite)]
+    PLAN[Derived Planned Trips]
+    SQL[Transportation SQL / Analytics]
+    DISPATCHER[Deterministic Dispatcher]
+    CONTEXT[Transportation Context]
+    AI[Copilot]
+
+    MASTER --> DB
+    FORECAST --> DB
+    POLICY --> PLAN
+    DB --> PLAN
+    PLAN --> DB
+    DB --> SQL
+    DISPATCHER --> SQL
+    SQL --> CONTEXT
+    CONTEXT --> AI
+
+Transportation is designed as a bounded analytics extensibility case rather than a standalone transportation-management or optimization product.
+
+Transportation Core Entities
+
+The implemented Transportation model includes the following core concepts:
+
+Entity
+
+Responsibility / Grain
+
+routes
+
+Route master; one row per route
+
+vehicle_types
+
+Vehicle-type master and capacity
+
+route_vehicle_options
+
+Allowed route/vehicle combinations where applicable
+
+route_vehicle_rates
+
+Effective-dated tariff by route and vehicle type
+
+forecast_raw
+
+Weekly route forecast input
+
+demand_forecast
+
+Canonical/analytical demand forecast at route × week grain
+
+planned_trips
+
+Derived planning result; one row per planned trip
+
+The exact physical schema and implementation details remain documented in 06_transportation_architecture.md.
+
+Transportation Grain
+
+The main analytical grains are intentionally explicit:
+
+forecast: year × week × route;
+
+demand planning: route × week;
+
+planned trips: one row per planned trip;
+
+route/vehicle tariffs: route × vehicle_type × effective_from.
+
+These grains support deterministic aggregation and prevent the LLM from becoming responsible for reconstructing business facts from ambiguous data.
+
+Derived Planning Data
+
+planned_trips is a deterministic derived planning result produced from synthetic demand, route characteristics, vehicle capacities, tariffs and Planning Policy v0.
+
+It is not an LLM-generated artifact.
+
+Transportation analytics query persisted and derived data to calculate authoritative values such as required trips, capacity, utilization, transportation cost and cost per piece.
+
+Data Representations
 
 The application uses different data representations depending on the responsibility of each processing stage.
 
-## Source Files
+Source Files
 
 Synthetic ERP-style files represent the external operational data supplied to the application.
 
@@ -111,28 +193,29 @@ They simulate realistic business information while protecting confidential corpo
 
 Source files should be treated as input artifacts rather than as the application's analytical model.
 
----
-
-## Pandas DataFrames
+Pandas DataFrames
 
 During ETL and analytical processing, data may be loaded into Pandas DataFrames.
 
 A DataFrame is an in-memory tabular data structure used for operations such as:
 
-- transformation;
-- cleaning;
-- filtering;
-- aggregation;
-- calculation;
-- validation.
+transformation;
+
+cleaning;
+
+filtering;
+
+aggregation;
+
+calculation;
+
+validation.
 
 A DataFrame is not itself a database or permanent persistence mechanism.
 
 Its lifecycle normally exists within the execution of the application process unless its contents are explicitly persisted elsewhere.
 
----
-
-## Relational Persistence
+Relational Persistence
 
 SQLite provides the current relational persistence layer.
 
@@ -140,49 +223,54 @@ Persisted data survives beyond the lifetime of an individual Python DataFrame or
 
 The persistence layer separates stored application data from temporary in-memory processing structures.
 
----
-
-## Analytical Data
+Analytical Data
 
 The analytical layer derives deterministic Supply Chain information from the synthetic ERP inventory dataset and produces the consolidated analytical output consumed by the application.
 
 Current analytical concepts include:
 
-- inventory value;
-- inventory coverage;
-- lead time;
-- rupture risk;
-- financial impact;
-- ABC classification;
-- prioritization scores;
-- supplier aggregations.
+inventory value;
+
+inventory coverage;
+
+lead time;
+
+rupture risk;
+
+financial impact;
+
+ABC classification;
+
+prioritization scores;
+
+supplier aggregations.
 
 These values are calculated by application logic rather than generated by the LLM.
 
----
-
-## Decision-Support Data
+Decision-Support Data
 
 Analytical outputs are transformed into business classifications and recommended actions.
 
 Current concepts include:
 
-- `REPOR`;
-- `TRATAR EXCESSO`;
-- `SEM AÇÃO`;
-- priority classification;
-- rupture-risk classification;
-- action value.
+REPOR;
+
+TRATAR EXCESSO;
+
+SEM AÇÃO;
+
+priority classification;
+
+rupture-risk classification;
+
+action value.
 
 Decision-support data represents business interpretation produced deterministically from operational and analytical information.
 
----
-
-# Data Lifecycle
+Data Lifecycle
 
 The current lifecycle can be represented as:
 
-```text
 Synthetic ERP Inventory
         │
         ▼
@@ -205,13 +293,10 @@ output/inventory_analysis.csv
         ├────────► Power BI
         │
         └────────► AI Context
-```
 
 This separation prevents presentation and Generative AI components from becoming the source of business facts.
 
----
-
-# Deterministic Data Ownership
+Deterministic Data Ownership
 
 The application treats deterministic data as the authoritative source for business calculations.
 
@@ -221,40 +306,63 @@ Instead, the AI layer receives controlled information produced by deterministic 
 
 The principle is:
 
-**Data and application logic establish the facts; Generative AI interprets and communicates them.**
+Data and application logic establish the facts; Generative AI interprets and communicates them.
 
 This distinction is particularly important for:
 
-- exact counts;
-- sums;
-- averages;
-- minimum and maximum values;
-- supplier frequency;
-- ties;
-- inventory metrics;
-- scoring;
-- business classifications.
+exact counts;
 
----
+sums;
 
-# Data Consumers
+averages;
+
+minimum and maximum values;
+
+supplier frequency;
+
+ties;
+
+inventory metrics;
+
+scoring;
+
+business classifications.
+
+Data Consumers
 
 The same deterministic data foundation supports multiple consumers.
 
-| Consumer | Data Usage |
-|---|---|
-| Analytics Layer | Calculates deterministic business metrics |
-| Decision Support | Produces classifications and recommended actions |
-| REST API | Exposes structured application information |
-| Power BI | Provides analytical visualization |
-| AI Context Builder | Supplies controlled business context to the LLM |
-| Streamlit Frontend | Presents responses received through the API |
+Consumer
+
+Data Usage
+
+Analytics Layer
+
+Calculates deterministic business metrics
+
+Decision Support
+
+Produces classifications and recommended actions
+
+REST API
+
+Exposes structured application information
+
+Power BI
+
+Provides analytical visualization
+
+AI Context Builder
+
+Supplies controlled business context to the LLM
+
+Streamlit Frontend
+
+Presents responses received through the API
 
 Consumers should not independently redefine the authoritative business calculations.
 
----
-
-# Persistence Scope
+Persistence Scope
 
 SQLite is currently appropriate for the project's synthetic and primarily analytical workload.
 
@@ -266,28 +374,48 @@ Such evolution should preserve the logical data responsibilities even if the phy
 
 Detailed cloud persistence considerations are documented in:
 
-[`05_cloud_deployment.md`](05_cloud_deployment.md)
+05_cloud_deployment.md
 
----
+Physical Schema
 
-# Physical Schema
+The SQLite model now supports both legacy Inventory/reference entities and the bounded Transportation domain.
 
-The current SQLite database contains four application tables:
+Inventory / Reference Tables
 
-| Table | Purpose |
-|---|---|
-| `produtos` | Product master data |
-| `depositos` | Warehouse master data |
-| `parametros_estoque` | Inventory parameters by product and warehouse |
-| `movimentacoes_estoque` | Inventory movement records |
+The original relational Inventory/reference model contains four application tables:
 
-SQLite also maintains the internal `sqlite_sequence` table to support the autoincrement identifier used by `movimentacoes_estoque`. This table is managed by SQLite and is not part of the application's business data model.
+Table
 
----
+Purpose
 
-## Entity Relationship Overview
+produtos
 
-```mermaid
+Product master data
+
+depositos
+
+Warehouse master data
+
+parametros_estoque
+
+Inventory parameters by product and warehouse
+
+movimentacoes_estoque
+
+Inventory movement records
+
+SQLite also maintains the internal sqlite_sequence table to support the autoincrement identifier used by movimentacoes_estoque. This table is managed by SQLite and is not part of the application's business data model.
+
+Transportation Tables
+
+Transportation introduces additional relational tables for routes, vehicle types, route/vehicle relationships, effective-dated tariffs, weekly forecast demand and derived planned trips.
+
+Because the Transportation schema evolved as a bounded domain extension, its detailed DDL and relationships are maintained in 06_transportation_architecture.md rather than duplicated in full here.
+
+The global modeling rule is that authoritative Transportation facts remain represented in structured relational data and deterministic analytical outputs.
+
+Entity Relationship Overview — Inventory / Reference Model
+
 erDiagram
 
     PRODUTOS ||--o{ PARAMETROS_ESTOQUE : defines
@@ -328,101 +456,207 @@ erDiagram
         INTEGER quantidade
         TEXT documento_referencia
     }
-```
 
----
-
-## `produtos`
+produtos
 
 Stores product master data.
 
-| Column | Type | Constraint / Purpose |
-|---|---|---|
-| `sku` | TEXT | Primary Key |
-| `descricao` | TEXT | Required product description |
-| `grupo_gerencial` | TEXT | Required managerial product group |
-| `unidade_medida` | TEXT | Required unit of measure |
-| `peso_kg` | REAL | Required; must be greater than or equal to zero |
+Column
 
-The `sku` field uniquely identifies each product and is referenced by inventory-related tables.
+Type
 
----
+Constraint / Purpose
 
-## `depositos`
+sku
+
+TEXT
+
+Primary Key
+
+descricao
+
+TEXT
+
+Required product description
+
+grupo_gerencial
+
+TEXT
+
+Required managerial product group
+
+unidade_medida
+
+TEXT
+
+Required unit of measure
+
+peso_kg
+
+REAL
+
+Required; must be greater than or equal to zero
+
+The sku field uniquely identifies each product and is referenced by inventory-related tables.
+
+depositos
 
 Stores warehouse master data.
 
-| Column | Type | Constraint / Purpose |
-|---|---|---|
-| `codigo_deposito` | TEXT | Primary Key |
-| `descricao` | TEXT | Required warehouse description |
-| `cidade` | TEXT | Required city |
-| `uf` | TEXT | Required state identifier |
+Column
 
-`codigo_deposito` uniquely identifies each warehouse.
+Type
 
----
+Constraint / Purpose
 
-## `parametros_estoque`
+codigo_deposito
+
+TEXT
+
+Primary Key
+
+descricao
+
+TEXT
+
+Required warehouse description
+
+cidade
+
+TEXT
+
+Required city
+
+uf
+
+TEXT
+
+Required state identifier
+
+codigo_deposito uniquely identifies each warehouse.
+
+parametros_estoque
 
 Stores inventory-control parameters for each product and warehouse combination.
 
-| Column | Type | Constraint / Purpose |
-|---|---|---|
-| `sku` | TEXT | Composite Primary Key; Foreign Key → `produtos.sku` |
-| `codigo_deposito` | TEXT | Composite Primary Key; Foreign Key → `depositos.codigo_deposito` |
-| `estoque_minimo` | INTEGER | Required; must be greater than or equal to zero |
-| `estoque_maximo` | INTEGER | Required; must be greater than or equal to `estoque_minimo` |
-| `ponto_ressuprimento` | INTEGER | Required; must be greater than or equal to zero |
+Column
+
+Type
+
+Constraint / Purpose
+
+sku
+
+TEXT
+
+Composite Primary Key; Foreign Key → produtos.sku
+
+codigo_deposito
+
+TEXT
+
+Composite Primary Key; Foreign Key → depositos.codigo_deposito
+
+estoque_minimo
+
+INTEGER
+
+Required; must be greater than or equal to zero
+
+estoque_maximo
+
+INTEGER
+
+Required; must be greater than or equal to estoque_minimo
+
+ponto_ressuprimento
+
+INTEGER
+
+Required; must be greater than or equal to zero
 
 The composite primary key:
 
-`(sku, codigo_deposito)`
+(sku, codigo_deposito)
 
 ensures that each product can have one inventory-parameter configuration for each warehouse.
 
 This models the fact that inventory policies may vary by both product and physical location.
 
----
-
-## `movimentacoes_estoque`
+movimentacoes_estoque
 
 Stores inventory movement records.
 
-| Column | Type | Constraint / Purpose |
-|---|---|---|
-| `id` | INTEGER | Primary Key; Auto Increment |
-| `data` | TEXT | Required movement date |
-| `sku` | TEXT | Required; Foreign Key → `produtos.sku` |
-| `codigo_deposito` | TEXT | Required; Foreign Key → `depositos.codigo_deposito` |
-| `tipo_movimentacao` | TEXT | Required; `ENTRADA` or `SAIDA` |
-| `quantidade` | INTEGER | Required; must be greater than zero |
-| `documento_referencia` | TEXT | Optional reference document |
+Column
+
+Type
+
+Constraint / Purpose
+
+id
+
+INTEGER
+
+Primary Key; Auto Increment
+
+data
+
+TEXT
+
+Required movement date
+
+sku
+
+TEXT
+
+Required; Foreign Key → produtos.sku
+
+codigo_deposito
+
+TEXT
+
+Required; Foreign Key → depositos.codigo_deposito
+
+tipo_movimentacao
+
+TEXT
+
+Required; ENTRADA or SAIDA
+
+quantidade
+
+INTEGER
+
+Required; must be greater than zero
+
+documento_referencia
+
+TEXT
+
+Optional reference document
 
 The database enforces the following movement-type constraint:
 
-`tipo_movimentacao IN ('ENTRADA', 'SAIDA')`
+tipo_movimentacao IN ('ENTRADA', 'SAIDA')
 
 and requires:
 
-`quantidade > 0`
+quantidade > 0
 
-Movement direction is therefore represented explicitly by `tipo_movimentacao` rather than by positive and negative quantity values.
+Movement direction is therefore represented explicitly by tipo_movimentacao rather than by positive and negative quantity values.
 
----
-
-# Relationships
+Relationships
 
 The physical model currently contains two master entities:
 
-- `produtos`;
-- `depositos`.
+produtos;
+
+depositos.
 
 These entities are referenced by both inventory-related tables.
 
 The relationship structure is:
 
-```text
 produtos ───────┐
                 ├──► parametros_estoque
 depositos ──────┘
@@ -430,101 +664,141 @@ depositos ──────┘
 produtos ───────┐
                 ├──► movimentacoes_estoque
 depositos ──────┘
-```
 
 This allows inventory information to be modeled at the intersection of:
 
-**Product × Warehouse**
+Product × Warehouse
 
 rather than treating inventory as an attribute of the product alone.
 
----
-
-# Database Constraints
+Database Constraints
 
 The current physical schema implements several deterministic integrity controls directly at database level.
 
 These include:
 
-- product primary-key uniqueness;
-- warehouse primary-key uniqueness;
-- composite uniqueness for product/warehouse inventory parameters;
-- foreign-key relationships between inventory tables and master entities;
-- non-negative product weight;
-- non-negative minimum inventory;
-- maximum inventory greater than or equal to minimum inventory;
-- non-negative reorder point;
-- positive inventory-movement quantity;
-- controlled inventory-movement types.
+product primary-key uniqueness;
+
+warehouse primary-key uniqueness;
+
+composite uniqueness for product/warehouse inventory parameters;
+
+foreign-key relationships between inventory tables and master entities;
+
+non-negative product weight;
+
+non-negative minimum inventory;
+
+maximum inventory greater than or equal to minimum inventory;
+
+non-negative reorder point;
+
+positive inventory-movement quantity;
+
+controlled inventory-movement types.
 
 These constraints complement application-level validation by protecting structural data integrity within the relational model.
 
----
-
-# Current Database State
+Current Database State
 
 At the time of this documentation review, the supplied SQLite database contains:
 
-| Table | Current Rows |
-|---|---:|
-| `produtos` | 5 |
-| `depositos` | 3 |
-| `parametros_estoque` | 0 |
-| `movimentacoes_estoque` | 0 |
+Table
+
+Current Rows
+
+produtos
+
+5
+
+depositos
+
+3
+
+parametros_estoque
+
+0
+
+movimentacoes_estoque
+
+0
 
 These row counts represent the inspected database instance and are not architectural constraints.
 
 The schema is therefore more important than the current record volume when describing the application's physical data model.
 
----
-
-# Data Modeling Principles
+Data Modeling Principles
 
 The current data architecture follows these principles:
 
-## Synthetic Data by Design
+Synthetic Data by Design
 
 Published business data is fictional or synthetic and does not expose proprietary corporate information.
 
-## Canonicalization
+Canonicalization
 
 Source-specific structures are standardized before downstream business processing.
 
-## Persistence Separation
+Persistence Separation
 
 Temporary in-memory processing structures and persisted application data have distinct responsibilities.
 
-## Deterministic Calculations
+Deterministic Calculations
 
 Business metrics and classifications are calculated through deterministic application logic.
 
-## Reusability
+Reusability
 
 The same structured analytical foundation can serve API, BI and AI consumers.
 
-## Technology Independence
+Technology Independence
 
 Higher application layers should depend on the logical data model rather than unnecessary details of the physical persistence technology.
 
----
+Document Relationships
 
-# Document Relationships
+Document
 
-| Document | Responsibility |
-|---|---|
-| `01_system_overview.md` | High-level system and business architecture |
-| `02_current_architecture.md` | Current technical implementation |
-| `04_decision_log.md` | Significant architectural decisions |
-| `05_cloud_deployment.md` | Cloud persistence and deployment considerations |
+Responsibility
 
----
+01_system_overview.md
 
-# Document Information
+High-level system and business architecture
 
-| Property | Value |
-|---|---|
-| Document | Data Model |
-| Directory | `docs/architecture` |
-| Application Version | v1.1.0 |
-| Status | Active |
-| Last Updated | August 2026 |
+02_current_architecture.md
+
+Current technical implementation
+
+04_decision_log.md
+
+Significant architectural decisions
+
+05_cloud_deployment.md
+
+Cloud persistence and deployment considerations
+
+Document Information
+
+Property
+
+Value
+
+Document
+
+Data Model
+
+Directory
+
+docs/architecture
+
+Application Version
+
+v1.1.0
+
+Status
+
+Active
+
+Last Updated
+
+2026-09-22

@@ -1,6 +1,6 @@
-# Architecture Decision Log
+Architecture Decision Log
 
-## Purpose
+Purpose
 
 This document records the most important architectural decisions made throughout the development of the AI Supply Chain Copilot.
 
@@ -8,207 +8,191 @@ Its objective is to explain why certain technical choices were made, providing c
 
 Only significant engineering decisions should be recorded here.
 
----
+Decision Log
 
-# Decision Log
+ADR-001
 
----
-
-## ADR-001
-
-### Date
+Date
 
 July 2026
 
-### Decision
+Decision
 
 The project will be developed incrementally using independent modules instead of a monolithic architecture.
 
-### Reason
+Reason
 
 Small modules are easier to understand, maintain and test.
 
 This approach also reflects common software engineering practices used in enterprise applications.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-002
 
-## ADR-002
-
-### Date
+Date
 
 July 2026
 
-### Decision
+Decision
 
 SQLite was selected as the project's initial database.
 
-### Reason
+Reason
 
 SQLite requires no installation or server configuration, making it ideal for the early stages of development while still allowing the use of SQL and relational modeling.
 
 The architecture is designed to allow future migration to PostgreSQL with minimal changes.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-003
 
-## ADR-003
-
-### Date
+Date
 
 July 2026
 
-### Decision
+Decision
 
 Each business entity will have its own ETL pipeline.
 
 Examples include:
 
-- Orders
-- Products
-- Inventory
-- Transportation
+Orders
 
-### Reason
+Products
+
+Inventory
+
+Transportation
+
+Reason
 
 Independent ETLs simplify maintenance and reduce coupling between different business processes.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-004
 
-## ADR-004
-
-### Date
+Date
 
 July 2026
 
-### Decision
+Decision
 
 Database access will be centralized in a single connection module.
 
-### Reason
+Reason
 
-All database communication should pass through `connection.py`.
+All database communication should pass through connection.py.
 
 This avoids duplicated code and makes future database migrations easier.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-005
 
-## ADR-005
-
-### Date
+Date
 
 July 2026
 
-### Decision
+Decision
 
 The repository will prioritize software development over extensive documentation.
 
-### Reason
+Reason
 
 The project follows the 80/20 principle:
 
-- Approximately 80% of the effort will be dedicated to software development.
-- Approximately 20% will be dedicated to documentation.
+Approximately 80% of the effort will be dedicated to software development.
+
+Approximately 20% will be dedicated to documentation.
 
 Documentation should explain architectural milestones and important decisions without slowing down product development.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-006
 
-## ADR-006
-
-### Date
+Date
 
 July 2026
 
-### Decision
+Decision
 
 The business case will use synthetic data inspired by real Supply Chain operations.
 
-### Reason
+Reason
 
 The objective is to demonstrate realistic business processes while protecting confidential corporate information.
 
 No proprietary or confidential business data will be published in this repository.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-007
 
-## ADR-007
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 Business rules and analytical thresholds will be externalized from the core analytical implementation whenever appropriate.
 
-### Reason
+Reason
 
 Business parameters may evolve without requiring changes to the underlying source code.
 
 Separating configurable business behavior from implementation logic improves maintainability and reduces unnecessary hardcoding.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-008
 
-## ADR-008
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 The application will expose its analytical and decision-support capabilities through a REST API implemented with FastAPI.
 
-### Reason
+Reason
 
 The REST API establishes an explicit integration contract between backend capabilities and external consumers.
 
 This reduces coupling and allows presentation or integration layers to evolve without requiring direct access to internal application modules.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-009
 
-## ADR-009
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 Exact business calculations and classifications will remain under deterministic application control rather than being delegated to the LLM.
 
-### Reason
+Reason
 
 Large Language Models are probabilistic and should not be treated as the authoritative calculation engine for exact business information.
 
@@ -216,45 +200,41 @@ Counts, aggregations, extrema, tie handling, scores, classifications and other d
 
 The LLM is primarily responsible for interpretation, synthesis, explanation and natural-language communication.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-010
 
-## ADR-010
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 The AI integration will use a dedicated orchestration layer with controlled context preparation and isolated LLM client implementations.
 
-### Reason
+Reason
 
 Separating orchestration, deterministic context preparation and provider communication improves maintainability and testability.
 
 The architecture also supports Fake and Real LLM execution modes without requiring changes to the higher business layers.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-011
 
-## ADR-011
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 Real LLM behavior will be evaluated separately from deterministic software correctness.
 
-### Reason
+Reason
 
 Traditional automated tests and probabilistic model evaluation address different quality concerns.
 
@@ -262,45 +242,41 @@ The deterministic application is validated through automated tests, while LLM be
 
 This prevents model variability from being confused with deterministic software defects.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-012
 
-## ADR-012
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 The conversational frontend will remain separated from backend business and AI logic and will consume application capabilities through the REST API contract.
 
-### Reason
+Reason
 
 Separating presentation from backend responsibilities reduces coupling and allows the frontend technology to evolve independently.
 
 Streamlit therefore acts as an API client rather than becoming the location of Supply Chain calculations or LLM orchestration.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-013
 
-## ADR-013
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 Environment-specific runtime values will be externalized from source code.
 
-### Reason
+Reason
 
 The same application codebase must support local and cloud execution without requiring environment-specific modifications to core application logic.
 
@@ -308,45 +284,41 @@ Values such as backend addresses and LLM execution controls can therefore vary t
 
 Sensitive credentials remain treated separately as secrets.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-014
 
-## ADR-014
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 Sensitive external-provider credentials will remain isolated from source code, the public repository and the frontend.
 
-### Reason
+Reason
 
-Credentials such as `OPENAI_API_KEY` provide authenticated access to external services and may generate real consumption and cost.
+Credentials such as OPENAI_API_KEY provide authenticated access to external services and may generate real consumption and cost.
 
 The credential is therefore required only by the backend component responsible for communicating with the external LLM provider.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-015
 
-## ADR-015
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 The Streamlit frontend and FastAPI backend will be deployed as independent cloud services.
 
-### Reason
+Reason
 
 Independent deployment preserves the existing separation between presentation and backend responsibilities.
 
@@ -354,23 +326,21 @@ The frontend communicates with the backend through the established REST API cont
 
 The additional distributed-system complexity is accepted as a trade-off for clearer architectural boundaries and deployment flexibility.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-016
 
-## ADR-016
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 SQLite will be retained for the v1.1.0 cloud deployment.
 
-### Reason
+Reason
 
 The objective of the v1.1.0 milestone is to validate cloud deployment, public accessibility and distributed end-to-end integration without introducing an unnecessary database migration at the same time.
 
@@ -378,45 +348,41 @@ The current relational workload is synthetic, controlled and limited in scope, m
 
 A managed relational database remains a future production-hardening evolution.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-017
 
-## ADR-017
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 The initial cloud deployment will use managed application-hosting services rather than lower-level infrastructure management.
 
-### Reason
+Reason
 
 Managed hosting allows the project to demonstrate practical cloud deployment and distributed application integration while remaining focused on business architecture, data, automation and AI.
 
 Lower-level infrastructure technologies should be introduced only when they solve a requirement that exists in the project.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-018
 
-## ADR-018
-
-### Date
+Date
 
 August 2026
 
-### Decision
+Decision
 
 Cloud deployment and production hardening will be treated as separate architectural milestones.
 
-### Reason
+Reason
 
 A publicly accessible cloud application is not automatically production-ready.
 
@@ -424,59 +390,262 @@ The v1.1.0 milestone validates deployment and distributed integration.
 
 Production concerns such as managed persistence, authentication, authorization, observability, centralized secrets management, scalability, resilience and CI/CD automation remain separate future evolutions.
 
-### Status
+Status
 
 ✅ Adopted
 
----
+ADR-019
 
-# Decision Guidelines
+Date
+
+September 2026
+
+Decision
+
+Transportation will be implemented as a bounded second analytical domain inside the existing AI Supply Chain Copilot rather than as a standalone product.
+
+Reason
+
+The objective of the Transportation increment is to demonstrate architectural extensibility, advanced SQL and deterministic Supply Chain analytics while reusing the existing Copilot architecture.
+
+Creating a separate product would duplicate infrastructure and distract from the portfolio objective.
+
+Inventory and Transportation therefore share the same application boundary while preserving domain-specific data, analytics and context responsibilities.
+
+Status
+
+✅ Adopted
+
+ADR-020
+
+Date
+
+September 2026
+
+Decision
+
+The business domain (inventory or transportation) will be selected explicitly by the user or calling layer and forwarded deterministically to the backend.
+
+The LLM will not decide which domain should handle the request.
+
+Reason
+
+When the interface already knows the intended domain, using an LLM for domain selection would add token cost, latency, complexity and probabilistic behavior without adding business value.
+
+Deterministic domain selection also creates a clearer application contract and preserves explicit user intent.
+
+Status
+
+✅ Adopted
+
+ADR-021
+
+Date
+
+September 2026
+
+Decision
+
+Inside the already-selected Transportation domain, natural-language analytical intent may be interpreted by an LLM only through a constrained Pydantic Structured Output contract.
+
+A deterministic dispatcher maps the validated intent to authorized deterministic analytical capabilities.
+
+Reason
+
+Transportation contains multiple analytical capabilities whose selection benefits from natural-language interpretation.
+
+Structured Output constrains that probabilistic interpretation to an explicit contract, while the dispatcher prevents the LLM from becoming the execution engine or selecting arbitrary functions.
+
+This preserves the boundary:
+
+LLM interprets intent → Dispatcher selects capability → SQL / deterministic analytics calculates authoritative results.
+
+An out_of_scope intent blocks analytical execution and the final explanatory LLM call.
+
+Status
+
+✅ Adopted
+
+Decision Guidelines
 
 A new decision should only be added when it significantly affects one or more of the following:
 
-- Software architecture
-- Database design
-- Project organization
-- Technology stack
-- Development methodology
+Software architecture
+
+Database design
+
+Project organization
+
+Technology stack
+
+Development methodology
 
 Routine implementation details should not be recorded.
 
----
+Current Decisions Summary
 
-# Current Decisions Summary
+ID
 
-| ID | Decision | Status |
-|---|---|---|
-| ADR-001 | Modular architecture | ✅ |
-| ADR-002 | SQLite database | ✅ |
-| ADR-003 | Independent ETLs | ✅ |
-| ADR-004 | Centralized database connection | ✅ |
-| ADR-005 | 80/20 Development vs Documentation | ✅ |
-| ADR-006 | Synthetic business data | ✅ |
-| ADR-007 | Externalized business-rule configuration | ✅ |
-| ADR-008 | REST API integration contract | ✅ |
-| ADR-009 | Deterministic ownership of business calculations | ✅ |
-| ADR-010 | Modular AI orchestration architecture | ✅ |
-| ADR-011 | Separate LLM behavioral evaluation | ✅ |
-| ADR-012 | Frontend/backend separation | ✅ |
-| ADR-013 | Environment-based runtime configuration | ✅ |
-| ADR-014 | Backend secret isolation | ✅ |
-| ADR-015 | Independent cloud deployment | ✅ |
-| ADR-016 | SQLite retained for v1.1.0 | ✅ |
-| ADR-017 | Managed cloud hosting | ✅ |
-| ADR-018 | Deployment separated from production hardening | ✅ |
+Decision
 
----
+Status
 
-# Document Information
+ADR-001
 
-| Property | Value |
-|----------|-------|
-| Document | Architecture Decision Log |
-| Directory | docs/architecture |
-| Version | 1.1 |
-| Status | Active |
-| Owner | Rodrigo Soares |
-| Repository | AI Supply Chain Copilot |
-| Last Updated | August 2026 |
+Modular architecture
+
+✅
+
+ADR-002
+
+SQLite database
+
+✅
+
+ADR-003
+
+Independent ETLs
+
+✅
+
+ADR-004
+
+Centralized database connection
+
+✅
+
+ADR-005
+
+80/20 Development vs Documentation
+
+✅
+
+ADR-006
+
+Synthetic business data
+
+✅
+
+ADR-007
+
+Externalized business-rule configuration
+
+✅
+
+ADR-008
+
+REST API integration contract
+
+✅
+
+ADR-009
+
+Deterministic ownership of business calculations
+
+✅
+
+ADR-010
+
+Modular AI orchestration architecture
+
+✅
+
+ADR-011
+
+Separate LLM behavioral evaluation
+
+✅
+
+ADR-012
+
+Frontend/backend separation
+
+✅
+
+ADR-013
+
+Environment-based runtime configuration
+
+✅
+
+ADR-014
+
+Backend secret isolation
+
+✅
+
+ADR-015
+
+Independent cloud deployment
+
+✅
+
+ADR-016
+
+SQLite retained for v1.1.0
+
+✅
+
+ADR-017
+
+Managed cloud hosting
+
+✅
+
+ADR-018
+
+Deployment separated from production hardening
+
+✅
+
+ADR-019
+
+Transportation as bounded second Copilot domain
+
+✅
+
+ADR-020
+
+Explicit deterministic domain selection
+
+✅
+
+ADR-021
+
+Structured Transportation intent routing + deterministic dispatch
+
+✅
+
+Document Information
+
+Property
+
+Value
+
+Document
+
+Architecture Decision Log
+
+Directory
+
+docs/architecture
+
+Version
+
+1.1
+
+Status
+
+Active
+
+Owner
+
+Rodrigo Soares
+
+Repository
+
+AI Supply Chain Copilot
+
+Last Updated
+
+2026-09-22

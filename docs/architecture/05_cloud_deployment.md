@@ -1,39 +1,43 @@
-# Cloud Deployment Architecture
+Cloud Deployment Architecture
 
-## Purpose
+Purpose
 
-This document describes the cloud deployment architecture of the **AI Supply Chain Copilot v1.1.0**.
+This document describes the cloud deployment architecture of the AI Supply Chain Copilot v1.1.0.
 
 The objective is to document how the application's existing logical architecture is distributed across cloud services while preserving the separation of responsibilities established during local development.
 
 The cloud deployment enables the application to remain publicly accessible independently of the local development machine.
 
----
-
-## Scope
+Scope
 
 This document covers:
 
-- frontend deployment through Streamlit Community Cloud;
-- backend deployment through Render;
-- communication between frontend and backend through the REST API;
-- integration with the external LLM provider;
-- environment-based runtime configuration;
-- management and isolation of application secrets;
-- source-code integration with GitHub;
-- local versus cloud execution;
-- current persistence strategy and deployment limitations;
-- end-to-end cloud request flow.
+frontend deployment through Streamlit Community Cloud;
+
+backend deployment through Render;
+
+communication between frontend and backend through the REST API;
+
+integration with the external LLM provider;
+
+environment-based runtime configuration;
+
+management and isolation of application secrets;
+
+source-code integration with GitHub;
+
+local versus cloud execution;
+
+current persistence strategy and deployment limitations;
+
+end-to-end cloud request flow.
 
 This document focuses on the architectural and application-level aspects relevant to the project. Detailed infrastructure administration, networking, operating-system management and low-level cloud infrastructure are outside the current project scope.
 
----
-
-## Deployment Overview
+Deployment Overview
 
 The cloud deployment distributes the application across independent services while preserving the same logical responsibilities defined by the application architecture.
 
-```mermaid
 flowchart LR
 
     GH[GitHub Repository]

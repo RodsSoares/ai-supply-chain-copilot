@@ -1,21 +1,21 @@
 # Project Audit
 
-Gerado em: 22/09/2026 13:23:50
+Gerado em: 22/09/2026 18:51:42
 
 > Este arquivo é gerado automaticamente. Não edite manualmente.
 
 ## 1. Resumo executivo
 
 - Arquivos Python: **43**
-- Linhas totais: **7672**
-- Linhas efetivas de código: **5979**
-- Funções: **264**
+- Linhas totais: **8553**
+- Linhas efetivas de código: **6789**
+- Funções: **276**
 - Classes: **17**
 - Imports internos: **101**
-- Imports externos: **33**
-- Imports da biblioteca padrão: **37**
+- Imports externos: **34**
+- Imports da biblioteca padrão: **39**
 - TODOs/FIXMEs em comentários: **0**
-- Funções sem docstring: **72**
+- Funções sem docstring: **78**
 - Arquivos com erro de sintaxe: **0**
 
 ## 2. Como usar as opções True e False
@@ -68,7 +68,7 @@ inventory_export.py
 | Dimensão | Nota |
 |---|---:|
 | Modularização | 10.0/10 |
-| Cobertura de docstrings | 7.3/10 |
+| Cobertura de docstrings | 7.2/10 |
 | Complexidade estrutural | 8.8/10 |
 | Integridade sintática | 10.0/10 |
 | Saúde geral | **9.0/10** |
@@ -110,7 +110,8 @@ ai-supply-chain-copilot/
 │   ├── backlog/
 │   │   └── backlog.md
 │   ├── evaluations/
-│   │   └── LLM_Real_Model_Benchmark_Final.xlsx
+│   │   ├── LLM_Real_Model_Benchmark_Final.xlsx
+│   │   └── Transportation_Real_LLM_Golden_Set_Validation.xlsx
 │   ├── images/
 │   │   ├── architecture-overview.png
 │   │   ├── art-end-to-end-copilot-flow.png
@@ -206,7 +207,7 @@ ai-supply-chain-copilot/
 
 | Arquivo | Linhas | Funções | Classes | TODOs |
 |---|---:|---:|---:|---:|
-| `frontend/app.py` | 520 | 2 | 0 | 0 |
+| `frontend/app.py` | 1288 | 12 | 0 | 0 |
 | `scripts/analyze_inventory.py` | 39 | 1 | 0 | 0 |
 | `scripts/business_rules.py` | 63 | 2 | 0 | 0 |
 | `scripts/database_setup.py` | 12 | 0 | 0 | 0 |
@@ -224,10 +225,10 @@ ai-supply-chain-copilot/
 | `src/ai/tools.py` | 154 | 2 | 0 | 0 |
 | `src/ai/transportation_context.py` | 45 | 1 | 0 | 0 |
 | `src/ai/transportation_dispatcher.py` | 70 | 1 | 0 | 0 |
-| `src/ai/transportation_router.py` | 120 | 1 | 1 | 0 |
+| `src/ai/transportation_router.py` | 124 | 1 | 1 | 0 |
 | `src/analytics/transportation/planning.py` | 247 | 7 | 0 | 0 |
-| `src/analytics/transportation/sql_analysis.py` | 627 | 10 | 0 | 0 |
-| `src/api/main.py` | 235 | 9 | 1 | 0 |
+| `src/analytics/transportation/sql_analysis.py` | 682 | 10 | 0 | 0 |
+| `src/api/main.py` | 240 | 9 | 1 | 0 |
 | `src/database/connection.py` | 19 | 1 | 0 | 0 |
 | `src/database/create_inventory_tables.py` | 121 | 5 | 0 | 0 |
 | `src/database/create_transportation_tables.py` | 156 | 8 | 0 | 0 |
@@ -243,7 +244,7 @@ ai-supply-chain-copilot/
 | `tests/test_ai_tools.py` | 200 | 20 | 2 | 0 |
 | `tests/test_ai_transportation_context.py` | 71 | 3 | 0 | 0 |
 | `tests/test_ai_transportation_router.py` | 186 | 11 | 0 | 0 |
-| `tests/test_api_copilot.py` | 152 | 8 | 0 | 0 |
+| `tests/test_api_copilot.py` | 201 | 10 | 0 | 0 |
 | `tests/test_transportation_dispatcher.py` | 146 | 7 | 0 | 0 |
 | `tests/test_transportation_planning.py` | 215 | 6 | 0 | 0 |
 | `tests/test_transportation_planning_policy.py` | 263 | 19 | 0 | 0 |
@@ -256,8 +257,18 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `api_esta_online` | 191–200 | `—` | NÃO |
-| `consultar_copilot` | 203–274 | `pergunta` | NÃO |
+| `mensagem_inicial` | 108–113 | `dominio` | NÃO |
+| `api_esta_online` | 681–686 | `—` | NÃO |
+| `obter_dashboard_inventory` | 690–697 | `—` | NÃO |
+| `consultar_copilot` | 700–778 | `pergunta, dominio` | NÃO |
+| `formatar_inteiro` | 785–789 | `valor` | NÃO |
+| `preparar_markdown_copilot` | 792–797 | `texto` | SIM |
+| `formatar_brl` | 800–817 | `valor` | SIM |
+| `solicitar_scroll_topo` | 820–822 | `—` | SIM |
+| `executar_scroll_topo_pendente` | 825–860 | `—` | SIM |
+| `resetar_conversa` | 863–870 | `dominio` | NÃO |
+| `renderizar_metricas_inventory` | 873–908 | `—` | NÃO |
+| `renderizar_escopo_transportation` | 911–963 | `—` | SIM |
 
 ### `scripts/analyze_inventory.py`
 
@@ -394,7 +405,7 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `rotear_pergunta_transporte` | 100–120 | `pergunta` | SIM |
+| `rotear_pergunta_transporte` | 104–124 | `pergunta` | SIM |
 
 | Classe | Linhas | Docstring |
 |---|---:|---|
@@ -418,32 +429,32 @@ ai-supply-chain-copilot/
 |---|---:|---|---|
 | `analisar_operacao_forecast` | 6–53 | `—` | SIM |
 | `analisar_eficiencia_economica` | 56–118 | `—` | SIM |
-| `analisar_evolucao_semanal` | 121–223 | `—` | SIM |
-| `analisar_participacao_custo_rede` | 226–268 | `—` | SIM |
-| `analisar_ranking_custo_semanal` | 270–302 | `—` | SIM |
-| `analisar_concentracao_custo_rede` | 305–349 | `—` | SIM |
-| `analisar_tendencia_recente` | 352–421 | `—` | SIM |
-| `analisar_mudancas_operacionais` | 424–491 | `—` | SIM |
-| `analisar_pressao_custo_rede` | 494–534 | `—` | SIM |
-| `analisar_resumo_executivo_semanal` | 537–627 | `—` | SIM |
+| `analisar_evolucao_semanal` | 121–278 | `—` | SIM |
+| `analisar_participacao_custo_rede` | 281–323 | `—` | SIM |
+| `analisar_ranking_custo_semanal` | 325–357 | `—` | SIM |
+| `analisar_concentracao_custo_rede` | 360–404 | `—` | SIM |
+| `analisar_tendencia_recente` | 407–476 | `—` | SIM |
+| `analisar_mudancas_operacionais` | 479–546 | `—` | SIM |
+| `analisar_pressao_custo_rede` | 549–589 | `—` | SIM |
+| `analisar_resumo_executivo_semanal` | 592–682 | `—` | SIM |
 
 ### `src/api/main.py`
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `carregar_inventario` | 16–31 | `—` | SIM |
-| `raiz` | 53–61 | `—` | SIM |
-| `verificar_saude` | 65–72 | `—` | SIM |
-| `listar_produtos` | 76–107 | `—` | SIM |
-| `buscar_produto` | 111–146 | `sku` | SIM |
-| `listar_inventario` | 150–159 | `—` | SIM |
-| `obter_dashboard` | 163–188 | `—` | SIM |
-| `obter_mudancas_transporte` | 192–212 | `route_id` | SIM |
-| `consultar_copilot` | 216–235 | `entrada` | SIM |
+| `carregar_inventario` | 17–32 | `—` | SIM |
+| `raiz` | 55–63 | `—` | SIM |
+| `verificar_saude` | 67–74 | `—` | SIM |
+| `listar_produtos` | 78–109 | `—` | SIM |
+| `buscar_produto` | 113–148 | `sku` | SIM |
+| `listar_inventario` | 152–161 | `—` | SIM |
+| `obter_dashboard` | 165–190 | `—` | SIM |
+| `obter_mudancas_transporte` | 194–214 | `route_id` | SIM |
+| `consultar_copilot` | 218–240 | `entrada` | SIM |
 
 | Classe | Linhas | Docstring |
 |---|---:|---|
-| `PerguntaCopilot` | 34–39 | SIM |
+| `PerguntaCopilot` | 35–41 | SIM |
 
 ### `src/database/connection.py`
 
@@ -679,14 +690,16 @@ ai-supply-chain-copilot/
 
 | Função | Linhas | Argumentos | Docstring |
 |---|---:|---|---|
-| `test_consultar_copilot_retorna_resposta` | 10–41 | `monkeypatch` | SIM |
-| `responder_fake` | 19–21 | `pergunta_recebida` | NÃO |
-| `test_consultar_copilot_rejeita_corpo_sem_pergunta` | 44–55 | `—` | SIM |
-| `test_consultar_copilot_rejeita_corpo_invalido` | 58–71 | `—` | SIM |
-| `test_consultar_copilot_trata_erros_da_camada_de_ia` | 82–110 | `monkeypatch, erro` | SIM |
-| `responder_fake` | 91–92 | `pergunta` | NÃO |
-| `test_obter_mudancas_transporte_retorna_historico_da_rota` | 113–140 | `—` | NÃO |
-| `test_obter_mudancas_transporte_retorna_404_para_rota_inexistente` | 143–151 | `—` | NÃO |
+| `test_consultar_copilot_retorna_resposta` | 10–45 | `monkeypatch` | SIM |
+| `responder_fake` | 19–25 | `pergunta_recebida, dominio` | NÃO |
+| `test_consultar_copilot_encaminha_dominio_transportation` | 48–86 | `monkeypatch` | SIM |
+| `responder_fake` | 59–65 | `pergunta_recebida, dominio` | NÃO |
+| `test_consultar_copilot_rejeita_corpo_sem_pergunta` | 89–100 | `—` | SIM |
+| `test_consultar_copilot_rejeita_corpo_invalido` | 103–116 | `—` | SIM |
+| `test_consultar_copilot_trata_erros_da_camada_de_ia` | 127–159 | `monkeypatch, erro` | SIM |
+| `responder_fake` | 136–141 | `pergunta, dominio` | NÃO |
+| `test_obter_mudancas_transporte_retorna_historico_da_rota` | 162–189 | `—` | NÃO |
+| `test_obter_mudancas_transporte_retorna_404_para_rota_inexistente` | 192–200 | `—` | NÃO |
 
 ### `tests/test_transportation_dispatcher.py`
 
