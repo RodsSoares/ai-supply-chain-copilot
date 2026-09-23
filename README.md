@@ -197,11 +197,6 @@ The focus is not simply learning Python syntax, but designing maintainable busin
 | Frontend Hosting | Streamlit Community Cloud |
 | Cloud Configuration | Environment Variables / Secrets |
 
-### Planned Technologies
-
-- PostgreSQL
-- Docker
-- Azure AI Services
 
 ## Solution Architecture
 
@@ -465,7 +460,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 4. Run the analytical pipeline
+### 4. Run the deterministic Inventory pipeline
 
 ```powershell
 python scripts/analyze_inventory.py
