@@ -4,364 +4,509 @@
 🌐 **Live Demo:** Open AI Supply Chain Copilot
 
 <p align="center">
-  <img
-    src="docs/images/architecture-overview.png?v=2.0.0"
-    alt="AI Supply Chain Copilot v2.0.0 multi-domain architecture"
-    width="1100"
-  >
+
+<img     src="docs/images/architecture-overview.png?v=2.0.0"     alt="AI Supply Chain Copilot v2.0.0 multi-domain architecture"     width="1100"   >
+
 </p>
 
-> **Two operational domains. One shared intelligence architecture.**  
-> Deterministic analytics first; Generative AI where interpretation adds value.
+> **From operational data to decision-ready intelligence.**  
+> Deterministic analytics establish the facts. Generative AI interprets and communicates them. The human owns the decision.
 
-The AI Supply Chain Copilot is an end-to-end decision-support platform that turns synthetic operational data into deterministic analytics, business decisions and natural-language explanations.
+**AI Supply Chain Copilot** is an end-to-end decision-support application that combines **Supply Chain domain knowledge, data engineering, SQL analytics, deterministic business logic, APIs, Business Intelligence and Generative AI** in one modular architecture.
 
-The current release demonstrates two materially different Supply Chain domains — **Inventory** and **Transportation** — running through the same application foundation while preserving domain-specific data, metrics and decision logic.
+The current release supports two materially different operational domains — **Inventory** and **Transportation** — through a shared application foundation while preserving domain-specific data, metrics, rules and analytical behavior.
 
-## The Core Idea
+This is not an LLM wrapped around a dataset. The application deliberately separates **authoritative business computation** from **probabilistic interpretation**.
 
-The project is built around a simple architectural principle:
+``` text
+Operational Data
+      ↓
+Deterministic Analytics
+      ↓
+Business Facts / Scenarios
+      ↓
+Controlled AI Context
+      ↓
+LLM Interpretation
+      ↓
+Decision Support
+      ↓
+Human Decision
+```
 
-> **Shared infrastructure. Domain-specific intelligence.**
+## What This Project Demonstrates
 
-**Inventory Decision Intelligence** focuses on stock value, coverage, stockout risk, ABC classification, replenishment, excess treatment and prioritization.
+The project was built as a portfolio-grade business system rather than a collection of isolated coding exercises.
 
-**Transportation Decision Intelligence** focuses on forecast, route capacity, vehicle configuration, utilization, cost per route, service-level trade-offs, operational changes and weekly planning.
+It demonstrates the ability to connect:
 
-The user selects the domain explicitly in the frontend. The backend routes the request deterministically to the correct analytical context. The LLM is not used to guess a domain that the user has already selected, reducing unnecessary token consumption, complexity and routing ambiguity.
+| Capability                | Evidence in the project                                               |
+|:--------------------------|:----------------------------------------------------------------------|
+| **Supply Chain**          | Inventory and Transportation decision-support domains                 |
+| **Data Engineering**      | Synthetic ERP-style data, ETL, standardization and persistence        |
+| **SQL & Analytics**       | Deterministic KPI calculation and Transportation analytical queries   |
+| **Decision Intelligence** | Rules, thresholds, classifications, scenarios and recommended actions |
+| **Software Architecture** | Modular layers, explicit contracts and separation of responsibilities |
+| **API Integration**       | FastAPI REST interface between application layers                     |
+| **Business Intelligence** | Power BI and analytical artifacts                                     |
+| **AI Solutions**          | Controlled LLM context, structured routing and grounded explanations  |
+| **Automation**            | End-to-end analytical and conversational workflows                    |
+| **Validation**            | Pytest regression suite plus structured real-LLM evaluation           |
+| **Cloud**                 | Independently deployed frontend and backend services                  |
+
+**Current engineering baseline: 105 automated tests passing.**
+
+## The Business Problem
+
+Operational teams rarely lack data. The harder problem is transforming fragmented operational information into **reliable, decision-ready context**.
+
+Inventory planners need to understand stock exposure, coverage, stockout risk, excess, priorities and recommended actions.
+
+Transportation planners need to understand forecast demand, route capacity, vehicle configuration, utilization, required trips, transportation cost and the trade-off between service frequency and unit economics.
+
+The Copilot addresses those problems through a hybrid architecture:
+
+> **Application code establishes the facts. AI helps humans interpret the facts.**
+
+Exact calculations, aggregations, classifications and business rules remain under deterministic application control. The LLM is used where language and semantic interpretation add value: understanding bounded intent, synthesizing evidence and communicating business meaning.
+
+## Two Domains. One Intelligence Architecture.
+
+### Inventory Decision Intelligence
+
+Inventory transforms synthetic ERP-style operational data into deterministic decision-support information, including:
+
+- inventory value;
+- coverage;
+- lead-time analysis;
+- stockout risk;
+- ABC classification;
+- prioritization;
+- supplier exposure;
+- recommended actions such as `REPOR`, `TRATAR EXCESSO` and `SEM AÇÃO`.
 
 <p align="center">
-  <img
-    src="docs/images/art-inventory-transportation-llm.png"
-    alt="Inventory and Transportation domains converging on the shared AI Supply Chain Copilot architecture"
-    width="1100"
-  >
+
+<img     src="docs/images/frontend-inventory.png"     alt="Inventory Decision Intelligence frontend"     width="1000"   >
+
 </p>
+
+### Transportation Decision Intelligence
+
+Transportation extends the same platform with a different data model and analytical problem.
+
+It covers:
+
+- weekly forecast demand;
+- route and vehicle characteristics;
+- route/vehicle tariffs;
+- vehicle capacity;
+- required trips;
+- capacity utilization;
+- transportation cost;
+- cost per piece;
+- operational changes and recent trends;
+- economic-versus-service planning scenarios.
+
+<p align="center">
+
+<img     src="docs/images/frontend-transportation.png"     alt="Transportation Decision Intelligence frontend"     width="1000"   >
+
+</p>
+
+Transportation is intentionally a **bounded analytics extensibility case**, not a vehicle-routing or global optimization product. Its purpose is to demonstrate that a second Supply Chain domain can be integrated without duplicating the complete application architecture.
+
+> **The business context changes. The architectural foundation remains shared.**
+
+## Core Architectural Principle
+
+The most important design decision in the project is the boundary between deterministic software and Generative AI.
+
+``` text
+UI defines the domain.
+LLM interprets bounded intent.
+Dispatcher selects an authorized capability.
+SQL / application logic calculates.
+Analytics detects.
+AI explains.
+Human decides.
+```
+
+The LLM is therefore **not** the system of record and **not** the authoritative calculation engine.
+
+For Transportation, after the user explicitly selects the domain, an LLM router may interpret the analytical intent through a validated structured contract. A deterministic dispatcher then maps that intent to an authorized analytical capability. SQL and deterministic analytics calculate the official result before the LLM receives a controlled context for explanation.
+
+This preserves a clear responsibility boundary:
+
+> **LLM ≠ Calculator.**
 
 ## Product Experience
 
 The architecture is implemented as a working multi-domain application rather than only as a diagram.
 
-The Streamlit frontend exposes Inventory and Transportation as explicit operational domains, preserves their visual identity during navigation and connects both experiences to the same FastAPI and AI foundations.
+The Streamlit frontend exposes **Inventory** and **Transportation** explicitly. The frontend acts as an API client; core Supply Chain calculations, decision logic and LLM orchestration remain in backend application layers.
 
-### Inventory Decision Intelligence
+The user experience therefore follows the same principle as the architecture:
 
-Inventory presents consolidated operational context and lets the user investigate priorities, stockout exposure, critical SKUs, suppliers, coverage and recommended actions.
-
-<p align="center">
-  <img
-    src="docs/images/frontend-inventory.png"
-    alt="Inventory Decision Intelligence frontend"
-    width="1000"
-  >
-</p>
-
-### Transportation Decision Intelligence
-
-Transportation reuses the same product shell while exposing a different analytical context: network, capacity, utilization, route cost, operational changes and economic-versus-service planning scenarios.
-
-<p align="center">
-  <img
-    src="docs/images/frontend-transportation.png"
-    alt="Transportation Decision Intelligence frontend"
-    width="1000"
-  >
-</p>
-
-> **The frontend changes context; the architecture remains shared.**
+``` text
+User
+  ↓
+Select Domain
+  ↓
+Ask Business Question
+  ↓
+Deterministic Business Processing
+  ↓
+Controlled AI Interpretation
+  ↓
+Decision-Support Answer
+```
 
 ## Engineering at a Glance
 
-| Layer | Implementation |
-| --- | --- |
-| Data | Synthetic ERP / operational datasets |
-| ETL & Integration | Python, Pandas |
-| Persistence | SQLite |
-| Inventory Intelligence | KPIs, coverage, risk, ABC, prioritization, deterministic actions |
-| Transportation Intelligence | SQL analytics, capacity, utilization, cost and planning scenarios |
-| Decision Layer | Rules, thresholds, optimization and planning policies |
-| API | FastAPI |
-| AI Layer | OpenAI / LLM with controlled domain context |
-| Domain Routing | Explicit frontend selection + deterministic backend routing |
-| Frontend | Streamlit |
-| BI | Power BI / analytical artifacts |
-| Validation | Pytest + real-LLM golden-set evaluation |
-| **Current Baseline** | **105 automated tests passing** |
-
-## Table of Contents
-
-- [The Core Idea](#the-core-idea)
-- [Product Experience](#product-experience)
-- [Engineering at a Glance](#engineering-at-a-glance)
-- [Overview](#overview)
-- [Current Status](#current-status)
-- [Technology Stack](#technology-stack)
-- [Solution Architecture](#solution-architecture)
-- [AI Copilot](#ai-copilot)
-- [Project Structure](#project-structure)
-- [Project Presentation](#project-presentation)
-- [Getting Started](#getting-started--local-development)
-- [Automated Tests](#automated-tests)
-- [Engineering Practices](#engineering-practices)
-- [Roadmap & Version History](#roadmap--version-history)
-- [Current Development Stage](#current-development-stage)
-- [Why this project?](#why-this-project)
-- [License](#license)
-
-## Overview
-
-The objective of this project is to demonstrate how modern Supply Chain problems can be addressed through software engineering, deterministic analytics and artificial intelligence.
-
-Rather than building isolated coding exercises, the repository evolved into a modular business application with:
-
-- Python and Pandas data pipelines
-- SQLite persistence
-- Inventory analytics and deterministic decision rules
-- Transportation SQL analytics and planning logic
-- FastAPI endpoints
-- Streamlit multi-domain frontend
-- Power BI / analytical artifacts
-- Real LLM integration
-- Domain-specific AI contexts
-- Automated tests and project audit
-- Public cloud deployment
-
-All operational datasets are synthetic and inspired by realistic business processes, preserving corporate confidentiality while supporting meaningful analytical scenarios.
-
-The v2.0.0 release is intentionally multi-domain: Inventory and Transportation solve different operational problems without becoming separate products.
-
-## Current Status
-
-| Module | Status |
-| --- | :---: |
-| Project Architecture | ✅ |
-| Synthetic ERP Dataset | ✅ |
-| ETL Pipeline | ✅ |
-| SQLite Database | ✅ |
-| Inventory Analytics | ✅ |
-| Business Rules Engine | ✅ |
-| Configurable Business Rules | ✅ |
-| Automated Project Audit | ✅ |
-| SQL Analytics | ✅ |
-| KPI Engine | ✅ |
-| REST API | ✅ |
-| Power BI Dashboard | ✅ |
-| AI Layer Foundation | ✅ |
-| Automated Test Suite | ✅ |
-| Real LLM Integration | ✅ |
-| Real LLM Golden Set Validation | ✅ |
-| Multi-Model Benchmark | ✅ |
-| LLM Cost / Activation Safeguards | ✅ |
-| Streamlit Conversational Frontend | ✅ |
-| Public Cloud Deployment | ✅ |
-| End-to-End Cloud Integration | ✅ |
-| Transportation Data Model | ✅ |
-| Transportation SQL Analytics | ✅ |
-| Economic vs Service Planning Scenarios | ✅ |
-| Deterministic Domain Routing | ✅ |
-| Domain-Specific AI Contexts | ✅ |
-| Transportation Real-LLM Golden Set Validation | ✅ |
-| Multi-Domain Streamlit UX | ✅ |
-
-### Main Objectives
-
-This repository demonstrates practical implementation of:
-
-- Data Engineering
-- Software Engineering
-- AI-enabled Solution Architecture
-- Supply Chain Analytics
-- Business Process Automation
-- Decision Support Systems
-
-The focus is not simply learning Python syntax, but designing maintainable business software following professional engineering practices.
-
-## Technology Stack
-
-| Category | Technologies |
-| --- | --- |
-| Language | Python 3.14 |
-| Data Processing | Pandas |
-| Database | SQLite |
-| API Framework | FastAPI |
-| Business Intelligence | Power BI |
-| Business Rules Configuration | JSON |
-| Version Control | Git / GitHub |
-| IDE | Visual Studio Code |
-| Documentation | Markdown |
-| Automated Testing | Pytest |
-| AI Integration | OpenAI API / Large Language Model |
-| AI Architecture | Modular AI Layer with Real and Fake LLM Clients |
-| Frontend | Streamlit |
-| Backend Hosting | Render |
-| Frontend Hosting | Streamlit Community Cloud |
-| Cloud Configuration | Environment Variables / Secrets |
-
+| Layer                       | Implementation                                                      |
+|:----------------------------|:--------------------------------------------------------------------|
+| Data                        | Synthetic ERP / operational datasets                                |
+| ETL & Integration           | Python, Pandas                                                      |
+| Persistence                 | SQLite + analytical artifacts                                       |
+| Inventory Intelligence      | KPIs, coverage, risk, ABC, prioritization and deterministic actions |
+| Transportation Intelligence | SQL analytics, capacity, utilization, cost and planning scenarios   |
+| Decision Layer              | Rules, thresholds and planning policies                             |
+| AI Intent Boundary          | Pydantic Structured Output for bounded Transportation intent        |
+| Capability Routing          | Deterministic dispatcher                                            |
+| API                         | FastAPI                                                             |
+| AI Layer                    | OpenAI / LLM with controlled domain context                         |
+| Frontend                    | Streamlit                                                           |
+| BI                          | Power BI / analytical artifacts                                     |
+| Validation                  | Pytest + real-LLM Golden Set evaluation                             |
+| Cloud                       | Render + Streamlit Community Cloud                                  |
+| **Current Baseline**        | **105 automated tests passing**                                     |
 
 ## Solution Architecture
 
-The v2.0.0 architecture separates shared platform capabilities from domain-specific analytical intelligence. Inventory and Transportation use different data, metrics and decision logic, but converge on the same persistence, API, AI and frontend foundations.
+The v2.0.0 architecture separates **shared platform capabilities** from **domain-specific intelligence**.
 
-The high-level architecture diagram at the top of this README is the canonical visual summary of the current release. The sections below explain the domain boundaries and shared layers in more detail.
-
-### Domain architecture
-
-Inventory transforms synthetic ERP inventory data into deterministic KPIs, coverage, risk, prioritization and actions such as `REPOR`, `TRATAR EXCESSO` and `SEM AÇÃO`. Exact calculations and aggregations remain outside the LLM.
-
-Transportation extends the platform with a relational transportation model and SQL-driven analytics. It evaluates weekly forecast, route profiles, vehicle capacity, utilization, trip requirements, cost and economic vs service planning scenarios.
-
-### Deterministic domain routing
-
-Domain selection is explicit in the frontend. The backend receives the selected domain and routes the request to the corresponding context and capabilities. This is intentionally deterministic: the LLM does not spend tokens deciding whether a question belongs to Inventory or Transportation when the user has already made that choice.
-
-### Shared architecture
-
-Both domains reuse the same architectural backbone:
-
-```text
-Data & Integration → Persistence → Analytics → Decision/Planning → Domain Context → FastAPI → AI Copilot → Streamlit
-```
-
-This promotes modularity, reuse and extensibility while allowing each domain to preserve its own business semantics. The Copilot is therefore not the decision engine itself: deterministic application layers calculate what can be calculated exactly, while the LLM explains, synthesizes and communicates the supplied context.
-
-The architecture promotes layered design, high cohesion, low coupling, separation of concerns, deterministic/probabilistic separation, testability, controlled LLM context and cost-aware AI usage.
-
-### Cloud Deployment Architecture
-
-The application is deployed as a distributed cloud solution while preserving the same layered architecture used during local development.
-
-```mermaid
-flowchart LR
-    U[User / Browser]
-
-    SC[Streamlit Community Cloud]
-    FE[Streamlit Conversational Frontend]
-
-    R[Render Web Service]
+``` mermaid
+flowchart TD
+    USER[User]
+    FE[Streamlit Frontend]
+    DOMAIN[Explicit Domain Selection]
     API[FastAPI REST API]
+    SERVICE[Multidomain AI Service]
 
-    ANALYTICAL[Analytical Inventory Artifact]
-    DB[(SQLite Relational Persistence)]
-    AI[AI Service]
-    CTX[Deterministic Context Preparation]
-    LLM[LLM Client]
+    subgraph INVENTORY[Inventory Domain]
+        INVDATA[Inventory Analytical Data]
+        INVAN[Deterministic Inventory Analytics]
+        INVCTX[Inventory Context]
+        BI[Power BI]
+        INVDATA --> INVAN
+        INVAN --> INVCTX
+        INVAN --> BI
+    end
 
-    OAI[OpenAI API / Real LLM]
+    subgraph TRANSPORTATION[Transportation Domain]
+        TRDB[(SQLite Transportation Data)]
+        ROUTER[LLM Intent Router]
+        CONTRACT[Pydantic Structured Output]
+        DISP[Deterministic Dispatcher]
+        TRAN[SQL / Deterministic Analytics]
+        TRCTX[Transportation Context]
+        ROUTER --> CONTRACT
+        CONTRACT -->|authorized intent| DISP
+        DISP --> TRAN
+        TRDB --> TRAN
+        TRAN --> TRCTX
+    end
 
-    GH[GitHub Repository]
+    CLIENT[LLM Client]
+    OAI[OpenAI API]
 
-    U -->|HTTPS| SC
-    SC --> FE
+    USER --> FE
+    FE --> DOMAIN
+    DOMAIN --> API
+    API --> SERVICE
 
-    FE -->|HTTPS / JSON| R
-    R --> API
+    SERVICE -->|inventory| INVCTX
+    SERVICE -->|transportation| ROUTER
+    CONTRACT -->|out_of_scope| SERVICE
+    TRCTX --> SERVICE
 
-    ANALYTICAL --> API
-    API --> AI
+    SERVICE --> CLIENT
+    CLIENT --> OAI
+    OAI --> CLIENT
+    CLIENT --> SERVICE
 
-    AI --> CTX
-    CTX --> LLM
-    LLM --> OAI
-    OAI -->|Generated Response| LLM
-    LLM --> AI
-
-    AI --> API
-    API -->|JSON Response| FE
-    FE --> U
-
-    GH -. Source / Deploy .-> SC
-    GH -. Source / Deploy .-> R
+    SERVICE --> API
+    API --> FE
+    FE --> USER
 ```
 
-### Environment-based configuration
+### Inventory Path
 
-The same source code supports both local and cloud execution through environment-specific configuration.
+``` text
+User
+  ↓
+Inventory selected
+  ↓
+FastAPI
+  ↓
+Deterministic Inventory Analytics
+  ↓
+Inventory Context
+  ↓
+LLM
+  ↓
+Business Answer
+```
 
-| Configuration | Local | Cloud |
-| --- | --- | --- |
-| Frontend API Base URL | `http://127.0.0.1:8000` | Render public backend URL |
-| LLM Mode | configurable | `real` |
-| Real LLM Enabled | configurable | `true` |
-| OpenAI API Key | local environment variable | backend secret |
+### Transportation Path
 
-Application code, runtime configuration and secrets are deliberately separated.
+``` text
+User
+  ↓
+Transportation selected
+  ↓
+FastAPI
+  ↓
+LLM Intent Router
+  ↓
+Pydantic Structured Output
+  ↓
+Deterministic Dispatcher
+  ↓
+SQL / Deterministic Analytics
+  ↓
+Transportation Context
+  ↓
+LLM
+  ↓
+Business Answer
+```
 
-The `OPENAI_API_KEY` is never stored in source code or exposed to the Streamlit frontend.
+An `out_of_scope` Transportation intent stops execution before analytical processing and before the final explanatory LLM call.
 
-Detailed cloud deployment architecture, service responsibilities, runtime configuration and deployment decisions are documented in:
+## Data & Decision Architecture
 
-`docs/architecture/05_cloud_deployment.md`
+The application intentionally uses different data representations according to responsibility.
+
+### Inventory
+
+The primary analytical path is:
+
+``` text
+Synthetic ERP Inventory
+      ↓
+Validation / Transformation
+      ↓
+Deterministic Analytics
+      ↓
+Decision-Support Calculations
+      ↓
+output/inventory_analysis.csv
+      ↓
+FastAPI / Power BI / AI Context
+```
+
+SQLite separately supports structured relational reference entities. The analytical artifact and relational persistence currently coexist and should not be interpreted as one sequential persistence pipeline.
+
+### Transportation
+
+Transportation uses relational and planning data in SQLite.
+
+Core concepts include:
+
+| Entity / Concept        | Grain / Responsibility           |
+|:------------------------|:---------------------------------|
+| Routes                  | one row per route                |
+| Vehicle Types           | vehicle master and capacity      |
+| Route / Vehicle Options | valid combinations               |
+| Route / Vehicle Rates   | route × vehicle × effective date |
+| Demand Forecast         | route × week                     |
+| Planned Trips           | one row per derived planned trip |
+
+`planned_trips` is a deterministic derived planning result. It is not generated by the LLM.
+
+Transportation analytics calculate authoritative values such as required trips, capacity, utilization, transportation cost and cost per piece.
 
 ## AI Copilot
 
-The AI Supply Chain Copilot is the natural-language decision-support layer shared by both operational domains. It does not replace the deterministic analytics or planning engines. Instead, it receives structured domain context and uses the LLM for interpretation, synthesis and communication.
+The AI layer is a **decision-support communication layer**, not the owner of business truth.
 
-### Domain-aware interaction
+The external LLM is used primarily for:
 
-The user first selects Inventory or Transportation in the Streamlit interface. That explicit selection becomes part of the API request and deterministically activates the appropriate domain context.
+- bounded semantic interpretation;
+- synthesis;
+- explanation;
+- natural-language communication.
 
-#### Inventory context
+The LLM must not:
 
-Supports questions about stock position, SKUs, coverage, stockout risk, priorities, recommended inventory actions and supplier exposure. The context combines detailed selected records with consolidated indicators so the model can distinguish sample-level evidence from the complete analytical universe.
+- select Inventory versus Transportation when the interface already knows the domain;
+- become the source of truth for exact KPIs;
+- invent unsupported causes;
+- bypass the deterministic dispatcher;
+- redefine deterministic business rules.
 
-#### Transportation context
+### Context ≠ Policy
 
-Supports questions about routes, forecast, capacity, vehicle choice, trip frequency, utilization, cost, recent evolution, operational changes and economic-versus-service scenarios. SQL analytics provide the deterministic evidence before the LLM interprets it.
+Controlled context gives the model the facts required to answer a question.
 
-### Controlled AI workflow
+Policy and authoritative calculations remain in deterministic application code.
 
-```text
-User selects domain
-        ↓
-Streamlit sends question + explicit domain
-        ↓
-FastAPI validates and routes deterministically
-        ↓
-Domain analytics / SQL / decision logic
-        ↓
-Domain-specific structured context
-        ↓
-LLM Client / OpenAI
-        ↓
-Grounded natural-language explanation
-        ↓
-FastAPI → Streamlit → User
-```
-
-The core rule is **Context ≠ Policy**. Context informs the LLM; critical calculations and operational rules remain deterministic and auditable. The model should explain what the supplied data supports rather than invent missing causes.
+This distinction is central to the project because it prevents the conversational layer from silently becoming the business-rule engine.
 
 ### Fake and Real LLM Modes
 
-The LLM client supports both **Fake LLM** for cost-free deterministic development/testing and **Real LLM** for controlled end-to-end validation through OpenAI. Real calls require explicit environment activation and a valid API key. Context size and response size are controlled to reduce unnecessary token consumption.
+The application supports:
 
-### API contract
+**Fake LLM Mode** — deterministic, cost-free development and testing without external model calls.
 
-The Copilot is exposed through the REST API. The multi-domain contract carries both the natural-language question and the explicitly selected domain, allowing the backend to choose the correct context without probabilistic intent classification.
+**Real LLM Mode** — controlled end-to-end execution through the configured external provider.
 
-### Real LLM validation
+Real model calls require explicit activation and a valid API key.
 
-Inventory and Transportation have been validated against real LLM behavior using structured evaluation cases. A key architectural lesson from the Inventory validation was to move exact aggregation, extrema and tie handling into deterministic context preparation instead of relying on probabilistic recalculation.
+### Real-LLM Evaluation
 
-Transportation validation extends the same principle to SQL-backed analytical questions and planning scenarios. Evaluation evidence is stored under `docs/evaluations/`, including the Inventory model benchmark and `Transportation_Real_LLM_Golden_Set_Validation.xlsx`.
+Deterministic software correctness and probabilistic model behavior are evaluated separately.
 
-The automated regression suite currently passes **105 tests**. Real-LLM evaluation is kept separate from routine deterministic tests so normal development remains repeatable and cost-efficient.
+The normal automated suite validates software behavior without requiring real model consumption.
 
-### Cloud end-to-end flow
+Real LLM behavior is evaluated through structured Golden Set cases, including Inventory model evaluation and Transportation analytical scenarios.
 
-```text
-User → Streamlit → explicit domain → FastAPI → domain analytics/context → LLM Client → OpenAI → FastAPI → Streamlit → User
+Evaluation evidence is maintained under:
+
+`docs/evaluations/`
+
+## Technology Stack
+
+| Category               | Technologies                                                  |
+|:-----------------------|:--------------------------------------------------------------|
+| Language               | Python 3.14                                                   |
+| Data Processing        | Pandas                                                        |
+| Database               | SQLite                                                        |
+| SQL Analytics          | SQLite SQL                                                    |
+| API Framework          | FastAPI                                                       |
+| Validation / Contracts | Pydantic                                                      |
+| Business Intelligence  | Power BI                                                      |
+| Business Rules         | JSON configuration                                            |
+| AI Integration         | OpenAI API / Large Language Model                             |
+| AI Architecture        | Modular AI service, controlled context, Fake and Real clients |
+| Frontend               | Streamlit                                                     |
+| Automated Testing      | Pytest                                                        |
+| Backend Hosting        | Render                                                        |
+| Frontend Hosting       | Streamlit Community Cloud                                     |
+| Version Control        | Git / GitHub                                                  |
+| Documentation          | Markdown                                                      |
+
+## Validation & Engineering Evidence
+
+The current regression baseline is:
+
+``` text
+105 automated tests passing
 ```
 
-## Project Structure
+Coverage includes responsibilities such as:
 
-```text
+- Inventory backward compatibility;
+- Inventory analytics and decision logic;
+- multidomain service orchestration;
+- invalid-domain rejection;
+- Transportation Structured Output contracts;
+- `out_of_scope` behavior;
+- deterministic dispatcher mapping;
+- route filtering;
+- Transportation context construction;
+- SQL-backed Transportation analytics;
+- API / AI integration;
+- LLM client modes and activation safeguards.
+
+Run the full suite with:
+
+``` powershell
+python -m pytest
+```
+
+### Automated Project Audit
+
+The repository also includes an automated engineering audit.
+
+``` powershell
+python scripts/project_audit.py
+```
+
+The generated audit inspects repository structure, module inventory, functions, dependencies, syntax, documentation coverage and other engineering indicators.
+
+Generated report:
+
+`docs/project_audit/PROJECT_AUDIT.md`
+
+The current audited codebase contains thousands of lines of effective Python code across a modular project structure, with no syntax errors reported in the supplied audit snapshot.
+
+## Cloud Deployment
+
+The public application uses independently deployed frontend and backend services.
+
+``` text
+User
+  ↓ HTTPS
+Streamlit Community Cloud
+  ↓ HTTPS / JSON
+FastAPI on Render
+  ↓
+Deterministic Application Layers
+  ↓
+AI Service / Controlled Context
+  ↓
+OpenAI API
+  ↓
+FastAPI
+  ↓
+Streamlit
+  ↓
+User
+```
+
+GitHub acts as the version-controlled deployment source.
+
+Application code, runtime configuration and secrets are separated. The `OPENAI_API_KEY` belongs only to the backend environment and is not exposed to the Streamlit frontend.
+
+Detailed deployment documentation:
+
+`docs/architecture/05_cloud_deployment.md`
+
+## Engineering Decisions
+
+Architectural decisions are documented explicitly in:
+
+`docs/architecture/04_decision_log.md`
+
+Examples include:
+
+- modular rather than monolithic development;
+- SQLite as the initial relational persistence layer;
+- configuration over hardcoding;
+- deterministic ownership of exact business calculations;
+- dedicated AI orchestration and LLM client layers;
+- separation of deterministic tests from probabilistic model evaluation;
+- frontend/backend separation through REST contracts;
+- environment-based configuration;
+- secret isolation;
+- independent frontend/backend cloud deployment;
+- cloud deployment separated from production hardening.
+
+The project intentionally introduces technology only when it solves a concrete business or architectural requirement.
+
+## Repository Structure
+
+``` text
 AI-SUPPLY-CHAIN-COPILOT/
 ├── config/
 │   └── business_rules.json
-│
 ├── data/
+│   ├── raw/
+│   └── synthetic/
 ├── database/
-│
 ├── docs/
 │   ├── architecture/
 │   │   ├── 01_system_overview.md
@@ -370,368 +515,228 @@ AI-SUPPLY-CHAIN-COPILOT/
 │   │   ├── 04_decision_log.md
 │   │   ├── 05_cloud_deployment.md
 │   │   └── 06_transportation_architecture.md
-│   │
 │   ├── evaluations/
-│   │   ├── LLM_Real_Model_Benchmark_Final.xlsx
-│   │   └── Transportation_Real_LLM_Golden_Set_Validation.xlsx
 │   ├── images/
 │   ├── presentations/
 │   ├── project_audit/
 │   └── roadmap/
-│
 ├── frontend/
 │   └── app.py
-│
 ├── output/
 ├── reports/
+│   ├── excel/
+│   └── powerbi/
 ├── sample_data/
 ├── scripts/
-│
+│   ├── analyze_inventory.py
+│   ├── inventory_*.py
+│   ├── materialize_transportation_plan.py
+│   └── project_audit.py
 ├── src/
 │   ├── ai/
 │   │   ├── client.py
 │   │   ├── inventory_context.py
 │   │   ├── transportation_context.py
+│   │   ├── transportation_dispatcher.py
 │   │   ├── transportation_router.py
 │   │   ├── prompts.py
 │   │   ├── service.py
 │   │   └── tools.py
-│   └── api/
-│
+│   ├── analytics/
+│   ├── api/
+│   ├── database/
+│   └── decision/
 ├── tests/
-│   ├── golden_test_set.md
-│   ├── test_ai_client.py
-│   ├── test_ai_context.py
-│   ├── test_ai_service.py
-│   ├── test_ai_tools.py
-│   └── test_api_copilot.py
-│
 ├── README.md
-├── requirements.txt
-└── .gitignore
+└── requirements.txt
 ```
+
+## Architecture Documentation
+
+The README is the portfolio entry point. Detailed engineering documentation remains separated by responsibility:
+
+| Document                            | Purpose                                             |
+|:------------------------------------|:----------------------------------------------------|
+| `01_system_overview.md`             | High-level system and business architecture         |
+| `02_current_architecture.md`        | Current implemented technical architecture          |
+| `03_data_model.md`                  | Data representations, grains and lifecycle          |
+| `04_decision_log.md`                | Architecture Decision Records                       |
+| `05_cloud_deployment.md`            | Public deployment topology and configuration        |
+| `06_transportation_architecture.md` | Transportation planning and analytical architecture |
 
 ## Project Presentation
 
-The repository contains both technical documentation and visual material. The README intentionally uses only the visuals that represent the current v2.0.0 multi-domain architecture and implemented product experience, keeping older single-domain or future-state concepts out of the main narrative.
+The repository also contains executive presentation material under:
 
-A comprehensive presentation describing the project's business case, software architecture, implementation strategy and development roadmap is available below.
+`docs/presentations/`
 
-### Downloads
-
-- 📄 Project Presentation (PDF)
-- 📊 Project Presentation (PowerPoint)
-
-The presentation provides an executive overview of:
-
-- Business Case
-- Software Architecture
-- ETL Pipeline
-- Business Rules
-- REST API
-- Power BI Dashboard
-- Engineering Decisions
-- Development Roadmap
-- AI Integration Roadmap
+The presentation complements the README with the business case, architecture, implementation strategy and project evolution.
 
 ## Getting Started — Local Development
 
-The steps below describe how to run the complete application locally.
-
-For direct access to the deployed version, use the Live Demo available at the top of this README.
-
 ### 1. Clone the repository
 
-```powershell
+``` powershell
 git clone https://github.com/RodsSoares/ai-supply-chain-copilot.git
 cd ai-supply-chain-copilot
 ```
 
 ### 2. Create and activate a virtual environment
 
-```powershell
+``` powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
 ### 3. Install dependencies
 
-```powershell
+``` powershell
 pip install -r requirements.txt
 ```
 
 ### 4. Run the deterministic Inventory pipeline
 
-```powershell
+``` powershell
 python scripts/analyze_inventory.py
 ```
 
-This executes the deterministic Supply Chain pipeline and generates the analytical outputs consumed by the application.
+### 5. Select the LLM execution mode
 
-### 5. Choose the LLM execution mode
+Fake mode:
 
-The Copilot supports both Fake LLM and Real LLM execution modes.
-
-#### Fake LLM Mode
-
-Recommended for local development, testing and demonstrations that do not require external API consumption.
-
-```powershell
+``` powershell
 $env:LLM_MODE="fake"
 ```
 
-#### Real LLM Mode
+Real mode:
 
-To enable the real LLM integration, configure the required environment variables:
-
-```powershell
+``` powershell
 $env:OPENAI_API_KEY="your-api-key"
 $env:LLM_MODE="real"
 $env:LLM_REAL_ENABLED="true"
 ```
 
-> **Security:** Never commit API keys, credentials or other secrets to the repository. Environment variables should be configured only in the local execution environment or through an appropriate secrets-management solution.
+> **Security:** Never commit API keys, credentials or secrets to the repository.
 
-> **Cost control:** Real LLM calls consume external API resources and may generate costs. The `LLM_REAL_ENABLED` variable acts as an explicit safeguard so that selecting real mode alone does not automatically authorize external model calls.
+> **Cost control:** Real LLM calls consume external API resources. `LLM_REAL_ENABLED` acts as an explicit activation safeguard.
 
-### 6. Start the REST API
+### 6. Start the FastAPI backend
 
-```powershell
+``` powershell
 python -m uvicorn src.api.main:app
 ```
 
-After startup, the interactive API documentation is available at:
+Interactive API documentation:
 
 `http://127.0.0.1:8000/docs`
 
-### 7. Test the Copilot
+### 7. Configure and start the Streamlit frontend
 
-Through the Swagger interface, execute:
-
-`POST /copilot`
-
-Example request:
-
-```json
-{
-  "pergunta": "Quais produtos apresentam prioridade alta?"
-}
-```
-
-In Fake LLM Mode, the application validates the complete internal AI flow without calling an external provider.
-
-In Real LLM Mode, the request is processed through the complete application pipeline and sent to the configured external LLM provider.
-
-### 8. Run the automated test suite
-
-```powershell
-python -m pytest
-```
-
-The automated tests validate the deterministic modules, API behavior, AI orchestration, context controls and LLM client safeguards.
-
-### 9. Start the Streamlit Frontend
-
-#### Frontend API Configuration
-
-The Streamlit frontend communicates with the FastAPI backend through the `API_BASE_URL` environment variable.
-
-For local execution:
-
-```powershell
+``` powershell
 $env:API_BASE_URL="http://127.0.0.1:8000"
-```
-
-In cloud environments, `API_BASE_URL` should point to the deployed FastAPI backend.
-
-If the variable is not defined, the application defaults to the local API address.
-
-With the REST API running, start the conversational frontend in a second terminal:
-
-```powershell
 python -m streamlit run frontend/app.py
 ```
 
-## Automated Tests
+### 8. Run automated tests
 
-The project uses Pytest as a regression safety net across deterministic analytics, APIs and AI integration. The current v2.0.0 baseline is:
-
-```text
-105 passed in 6.29s
-```
-
-Coverage includes Inventory and Transportation analytics, AI client modes and safeguards, domain-specific context preparation, deterministic domain routing, transportation SQL analysis, Copilot API behavior, integration between API and AI layers, and error/external-call protection.
-
-Run the complete suite from the project root:
-
-```powershell
+``` powershell
 python -m pytest
 ```
 
-Routine automated tests remain deterministic and avoid unnecessary real-LLM consumption. Real model behavior is validated separately through controlled Golden Set executions.
+## Development Workflow
 
-### Automated Project Audit
-
-To ensure architectural consistency throughout development, the repository includes an automated engineering auditing tool.
-
-Run:
-
-```powershell
-python scripts/project_audit.py
-```
-
-The auditor automatically generates:
-
-- Project Health Score
-- Architecture Overview
-- Pipeline Overview
-- Python Module Inventory
-- Function Catalog
-- Dependency Analysis
-- Repository Consistency Checks
-- Syntax Validation
-- Documentation Coverage
-- TODO / FIXME Detection
-
-Generated report:
-
-`docs/project_audit/PROJECT_AUDIT.md`
-
-Rather than relying exclusively on manually maintained documentation, the project automatically generates engineering reports based on the current repository state, helping keep technical documentation aligned with the implementation.
-
-## Engineering Practices
-
-This project follows modern software engineering principles designed to maximize maintainability, extensibility and long-term evolution.
-
-- Layered Architecture
-- Modular Architecture
-- High Cohesion
-- Low Coupling
-- Single Responsibility Principle (SRP)
-- Separation of Concerns
-- Configuration over Hardcoding
-- Environment-based Runtime Configuration
-- Business-driven Development
-- Synthetic Enterprise Dataset
-- Continuous Refactoring
-- Automated Project Audit
-- Incremental Delivery
-- Version Control
-- Automated Testing with Pytest
-- Deterministic / Probabilistic Layer Separation
-- Modular AI Integration
-- Explicit LLM Activation Safeguards
-- Controlled LLM Context
-- Fake Client for Cost-free Testing
-
-### Business Rules Configuration
-
-Business parameters are centralized in:
-
-`config/business_rules.json`
-
-This configuration layer separates configurable business parameters from application code, allowing operational thresholds, scoring values and business policies to evolve without modifying Python source files.
-
-By externalizing these parameters into a JSON configuration file, the project reduces hardcoded values, improves maintainability and enables business rule adjustments without requiring changes to the application's implementation.
-
-Current configurable parameters include:
-
-- Inventory limits
-- Financial scoring thresholds
-- ABC classification weights
-- Stockout risk scoring
-- Lead time scoring
-- Priority thresholds
-
-This architecture supports future administrative interfaces and additional API-based configuration capabilities while keeping the core business logic modular and maintainable.
-
-### Development Workflow
-
-```text
-Develop Feature
-      │
-      ▼
-Execute Pipeline
-      │
-      ▼
+``` text
+Business / Architecture Requirement
+          ↓
+Implement Deterministic Capability
+          ↓
+Integrate API / AI Boundary
+          ↓
 Run Automated Tests
-      │
-      ▼
-Execute Project Audit
-      │
-      ▼
-Review PROJECT_AUDIT.md
-      │
-      ▼
-Commit
-      │
-      ▼
-Push to GitHub
-      │
-      ▼
+          ↓
+Run Project Audit
+          ↓
+Validate Real LLM Behavior When Required
+          ↓
+Commit / Push
+          ↓
 Cloud Deployment
-      │
-      ▼
+          ↓
 End-to-End Validation
 ```
 
 ## Roadmap & Version History
 
-| Phase | Planned Release | Status |
-| --- | --- | :---: |
-| Foundation (Architecture, Dataset, ETL, Database) | v0.1.0 | ✅ |
-| Business Intelligence (Inventory Analytics, Rules Engine, Audit) | v0.2.0 | ✅ |
-| Analytics (SQL Analytics, KPI Engine) | v0.3.0 | ✅ |
-| Applications (REST API and Dashboard) | v0.4.0 | ✅ |
-| AI Integration Layer | v0.5.0 | ✅ |
-| Functional AI Copilot | v1.0.0 | ✅ |
-| Cloud Deployment & Conversational Frontend | v1.1.0 | ✅ |
-| Multi-Domain Architecture: Inventory + Transportation | v2.0.0 | ✅ |
-| Production Hardening / Agentic Execution | Future | ⏳ |
+| Phase                                                           | Release | Status |
+|:----------------------------------------------------------------|:--------|:------:|
+| Foundation — Architecture, Dataset, ETL, Database               | v0.1.0  |   ✅   |
+| Business Intelligence — Inventory Analytics, Rules, Audit       | v0.2.0  |   ✅   |
+| Analytics — SQL Analytics and KPI Engine                        | v0.3.0  |   ✅   |
+| Application Layer — REST API and Dashboard                      | v0.4.0  |   ✅   |
+| AI Integration Layer                                            | v0.5.0  |   ✅   |
+| Functional AI Copilot                                           | v1.0.0  |   ✅   |
+| Cloud Deployment & Conversational Frontend                      | v1.1.0  |   ✅   |
+| Multi-Domain Decision Intelligence — Inventory + Transportation | v2.0.0  |   ✅   |
+| Production Hardening / Controlled Agentic Execution             | Future  |   ⏳   |
 
-### Version History
+### v2.0.0 — Multi-Domain Decision Intelligence
 
-| Version | Highlights |
-| --- | --- |
-| v0.1.0 | Project architecture, synthetic ERP dataset and repository foundation |
-| v0.2.0 | ETL Pipeline, SQLite integration, Inventory Analytics MVP, Business Rules Configuration, Configurable Business Rules and Automated Project Audit |
-| v0.3.0 | SQL Analytics, KPI Engine and advanced business metrics |
-| v0.4.0 | REST API, Dashboard and application layer |
-| v0.5.0 | AI Layer Foundation |
-| v1.0.0 | Functional AI Copilot with validated real LLM integration, controlled context, explicit activation safeguards and end-to-end API flow |
-| v1.1.0 | Streamlit conversational frontend, public cloud deployment, Render-hosted FastAPI backend, Streamlit Community Cloud frontend, environment-based service configuration and validated end-to-end cloud integration |
-| v2.0.0 | Multi-domain architecture with Inventory and Transportation, deterministic domain routing, transportation SQL analytics and planning scenarios, domain-specific AI context, redesigned decision-intelligence frontend, real-LLM transportation validation and 105 passing automated tests |
+The current portfolio release demonstrates:
+
+- two materially different Supply Chain domains;
+- explicit deterministic domain selection;
+- domain-specific analytical contexts;
+- Transportation structured intent routing;
+- deterministic capability dispatch;
+- SQL-backed Transportation analytics;
+- redesigned multi-domain Streamlit experience;
+- real-LLM validation;
+- **105 passing automated tests**.
 
 ## Current Development Stage
 
-The AI Supply Chain Copilot v2.0.0 has reached the intended scope of its current public portfolio stage.
+The AI Supply Chain Copilot has reached the intended scope of its current public portfolio stage.
 
-The project now demonstrates two materially different Supply Chain domains — Inventory and Transportation — running through one modular intelligence architecture. Inventory emphasizes risk, prioritization and recommended stock actions; Transportation emphasizes SQL analytics, capacity/cost trade-offs and planning scenarios.
+It is intentionally a **portfolio and learning system**, not a claim of production-enterprise readiness.
 
-The frontend exposes the domains explicitly, the backend routes them deterministically, each domain prepares its own analytical context, and the shared Copilot layer uses Generative AI to explain and synthesize evidence produced by deterministic application components.
+Production concerns such as authentication, authorization, enterprise observability, managed production persistence, scalability, resilience and CI/CD hardening remain legitimate future evolutions.
 
-The current baseline includes a redesigned multi-domain Streamlit experience, FastAPI integration, real-LLM validation, updated architecture documentation and **105 passing automated tests**.
+A possible next architectural step is:
 
-This is intentionally a portfolio and learning system, not a production enterprise implementation. Authentication, authorization, enterprise observability, persistent production infrastructure and proactive agentic execution are therefore not prerequisites for closing this stage. They remain legitimate future evolution paths rather than missing requirements for the current objective.
+``` text
+Decision Support
+      ↓
+Controlled Action Proposal
+      ↓
+Policy / Guardrails
+      ↓
+Human Approval
+      ↓
+Audited Execution
+```
 
-A possible future direction is **Decision Support → Agentic Execution**, adding action policies, human approval, audit logs and controlled execution against external systems. That evolution should only be introduced when it serves a concrete use case rather than to add architectural complexity for its own sake.
+That evolution should be introduced only when it serves a concrete use case rather than to add architectural complexity for its own sake.
 
-## Why this project?
+## Why This Project
 
-This repository reflects my transition from Supply Chain leadership toward AI Solutions, Intelligent Automation and AI Transformation.
+This repository connects my professional background in **Supply Chain, Planning and Operations** with my development in **Data, Analytics, Automation, Software Architecture and Artificial Intelligence**.
 
-It combines nearly two decades of enterprise experience in Supply Chain, Planning and Operations with data, automation, software architecture and Generative AI.
+The objective is not to present a generic chatbot or an isolated technical exercise.
 
-The objective is not only to build software, but to demonstrate the ability to design maintainable business solutions that integrate engineering, analytics and artificial intelligence.
+It is to demonstrate the design of an end-to-end business solution in which:
 
-### Repository Purpose
+> **Data establishes facts → Analytics creates decision context → AI synthesizes and explains → Human decides.**
 
-This repository serves as a functional AI Solutions portfolio project demonstrating the end-to-end design, implementation and cloud deployment of a business application integrating data engineering, analytics, business rules, APIs, Business Intelligence and Generative AI.
+That is the central idea behind the project and the direction in which the architecture has evolved.
 
-Each sprint delivers an enterprise-inspired capability while preserving architecture quality, maintainability and long-term scalability.
+## Confidentiality
+
+All operational datasets, identifiers, routes, tariffs, business rules and scenarios published in this repository are fictional or synthetically generated.
+
+The Transportation domain deliberately reconstructs **classes of planning problems**, not proprietary implementations or historical corporate data.
+
+> **Rebuild the problem, not the spreadsheet.**
 
 ## License
 
 This repository is intended exclusively for educational and portfolio purposes.
-
-All datasets, business rules and operational scenarios are fictional or synthetically generated and do not contain confidential corporate information.
