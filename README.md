@@ -275,10 +275,10 @@ flowchart LR
 
     GH[GitHub Repository]
 
-    U -->|HTTPS| SC
+    U -->|"HTTPS"| SC
     SC --> FE
 
-    FE -->|HTTPS / JSON| R
+    FE -->|"HTTPS / JSON"| R
     R --> API
 
     ANALYTICAL --> API
@@ -287,15 +287,15 @@ flowchart LR
     AI --> CTX
     CTX --> LLM
     LLM --> OAI
-    OAI -->|Generated Response| LLM
+    OAI -->|"Generated Response"| LLM
     LLM --> AI
 
     AI --> API
-    API -->|JSON Response| FE
+    API -->|"JSON Response"| FE
     FE --> U
 
-    GH -. Source / Deploy .-> SC
-    GH -. Source / Deploy .-> R
+    GH -. "Source / Deploy" .-> SC
+    GH -. "Source / Deploy" .-> R
 ```
 
 ### Environment-based configuration
