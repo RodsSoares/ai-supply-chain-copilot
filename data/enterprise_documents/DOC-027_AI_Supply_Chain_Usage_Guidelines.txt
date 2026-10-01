@@ -1,0 +1,27 @@
+AI SUPPLY CHAIN USAGE GUIDELINES
+Document ID: DOC-027
+Version: 1.0
+Effective: 2026-01-01
+Status: ACTIVE
+Type: Guideline
+
+PURPOSE
+Provide practical examples for approved AI use in Supply Chain. This guideline is not a corporate policy and does not authorize tools, data classifications, or formal decisions.
+
+EXAMPLE USES
+- Summarize non-sensitive operational notes.
+- Draft a first version of a carrier-performance narrative from approved inputs.
+- Compare non-confidential process descriptions.
+- Generate questions for investigation of an operational exception.
+- Assist with documentation when the user verifies the result.
+
+SUPPLIER AND CARRIER CONTEXT
+AI can support analysis of supplier and carrier information only within an approved environment and approved use case. Users must follow the AI Governance Policy, Information Security Policy, Data Sharing Policy, and applicable contractual obligations.
+
+DECISION BOUNDARY
+AI may organize evidence and suggest considerations, but formal supplier selection, contracting approval, security approval, and exception approval remain with the authorized human roles.
+
+IMPORTANT
+This document contains terms such as AI, supplier, carrier, approval, security, data, and contract. It is operational guidance, not the authoritative source for approval authority, confidential-data controls, or mandatory enterprise training.
+
+Controlled synthetic document generated for the Enterprise Knowledge AI System evaluation corpus.
