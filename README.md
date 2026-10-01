@@ -113,6 +113,16 @@ Transportation reuses the same product shell while exposing a different analytic
 
 > **The frontend changes context; the architecture remains shared.**
 
+### System in Action
+
+The Copilot operates across multiple supply chain domains while preserving a shared decision-intelligence architecture.
+
+<p align="center">
+  <img src="docs/images/ai-supply-chain-copilot-demo.gif"
+       alt="AI Supply Chain Copilot — multi-domain workflow demonstration"
+       width="900">
+</p>
+
 ## Table of Contents
 
 - [Engineering Overview](#engineering-overview)
