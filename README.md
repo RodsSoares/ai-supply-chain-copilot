@@ -1,7 +1,7 @@
 # AI Supply Chain Copilot
 
 🚀 **Current Release:** v2.0.0 — Multi-Domain Decision Intelligence  
-🌐 **Live Demo:** Open AI Supply Chain Copilot
+🌐 **Live Application:** [Launch AI Supply Chain Copilot](https://ai-supply-chain-copilot.streamlit.app/)
 
 The AI Supply Chain Copilot is an end-to-end decision-support platform that combines **Supply Chain domain knowledge, deterministic analytics, software architecture and Generative AI** to transform operational data into decision-ready intelligence.
 
