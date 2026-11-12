@@ -1,0 +1,368 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Mapa de rede ilustrativo. Campos (Não resumir): rota, origem, origem_x, origem_y, destino_x, destino_y; medidas: Custo Planejado, Cor Rota, Rank Custo Rota",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Segoe UI",
+    "axis": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#263247",
+      "gridDash": [
+        2,
+        4
+      ]
+    },
+    "legend": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "symbolType": "square"
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "origem_x",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          80,
+          760
+        ]
+      },
+      "axis": null
+    },
+    "y": {
+      "field": "origem_y",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          20,
+          380
+        ],
+        "reverse": true
+      },
+      "axis": null
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeCap": "round",
+        "opacity": 0.25
+      },
+      "encoding": {
+        "x2": {
+          "field": "destino_x"
+        },
+        "y2": {
+          "field": "destino_y"
+        },
+        "color": {
+          "field": "Cor Rota",
+          "type": "nominal",
+          "scale": null
+        },
+        "strokeWidth": {
+          "field": "Custo Planejado",
+          "type": "quantitative",
+          "scale": {
+            "range": [
+              6,
+              18
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "strokeCap": "round"
+      },
+      "encoding": {
+        "x2": {
+          "field": "destino_x"
+        },
+        "y2": {
+          "field": "destino_y"
+        },
+        "color": {
+          "field": "Cor Rota",
+          "type": "nominal",
+          "scale": null
+        },
+        "strokeWidth": {
+          "field": "Custo Planejado",
+          "type": "quantitative",
+          "scale": {
+            "range": [
+              1.5,
+              6.5
+            ]
+          },
+          "legend": null
+        },
+        "opacity": {
+          "condition": {
+            "param": "hover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.3
+        },
+        "tooltip": [
+          {
+            "field": "rota",
+            "title": "Rota"
+          },
+          {
+            "field": "origem",
+            "title": "Origem"
+          },
+          {
+            "field": "Custo Planejado",
+            "title": "Custo (R$)",
+            "format": ",.0f"
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "hover",
+          "select": {
+            "type": "point",
+            "on": "pointerover",
+            "fields": [
+              "rota"
+            ],
+            "clear": "pointerout"
+          }
+        }
+      ]
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 60,
+        "stroke": "#060A16",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "x": {
+          "field": "destino_x"
+        },
+        "y": {
+          "field": "destino_y"
+        },
+        "color": {
+          "condition": {
+            "test": "datum['Rank Custo Rota'] <= 2",
+            "value": "#D946EF"
+          },
+          "value": "#F1F5F9"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dx": 8,
+        "align": "left",
+        "fontSize": 11
+      },
+      "encoding": {
+        "x": {
+          "field": "destino_x"
+        },
+        "y": {
+          "field": "destino_y"
+        },
+        "text": {
+          "field": "rotulo"
+        },
+        "color": {
+          "value": "#94A3B8"
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum['Rank Custo Rota'] <= 2 ? datum.rota + ' · R$ ' + replace(format(datum['Custo Planejado']/1000, '.1f'), '.', ',') + ' mil' : datum.rota",
+          "as": "rotulo"
+        },
+        {
+          "filter": "datum['Rank Custo Rota'] > 2"
+        }
+      ]
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dx": 8,
+        "align": "left",
+        "fontSize": 11,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "destino_x"
+        },
+        "y": {
+          "field": "destino_y"
+        },
+        "text": {
+          "field": "rotulo"
+        },
+        "color": {
+          "value": "#F1F5F9"
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum['Rank Custo Rota'] <= 2 ? datum.rota + ' · R$ ' + replace(format(datum['Custo Planejado']/1000, '.1f'), '.', ',') + ' mil' : datum.rota",
+          "as": "rotulo"
+        },
+        {
+          "filter": "datum['Rank Custo Rota'] <= 2"
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "min",
+              "field": "origem_x",
+              "as": "origem_x"
+            },
+            {
+              "op": "min",
+              "field": "origem_y",
+              "as": "origem_y"
+            }
+          ],
+          "groupby": [
+            "origem"
+          ]
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "size": 2600,
+        "opacity": 0.18
+      },
+      "encoding": {
+        "color": {
+          "field": "origem",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "DC01",
+              "DC02"
+            ],
+            "range": [
+              "#19D3FF",
+              "#7557FF"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "min",
+              "field": "origem_x",
+              "as": "origem_x"
+            },
+            {
+              "op": "min",
+              "field": "origem_y",
+              "as": "origem_y"
+            }
+          ],
+          "groupby": [
+            "origem"
+          ]
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "size": 260,
+        "fill": "#060A16",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "stroke": {
+          "field": "origem",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "DC01",
+              "DC02"
+            ],
+            "range": [
+              "#19D3FF",
+              "#7557FF"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "min",
+              "field": "origem_x",
+              "as": "origem_x"
+            },
+            {
+              "op": "min",
+              "field": "origem_y",
+              "as": "origem_y"
+            }
+          ],
+          "groupby": [
+            "origem"
+          ]
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "dy": 30,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#F1F5F9"
+      },
+      "encoding": {
+        "text": {
+          "field": "origem"
+        }
+      }
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "strokeWidth": "independent",
+      "color": "independent"
+    }
+  }
+}

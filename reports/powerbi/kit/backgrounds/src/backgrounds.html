@@ -1,0 +1,88 @@
+<!doctype html>
+<!--
+  Gerador dos fundos HUD do Power BI (1920x1080).
+  Renderizar com: node reports/powerbi/kit/backgrounds/src/render.js
+  Cada painel aqui corresponde a um visual no Power BI; as posições
+  (x, y, largura, altura) estão em layout.json e no guia de montagem.
+-->
+<html lang="pt-BR"><head><meta charset="utf-8"><title>HUD Backgrounds</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060A16;--cy:#19D3FF;--bl:#248BFF;--pu:#7557FF;--t1:#F1F5F9;--t2:#94A3B8;--t3:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1920px;height:1080px;background:var(--bg);color:var(--t1);font-family:Inter,"Segoe UI",sans-serif;overflow:hidden;position:relative}
+.bg{position:absolute;inset:0;background:
+ radial-gradient(900px 500px at 18% -10%,rgba(36,139,255,.22),transparent 60%),
+ radial-gradient(800px 500px at 100% 110%,rgba(117,87,255,.18),transparent 60%),
+ radial-gradient(600px 400px at 55% 45%,rgba(25,211,255,.06),transparent 70%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(36,139,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(36,139,255,.06) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 40%,transparent 95%)}
+.hdr{position:absolute;left:32px;top:22px;right:32px;height:68px;border-bottom:1px solid rgba(25,211,255,.25);display:flex;align-items:center;gap:22px}
+.hdr:after{content:"";position:absolute;left:0;bottom:-1px;width:420px;height:2px;background:linear-gradient(90deg,var(--cy),transparent);box-shadow:0 0 12px var(--cy)}
+.logo{width:46px;height:46px;display:grid;place-items:center;filter:drop-shadow(0 0 10px rgba(25,211,255,.7))}
+.brand h1{font-family:Orbitron,Inter,sans-serif;font-size:24px;letter-spacing:2px;font-weight:800}
+.brand h1 span{color:var(--cy);text-shadow:0 0 14px rgba(25,211,255,.7)}
+.brand p{font-size:12px;letter-spacing:4px;color:var(--t2);margin-top:3px}
+.p{position:absolute;background:linear-gradient(180deg,rgba(16,24,42,.92),rgba(11,19,36,.92));border:1px solid rgba(36,139,255,.28);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04)}
+.p:before,.p:after{content:"";position:absolute;width:18px;height:18px;border-color:var(--cy);border-style:solid;filter:drop-shadow(0 0 4px var(--cy))}
+.p:before{top:-1px;left:-1px;border-width:2px 0 0 2px;border-top-left-radius:10px}
+.p:after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;border-bottom-right-radius:10px}
+.p .t{position:absolute;left:18px;top:16px;display:flex;gap:10px;align-items:baseline}
+.p .t h3{font-size:14px;font-weight:600}
+.p .t small{font-size:11px;color:var(--t3);letter-spacing:1px}
+.p.kpi .acc{position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0}
+.p.kpi .glow{position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;opacity:.18;filter:blur(30px)}
+.p.kpi{overflow:hidden}
+</style></head>
+<body>
+<div class="bg"></div><div class="grid"></div>
+<div class="hdr">
+  <div class="logo"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#19D3FF" stroke-width="2"><path d="M20 3 35 11.5v17L20 37 5 28.5v-17z"/><path d="M5 11.5 20 20l15-8.5M20 20v17" opacity=".8"/></svg></div>
+  <div class="brand"><h1>AI SUPPLY CHAIN <span>COPILOT</span></h1><p id="sub"></p></div>
+</div>
+<div id="panels"></div>
+<script>
+// Layouts compartilhados com render.js (que grava layout.json).
+window.LAYOUTS = {
+  command_center: {
+    subtitle: "COMMAND CENTER · DECISION INTELLIGENCE",
+    panels: [
+      ...[0,1,2,3,4,5].map(i => ({id:`kpi_${i+1}`, kpi:["#19D3FF","#248BFF","#D946EF","#7557FF","#19D3FF","#22D3A7"][i], x:32+i*312, y:104, w:296, h:150})),
+      {id:"rede_transporte", title:"Rede de Transporte", sub:"CUSTO PLANEJADO POR ROTA · 8 SEMANAS", x:32, y:272, w:760, h:468},
+      {id:"copilot_insight", title:"Copilot Insight", sub:"RESUMO EXECUTIVO GERADO POR IA", x:808, y:272, w:578, h:468},
+      {id:"utilizacao_rotas", title:"Utilização por Rota", sub:"PEÇAS / CAPACIDADE", x:1402, y:272, w:486, h:468},
+      {id:"custo_semanal", title:"Custo Semanal de Transporte", sub:"R$ MIL · 8 SEMANAS", x:32, y:758, w:561, h:300},
+      {id:"acoes_prioridade", title:"Ações de Estoque por Prioridade", sub:"Nº DE SKUs", x:609, y:758, w:561, h:300},
+      {id:"rotas_destaque", title:"Rotas em Destaque", sub:"TOP 6 POR CUSTO PLANEJADO", x:1186, y:758, w:702, h:300},
+    ]
+  },
+  inventory: {
+    subtitle: "INVENTORY INTELLIGENCE · RISCO, COBERTURA E AÇÃO",
+    panels: [
+      ...[0,1,2,3].map(i => ({id:`kpi_${i+1}`, kpi:["#19D3FF","#248BFF","#D946EF","#7557FF"][i], x:32+i*468, y:104, w:452, h:150})),
+      {id:"pareto", title:"Concentração do Valor de Estoque", sub:"CURVA DE PARETO", x:32, y:272, w:900, h:400},
+      {id:"acoes_deposito", title:"Ações por Depósito", sub:"VALOR DA AÇÃO · R$", x:948, y:272, w:940, h:400},
+      {id:"tabela_skus", title:"SKUs Prioritários", sub:"ORDENADO POR SCORE DE PRIORIDADE", x:32, y:690, w:1856, h:368},
+    ]
+  },
+  transportation: {
+    subtitle: "TRANSPORTATION INTELLIGENCE · CUSTO, CAPACIDADE E SERVIÇO",
+    panels: [
+      ...[0,1,2,3].map(i => ({id:`kpi_${i+1}`, kpi:["#19D3FF","#22D3A7","#248BFF","#7557FF"][i], x:32+i*468, y:104, w:452, h:150})),
+      {id:"rede_transporte", title:"Rede de Transporte", sub:"CUSTO PLANEJADO POR ROTA", x:32, y:272, w:1100, h:500},
+      {id:"custo_x_utilizacao", title:"Custo × Utilização", sub:"CADA PONTO É UMA ROTA", x:1148, y:272, w:740, h:500},
+      {id:"custo_semanal", title:"Custo Semanal", sub:"R$ MIL", x:32, y:790, w:600, h:268},
+      {id:"tabela_rotas", title:"Rotas", sub:"CUSTO, DISTÂNCIA E UTILIZAÇÃO", x:648, y:790, w:1240, h:268},
+    ]
+  }
+};
+window.renderPage = (name) => {
+  const L = window.LAYOUTS[name];
+  document.getElementById("sub").textContent = L.subtitle;
+  document.getElementById("panels").innerHTML = L.panels.map(p => {
+    const style = `left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px`;
+    if (p.kpi) return `<div class="p kpi" style="${style}"><div class="acc" style="background:${p.kpi};box-shadow:0 0 10px ${p.kpi}"></div><div class="glow" style="background:${p.kpi}"></div></div>`;
+    return `<div class="p" style="${style}"><div class="t"><h3>${p.title}</h3><small>${p.sub}</small></div></div>`;
+  }).join("");
+};
+</script>
+</body></html>

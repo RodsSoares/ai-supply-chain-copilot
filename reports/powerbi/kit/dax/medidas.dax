@@ -1,0 +1,273 @@
+// =====================================================================
+// AI Supply Chain Copilot · Power BI HUD V6 · Medidas DAX
+// ---------------------------------------------------------------------
+// Crie uma tabela vazia "_Medidas" (Página Inicial → Inserir dados → OK)
+// e cole cada medida abaixo (Nova medida). Os nomes entre colchetes
+// são usados pelas medidas HTML, então mantenha-os iguais.
+// Modelo esperado: tabelas carregadas de reports/powerbi/kit/data.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// 1. ESTOQUE (tabela fato_estoque)
+// ---------------------------------------------------------------------
+
+Valor Estoque = SUM ( fato_estoque[valor_estoque] )
+
+Valor Reposicao = SUM ( fato_estoque[valor_reposicao] )
+
+Valor Excesso = SUM ( fato_estoque[valor_excesso] )
+
+Valor Acao = SUM ( fato_estoque[valor_acao] )
+
+SKUs = DISTINCTCOUNT ( fato_estoque[sku] )
+
+SKUs Repor =
+CALCULATE ( [SKUs], fato_estoque[acao_recomendada] = "REPOR" )
+
+SKUs Excesso =
+CALCULATE ( [SKUs], fato_estoque[acao_recomendada] = "TRATAR EXCESSO" )
+
+SKUs Risco Ruptura =
+CALCULATE ( [SKUs], fato_estoque[risco_ruptura] = "SIM" )
+
+Acoes Alta Prioridade =
+CALCULATE ( [SKUs], fato_estoque[prioridade] = "ALTA" )
+
+Depositos = DISTINCTCOUNT ( fato_estoque[deposito] )
+
+% Excesso = DIVIDE ( [Valor Excesso], [Valor Estoque] )
+
+
+// ---------------------------------------------------------------------
+// 2. TRANSPORTE (tabelas fato_viagens, dim_semana, dim_rotas)
+// ---------------------------------------------------------------------
+
+Custo Planejado = SUM ( fato_viagens[custo_planejado] )
+
+Pecas Planejadas = SUM ( fato_viagens[pecas_planejadas] )
+
+Capacidade Planejada = SUM ( fato_viagens[capacidade_planejada] )
+
+Viagens = COUNTROWS ( fato_viagens )
+
+Utilizacao = DIVIDE ( [Pecas Planejadas], [Capacidade Planejada] )
+
+Rotas = DISTINCTCOUNT ( fato_viagens[rota] )
+
+Ultima Semana = MAX ( dim_semana[semana_ordem] )
+
+Custo Ultima Semana =
+VAR s = CALCULATE ( MAX ( dim_semana[semana_ordem] ), ALL ( dim_semana ) )
+RETURN CALCULATE ( [Custo Planejado], dim_semana[semana_ordem] = s, ALL ( dim_semana ) )
+
+Custo Primeira Semana =
+CALCULATE ( [Custo Planejado], dim_semana[semana_ordem] = 1, ALL ( dim_semana ) )
+
+Var Custo vs S1 = DIVIDE ( [Custo Ultima Semana] - [Custo Primeira Semana], [Custo Primeira Semana] )
+
+Utilizacao Ultima Semana =
+VAR s = CALCULATE ( MAX ( dim_semana[semana_ordem] ), ALL ( dim_semana ) )
+RETURN CALCULATE ( [Utilizacao], dim_semana[semana_ordem] = s, ALL ( dim_semana ) )
+
+Utilizacao Primeira Semana =
+CALCULATE ( [Utilizacao], dim_semana[semana_ordem] = 1, ALL ( dim_semana ) )
+
+Var Utilizacao pp = ( [Utilizacao Ultima Semana] - [Utilizacao Primeira Semana] ) * 100
+
+Custo Mil = DIVIDE ( [Custo Planejado], 1000 )
+
+// Cor de status usada na tabela e nos medidores (formatação condicional → "Valor do campo")
+Cor Utilizacao =
+VAR u = [Utilizacao]
+RETURN SWITCH ( TRUE (), u >= 0.80, "#22D3A7", u >= 0.70, "#F59E0B", "#EF4444" )
+
+Rank Custo Rota =
+RANKX ( ALL ( dim_rotas[rota] ), [Custo Planejado],, DESC )
+
+// Destaca as 2 rotas mais caras no mapa de rede (Deneb)
+Cor Rota =
+SWITCH (
+    TRUE (),
+    [Rank Custo Rota] <= 2, "#D946EF",
+    SELECTEDVALUE ( dim_rotas[origem] ) = "DC01", "#19D3FF",
+    "#7557FF"
+)
+
+
+// ---------------------------------------------------------------------
+// 3. HTML · base de estilo compartilhada
+//    Visual: "HTML Content" (Daniel Marsh-Patrick), AppSource.
+//    Em cada visual HTML, arraste UMA medida HTML para "Values".
+// ---------------------------------------------------------------------
+
+HTML Estilo =
+"<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,'Segoe UI',sans-serif;color:#F1F5F9;background:transparent}
+.k{height:100vh;padding:14px 18px 14px 22px;display:flex;flex-direction:column;justify-content:space-between}
+.lab{font-size:11px;letter-spacing:2px;color:#94A3B8;text-transform:uppercase}
+.val{font-size:34px;font-weight:700;letter-spacing:-.5px;animation:in .9s ease-out both}
+.val i{font-style:normal;font-size:16px;color:#94A3B8;font-weight:500;margin-left:4px}
+.foot{display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#94A3B8}
+.up{color:#22D3A7}.dn{color:#EF4444}
+.glow{filter:drop-shadow(0 0 6px #19D3FF);animation:pulse 3s ease-in-out infinite}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 4px #19D3FF)}50%{filter:drop-shadow(0 0 10px #19D3FF)}}
+</style>"
+
+// Helper: R$ em milhões com 2 casas (ex.: 34,59)
+// (usa a localidade do arquivo; configure Arquivo → Opções → Configurações regionais = Português (Brasil))
+
+
+// ---------------------------------------------------------------------
+// 4. HTML · cartões de KPI (Command Center)
+// ---------------------------------------------------------------------
+
+HTML KPI Estoque =
+VAR pontos = "0,20 15,18 30,19 45,14 60,15 75,10 90,8"   // tendência decorativa
+RETURN
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Valor em estoque</div>
+<div class='val'>R$ " & FORMAT ( [Valor Estoque] / 1e6, "#,##0.00" ) & "<i>Mi</i></div>
+<div class='foot'><span>" & [SKUs] & " SKUs · " & [Depositos] & " CDs</span>
+<svg width='90' height='26'><polyline class='glow' fill='none' stroke='#19D3FF' stroke-width='2' points='" & pontos & "'/></svg></div></div>"
+
+HTML KPI Reposicao =
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Reposição necessária</div>
+<div class='val'>R$ " & FORMAT ( [Valor Reposicao] / 1e6, "#,##0.00" ) & "<i>Mi</i></div>
+<div class='foot'><span>" & [SKUs Repor] & " SKUs a repor</span>
+<span class='dn'>▲ " & [SKUs Risco Ruptura] & " em risco</span></div></div>"
+
+HTML KPI Excesso =
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Capital em excesso</div>
+<div class='val'>R$ " & FORMAT ( [Valor Excesso] / 1e6, "#,##0.00" ) & "<i>Mi</i></div>
+<div class='foot'><span>" & [SKUs Excesso] & " SKUs</span>
+<span>" & FORMAT ( [% Excesso], "0.0%" ) & " do estoque</span></div></div>"
+
+HTML KPI Acao =
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Valor da ação</div>
+<div class='val'>R$ " & FORMAT ( [Valor Acao] / 1e6, "#,##0.00" ) & "<i>Mi</i></div>
+<div class='foot'><span>" & [Acoes Alta Prioridade] & " ações alta prioridade</span></div></div>"
+
+HTML KPI Custo Transporte =
+VAR minimo = MINX ( ALL ( dim_semana ), [Custo Planejado] )
+VAR maximo = MAXX ( ALL ( dim_semana ), [Custo Planejado] )
+VAR n = COUNTROWS ( ALL ( dim_semana ) )
+VAR pontos =
+    CONCATENATEX (
+        ALL ( dim_semana ),
+        FORMAT ( ( dim_semana[semana_ordem] - 1 ) * 90 / ( n - 1 ), "0" ) & ","
+            & FORMAT ( 22 - DIVIDE ( [Custo Planejado] - minimo, maximo - minimo ) * 18, "0" ),
+        " ",
+        dim_semana[semana_ordem], ASC
+    )
+VAR v = [Var Custo vs S1]
+RETURN
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Custo transporte · semana</div>
+<div class='val'>R$ " & FORMAT ( [Custo Ultima Semana] / 1000, "#,##0.0" ) & "<i>mil</i></div>
+<div class='foot'><span>" & [Rotas] & " rotas · 2 DCs</span>
+<span class='" & IF ( v > 0, "dn", "up" ) & "'>" & IF ( v > 0, "▲ ", "▼ " ) & FORMAT ( ABS ( v ), "0.0%" ) & " vs S1</span>
+<svg width='90' height='26'><polyline class='glow' fill='none' stroke='#19D3FF' stroke-width='2' points='"
+    & pontos & "'/></svg></div></div>"
+// Obs.: as coordenadas são inteiras (formato "0"), então não há conflito com a vírgula decimal pt-BR.
+// Nos medidores (dasharray) usamos SUBSTITUTE(",", ".") porque ali há casas decimais.
+
+HTML KPI Utilizacao =
+VAR u = [Utilizacao Ultima Semana]
+VAR c = 2 * PI () * 40
+VAR preenchido = c * u
+VAR pp = [Var Utilizacao pp]
+RETURN
+[HTML Estilo] &
+"<div class='k' style='flex-direction:row;align-items:center;gap:14px;justify-content:flex-start'>
+<svg width='96' height='96' viewBox='0 0 100 100'>
+<circle cx='50' cy='50' r='40' fill='none' stroke='#263247' stroke-width='9'/>
+<circle class='glow' cx='50' cy='50' r='40' fill='none' stroke='#19D3FF' stroke-width='9' stroke-linecap='round'
+ stroke-dasharray='" & SUBSTITUTE ( FORMAT ( preenchido, "0.0" ), ",", "." ) & " " & SUBSTITUTE ( FORMAT ( c, "0.0" ), ",", "." ) & "' transform='rotate(-90 50 50)'/>
+<text x='50' y='56' text-anchor='middle' fill='#F1F5F9' font-size='20' font-weight='700'>" & FORMAT ( u, "0.0%" ) & "</text></svg>
+<div style='display:flex;flex-direction:column;gap:6px'><div class='lab'>Utilização da frota</div>
+<div style='font-size:12px;color:#94A3B8'>Meta 80%</div>
+<div class='" & IF ( pp >= 0, "up", "dn" ) & "' style='font-size:12px'>" & IF ( pp >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( pp ), "0.0" ) & " p.p. em " & [Ultima Semana] & " sem.</div></div></div>"
+
+
+// ---------------------------------------------------------------------
+// 5. HTML · medidores de utilização por rota (6 rotas de maior custo)
+// ---------------------------------------------------------------------
+
+HTML Medidores Rotas =
+VAR c = 2 * PI () * 30
+VAR arco = c * 0.75
+VAR top6 = TOPN ( 6, ALL ( dim_rotas[rota] ), [Custo Planejado], DESC )
+VAR itens =
+    CONCATENATEX (
+        top6,
+        VAR u = [Utilizacao]
+        VAR cor = SWITCH ( TRUE (), u >= 0.80, "#22D3A7", u >= 0.70, "#F59E0B", "#EF4444" )
+        RETURN
+            "<div class='g'><svg width='110' height='92' viewBox='0 0 80 70'>
+<circle cx='40' cy='40' r='30' fill='none' stroke='#263247' stroke-width='6' stroke-linecap='round' transform='rotate(135 40 40)' stroke-dasharray='"
+                & SUBSTITUTE ( FORMAT ( arco, "0.0" ), ",", "." ) & " " & SUBSTITUTE ( FORMAT ( c, "0.0" ), ",", "." ) & "'/>
+<circle cx='40' cy='40' r='30' fill='none' stroke='" & cor & "' stroke-width='6' stroke-linecap='round' transform='rotate(135 40 40)' style='filter:drop-shadow(0 0 4px " & cor & ")' stroke-dasharray='"
+                & SUBSTITUTE ( FORMAT ( arco * u, "0.0" ), ",", "." ) & " " & SUBSTITUTE ( FORMAT ( c, "0.0" ), ",", "." ) & "'/>
+<text x='40' y='45' text-anchor='middle' fill='#F1F5F9' font-size='14' font-weight='700'>" & FORMAT ( u, "0%" ) & "</text></svg><b>" & dim_rotas[rota] & "</b></div>",
+        "",
+        [Custo Planejado], DESC
+    )
+RETURN
+[HTML Estilo] &
+"<style>.gs{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;padding:4px 10px}
+.g{display:flex;flex-direction:column;align-items:center;font-size:12px}.g b{font-weight:600;margin-top:2px}
+.lg{display:flex;gap:16px;justify-content:center;font-size:11px;color:#94A3B8;margin-top:6px}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}</style>
+<div class='gs'>" & itens & "</div>
+<div class='lg'><span><i style='background:#22D3A7'></i>≥ 80% ok</span><span><i style='background:#F59E0B'></i>70–80% atenção</span><span><i style='background:#EF4444'></i>&lt; 70% baixa</span></div>"
+
+
+// ---------------------------------------------------------------------
+// 6. HTML · painel Copilot Insight (tabela copilot_insights)
+// ---------------------------------------------------------------------
+
+HTML Copilot Insight =
+VAR itens =
+    CONCATENATEX (
+        copilot_insights,
+        VAR tag = copilot_insights[tag]
+        VAR estilo =
+            SWITCH (
+                tag,
+                "ALTA", "background:rgba(217,70,239,.18);color:#E879F9",
+                "CUSTO", "background:rgba(25,211,255,.15);color:#19D3FF",
+                "background:rgba(117,87,255,.2);color:#A78BFA"
+            )
+        RETURN
+            "<li><span class='pill' style='" & estilo & "'>" & tag & "</span><span><b>"
+                & copilot_insights[titulo] & "</b> — " & copilot_insights[detalhe] & "</span></li>",
+        "",
+        copilot_insights[ordem], ASC
+    )
+RETURN
+[HTML Estilo] &
+"<style>.ai{height:100vh;display:flex;flex-direction:column;padding:4px 8px}
+.q{align-self:flex-end;background:linear-gradient(135deg,rgba(36,139,255,.35),rgba(117,87,255,.25));border:1px solid rgba(36,139,255,.5);border-radius:12px 12px 2px 12px;padding:10px 14px;font-size:13px;max-width:88%}
+.a{margin-top:12px;display:flex;gap:12px}
+.bot{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid #19D3FF;display:grid;place-items:center;box-shadow:0 0 14px rgba(25,211,255,.5);background:rgba(25,211,255,.08)}
+.txt{font-size:13px;line-height:1.55;color:#CBD5E1}
+ul{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:9px}
+li{display:flex;gap:10px;align-items:flex-start;line-height:1.4;padding:9px 12px;border:1px solid #263247;border-radius:8px;background:rgba(6,10,22,.5);animation:in .6s ease-out both}
+li:nth-child(2){animation-delay:.15s}li:nth-child(3){animation-delay:.3s}
+li b{font-weight:600;color:#F1F5F9}
+.pill{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 7px;border-radius:4px;flex:none;margin-top:1px}
+.inp{margin-top:auto;display:flex;align-items:center;border:1px solid rgba(25,211,255,.35);border-radius:10px;padding:10px 12px;font-size:13px;color:#64748B;background:rgba(6,10,22,.6)}
+.send{margin-left:auto;width:30px;height:30px;border-radius:7px;background:#248BFF;display:grid;place-items:center;box-shadow:0 0 12px rgba(36,139,255,.6)}</style>
+<div class='ai'><div class='q'>Quais são as 3 decisões mais importantes desta semana?</div>
+<div class='a'><div class='bot'><svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#19D3FF' stroke-width='2'><rect x='4' y='7' width='16' height='12' rx='3'/><path d='M12 3v4M9 13h.01M15 13h.01'/></svg></div>
+<div class='txt'>Analisei estoque e transporte das últimas 8 semanas. Três frentes concentram o maior impacto financeiro:<ul>"
+& itens &
+"</ul></div></div>
+<div class='inp'>Pergunte ao Copilot sobre estoque, rotas, custos, cenários…<span class='send'><svg width='14' height='14' viewBox='0 0 24 24' fill='#fff'><path d='M3 11 21 3l-8 18-2-8z'/></svg></span></div></div>"

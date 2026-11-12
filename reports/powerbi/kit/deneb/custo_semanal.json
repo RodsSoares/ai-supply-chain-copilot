@@ -1,0 +1,195 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Custo semanal de transporte (R$ mil). Campos: semana_label, semana_ordem, Custo Mil",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Segoe UI",
+    "axis": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#263247",
+      "gridDash": [
+        2,
+        4
+      ]
+    },
+    "legend": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "symbolType": "square"
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "semana_label",
+      "type": "ordinal",
+      "sort": {
+        "field": "semana_ordem",
+        "op": "min"
+      },
+      "axis": {
+        "title": null,
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "Custo Mil",
+      "type": "quantitative",
+      "scale": {
+        "zero": false,
+        "nice": false
+      },
+      "axis": {
+        "title": null,
+        "tickCount": 4,
+        "grid": true
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "color": {
+          "x1": 1,
+          "y1": 1,
+          "x2": 1,
+          "y2": 0,
+          "gradient": "linear",
+          "stops": [
+            {
+              "offset": 0,
+              "color": "rgba(25,211,255,0)"
+            },
+            {
+              "offset": 1,
+              "color": "rgba(25,211,255,0.35)"
+            }
+          ]
+        }
+      },
+      "encoding": {
+        "y2": {
+          "field": "base"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "color": "#19D3FF",
+        "strokeWidth": 2.5
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "fill": "#060A16",
+        "stroke": "#19D3FF",
+        "strokeWidth": 2,
+        "size": 70
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "semana_label",
+            "title": "Semana"
+          },
+          {
+            "field": "Custo Mil",
+            "title": "Custo (R$ mil)",
+            "format": ",.1f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "window": [
+            {
+              "op": "rank",
+              "as": "r"
+            }
+          ],
+          "sort": [
+            {
+              "field": "semana_ordem",
+              "order": "descending"
+            }
+          ]
+        },
+        {
+          "filter": "datum.r == 1"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "dy": -14,
+        "color": "#F1F5F9",
+        "fontWeight": "bold",
+        "fontSize": 12
+      },
+      "encoding": {
+        "text": {
+          "field": "rotulo"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.semana_ordem == 1"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "dy": -14,
+        "color": "#94A3B8",
+        "fontSize": 12
+      },
+      "encoding": {
+        "text": {
+          "field": "rotulo"
+        }
+      }
+    }
+  ],
+  "transform": [
+    {
+      "joinaggregate": [
+        {
+          "op": "min",
+          "field": "Custo Mil",
+          "as": "minimo"
+        },
+        {
+          "op": "max",
+          "field": "Custo Mil",
+          "as": "maximo"
+        }
+      ]
+    },
+    {
+      "calculate": "datum.minimo - (datum.maximo - datum.minimo) * 0.6",
+      "as": "base"
+    },
+    {
+      "calculate": "replace(format(datum['Custo Mil'], '.1f'), '.', ',')",
+      "as": "rotulo"
+    }
+  ]
+}

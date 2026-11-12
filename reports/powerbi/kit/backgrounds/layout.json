@@ -1,0 +1,197 @@
+{
+  "command_center": [
+    {
+      "id": "kpi_1",
+      "x": 32,
+      "y": 104,
+      "largura": 296,
+      "altura": 150
+    },
+    {
+      "id": "kpi_2",
+      "x": 344,
+      "y": 104,
+      "largura": 296,
+      "altura": 150
+    },
+    {
+      "id": "kpi_3",
+      "x": 656,
+      "y": 104,
+      "largura": 296,
+      "altura": 150
+    },
+    {
+      "id": "kpi_4",
+      "x": 968,
+      "y": 104,
+      "largura": 296,
+      "altura": 150
+    },
+    {
+      "id": "kpi_5",
+      "x": 1280,
+      "y": 104,
+      "largura": 296,
+      "altura": 150
+    },
+    {
+      "id": "kpi_6",
+      "x": 1592,
+      "y": 104,
+      "largura": 296,
+      "altura": 150
+    },
+    {
+      "id": "rede_transporte",
+      "x": 32,
+      "y": 272,
+      "largura": 760,
+      "altura": 468
+    },
+    {
+      "id": "copilot_insight",
+      "x": 808,
+      "y": 272,
+      "largura": 578,
+      "altura": 468
+    },
+    {
+      "id": "utilizacao_rotas",
+      "x": 1402,
+      "y": 272,
+      "largura": 486,
+      "altura": 468
+    },
+    {
+      "id": "custo_semanal",
+      "x": 32,
+      "y": 758,
+      "largura": 561,
+      "altura": 300
+    },
+    {
+      "id": "acoes_prioridade",
+      "x": 609,
+      "y": 758,
+      "largura": 561,
+      "altura": 300
+    },
+    {
+      "id": "rotas_destaque",
+      "x": 1186,
+      "y": 758,
+      "largura": 702,
+      "altura": 300
+    }
+  ],
+  "inventory": [
+    {
+      "id": "kpi_1",
+      "x": 32,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "kpi_2",
+      "x": 500,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "kpi_3",
+      "x": 968,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "kpi_4",
+      "x": 1436,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "pareto",
+      "x": 32,
+      "y": 272,
+      "largura": 900,
+      "altura": 400
+    },
+    {
+      "id": "acoes_deposito",
+      "x": 948,
+      "y": 272,
+      "largura": 940,
+      "altura": 400
+    },
+    {
+      "id": "tabela_skus",
+      "x": 32,
+      "y": 690,
+      "largura": 1856,
+      "altura": 368
+    }
+  ],
+  "transportation": [
+    {
+      "id": "kpi_1",
+      "x": 32,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "kpi_2",
+      "x": 500,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "kpi_3",
+      "x": 968,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "kpi_4",
+      "x": 1436,
+      "y": 104,
+      "largura": 452,
+      "altura": 150
+    },
+    {
+      "id": "rede_transporte",
+      "x": 32,
+      "y": 272,
+      "largura": 1100,
+      "altura": 500
+    },
+    {
+      "id": "custo_x_utilizacao",
+      "x": 1148,
+      "y": 272,
+      "largura": 740,
+      "altura": 500
+    },
+    {
+      "id": "custo_semanal",
+      "x": 32,
+      "y": 790,
+      "largura": 600,
+      "altura": 268
+    },
+    {
+      "id": "tabela_rotas",
+      "x": 648,
+      "y": 790,
+      "largura": 1240,
+      "altura": 268
+    }
+  ]
+}

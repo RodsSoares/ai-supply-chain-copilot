@@ -1,0 +1,157 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Ações de estoque por prioridade. Campos: acao_recomendada, prioridade, SKUs",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Segoe UI",
+    "axis": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#263247",
+      "gridDash": [
+        2,
+        4
+      ]
+    },
+    "legend": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "symbolType": "square"
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.acao_recomendada != 'SEM AÇÃO'"
+    },
+    {
+      "calculate": "indexof(['ALTA','MÉDIA','BAIXA'], datum.prioridade)",
+      "as": "ordem"
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "acao_recomendada",
+      "type": "nominal",
+      "axis": {
+        "title": null,
+        "labelColor": "#F1F5F9",
+        "labelFontWeight": "bold",
+        "labelFontSize": 12
+      },
+      "sort": [
+        "REPOR",
+        "TRATAR EXCESSO"
+      ]
+    },
+    "x": {
+      "field": "SKUs",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "title": null,
+        "tickCount": 4,
+        "grid": true
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "height": 34,
+        "stroke": "#0E1628",
+        "strokeWidth": 2,
+        "cornerRadiusEnd": 0
+      },
+      "encoding": {
+        "color": {
+          "field": "prioridade",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "ALTA",
+              "MÉDIA",
+              "BAIXA"
+            ],
+            "range": [
+              "#D946EF",
+              "#19D3FF",
+              "#7557FF"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "title": null,
+            "labelExpr": "datum.label == 'ALTA' ? 'Alta' : datum.label == 'MÉDIA' ? 'Média' : 'Baixa'"
+          }
+        },
+        "order": {
+          "field": "ordem"
+        },
+        "tooltip": [
+          {
+            "field": "acao_recomendada",
+            "title": "Ação"
+          },
+          {
+            "field": "prioridade",
+            "title": "Prioridade"
+          },
+          {
+            "field": "SKUs",
+            "title": "SKUs"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "stack": "SKUs",
+          "groupby": [
+            "acao_recomendada"
+          ],
+          "sort": [
+            {
+              "field": "ordem"
+            }
+          ],
+          "as": [
+            "x0",
+            "x1"
+          ]
+        },
+        {
+          "calculate": "(datum.x0 + datum.x1) / 2",
+          "as": "xm"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "color": "#060A16",
+        "fontWeight": "bold",
+        "fontSize": 12
+      },
+      "encoding": {
+        "x": {
+          "field": "xm",
+          "type": "quantitative",
+          "stack": null
+        },
+        "text": {
+          "field": "SKUs"
+        }
+      }
+    }
+  ]
+}
