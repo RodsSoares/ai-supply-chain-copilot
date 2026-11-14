@@ -1,42 +1,148 @@
 {
     "dataset_version": "network_v1",
     "seed": 42,
-
     "horizon": {
         "first_week": "2024-W01",
         "history_last_week": "2026-W44",
         "forecast_first_week": "2026-W01",
         "last_week": "2027-W52"
     },
-
     "dcs": [
-        {"dc_id": "DC01", "dc_name": "DC Southeast Hub", "city": "SP_C01", "uf": "SP", "weekly_dispatch_capacity_pieces": 420000, "active_from": "2020-01-01"},
-        {"dc_id": "DC02", "dc_name": "DC South Hub", "city": "PR_C01", "uf": "PR", "weekly_dispatch_capacity_pieces": 200000, "active_from": "2020-01-01"},
-        {"dc_id": "DC03", "dc_name": "DC Northeast Hub", "city": "PE_C01", "uf": "PE", "weekly_dispatch_capacity_pieces": 140000, "active_from": "2021-01-01"}
+        {
+            "dc_id": "DC01",
+            "dc_name": "DC Southeast Hub",
+            "city": "SP_C01",
+            "uf": "SP",
+            "weekly_dispatch_capacity_pieces": 420000,
+            "active_from": "2020-01-01"
+        },
+        {
+            "dc_id": "DC02",
+            "dc_name": "DC South Hub",
+            "city": "PR_C01",
+            "uf": "PR",
+            "weekly_dispatch_capacity_pieces": 200000,
+            "active_from": "2020-01-01"
+        },
+        {
+            "dc_id": "DC03",
+            "dc_name": "DC Northeast Hub",
+            "city": "PE_C01",
+            "uf": "PE",
+            "weekly_dispatch_capacity_pieces": 140000,
+            "active_from": "2021-01-01"
+        }
     ],
-
     "ufs": {
-        "SP": {"dc_id": "DC01", "stores": 28, "base_km": 60,   "mode": "ROAD"},
-        "RJ": {"dc_id": "DC01", "stores": 12, "base_km": 480,  "mode": "ROAD"},
-        "MG": {"dc_id": "DC01", "stores": 10, "base_km": 520,  "mode": "ROAD"},
-        "ES": {"dc_id": "DC01", "stores": 3,  "base_km": 900,  "mode": "ROAD"},
-        "GO": {"dc_id": "DC01", "stores": 4,  "base_km": 880,  "mode": "ROAD"},
-        "DF": {"dc_id": "DC01", "stores": 4,  "base_km": 950,  "mode": "ROAD"},
-        "PR": {"dc_id": "DC02", "stores": 10, "base_km": 40,   "mode": "ROAD"},
-        "SC": {"dc_id": "DC02", "stores": 8,  "base_km": 260,  "mode": "ROAD"},
-        "RS": {"dc_id": "DC02", "stores": 11, "base_km": 690,  "mode": "ROAD"},
-        "PE": {"dc_id": "DC03", "stores": 7,  "base_km": 40,   "mode": "ROAD"},
-        "BA": {"dc_id": "DC03", "stores": 8,  "base_km": 780,  "mode": "ROAD"},
-        "CE": {"dc_id": "DC03", "stores": 6,  "base_km": 760,  "mode": "ROAD"},
-        "AM": {"dc_id": "DC01", "stores": 5,  "base_km": 2700, "mode": "AIR"},
-        "PA": {"dc_id": "DC01", "stores": 4,  "base_km": 2500, "mode": "AIR"}
+        "SP": {
+            "dc_id": "DC01",
+            "stores": 28,
+            "base_km": 60,
+            "mode": "ROAD"
+        },
+        "RJ": {
+            "dc_id": "DC01",
+            "stores": 12,
+            "base_km": 480,
+            "mode": "ROAD"
+        },
+        "MG": {
+            "dc_id": "DC01",
+            "stores": 10,
+            "base_km": 520,
+            "mode": "ROAD"
+        },
+        "ES": {
+            "dc_id": "DC01",
+            "stores": 3,
+            "base_km": 900,
+            "mode": "ROAD"
+        },
+        "GO": {
+            "dc_id": "DC01",
+            "stores": 4,
+            "base_km": 880,
+            "mode": "ROAD"
+        },
+        "DF": {
+            "dc_id": "DC01",
+            "stores": 4,
+            "base_km": 950,
+            "mode": "ROAD"
+        },
+        "PR": {
+            "dc_id": "DC02",
+            "stores": 10,
+            "base_km": 40,
+            "mode": "ROAD"
+        },
+        "SC": {
+            "dc_id": "DC02",
+            "stores": 8,
+            "base_km": 260,
+            "mode": "ROAD"
+        },
+        "RS": {
+            "dc_id": "DC02",
+            "stores": 11,
+            "base_km": 690,
+            "mode": "ROAD"
+        },
+        "PE": {
+            "dc_id": "DC03",
+            "stores": 7,
+            "base_km": 40,
+            "mode": "ROAD"
+        },
+        "BA": {
+            "dc_id": "DC03",
+            "stores": 8,
+            "base_km": 780,
+            "mode": "ROAD"
+        },
+        "CE": {
+            "dc_id": "DC03",
+            "stores": 6,
+            "base_km": 760,
+            "mode": "ROAD"
+        },
+        "AM": {
+            "dc_id": "DC01",
+            "stores": 5,
+            "base_km": 2700,
+            "mode": "AIR"
+        },
+        "PA": {
+            "dc_id": "DC01",
+            "stores": 4,
+            "base_km": 2500,
+            "mode": "AIR"
+        }
     },
-
     "stores": {
-        "cluster_weights": {"S": 0.30, "M": 0.35, "L": 0.25, "XL": 0.10},
-        "cluster_base_weekly_pieces": {"S": 1800, "M": 3200, "L": 5200, "XL": 8000},
-        "cluster_noise_cv": {"S": 0.18, "M": 0.14, "L": 0.11, "XL": 0.09},
-        "brand_share": {"BRAND_A": 0.72, "BRAND_B": 0.20, "BRAND_C": 0.08},
+        "cluster_weights": {
+            "S": 0.3,
+            "M": 0.35,
+            "L": 0.25,
+            "XL": 0.1
+        },
+        "cluster_base_weekly_pieces": {
+            "S": 1800,
+            "M": 3200,
+            "L": 5200,
+            "XL": 8000
+        },
+        "cluster_noise_cv": {
+            "S": 0.18,
+            "M": 0.14,
+            "L": 0.11,
+            "XL": 0.09
+        },
+        "brand_share": {
+            "BRAND_A": 0.72,
+            "BRAND_B": 0.2,
+            "BRAND_C": 0.08
+        },
         "brand_b_probability": 0.5,
         "brand_c_probability": 0.3,
         "ecom_probability_l_xl": 0.5,
@@ -44,71 +150,207 @@
         "annual_trend_mean": 0.03,
         "annual_trend_sd": 0.025,
         "openings": 10,
-        "opening_window": ["2025-03-01", "2027-09-30"],
+        "opening_window": [
+            "2025-03-01",
+            "2027-09-30"
+        ],
         "closures": 2,
         "closing_date": "2026-06-28",
         "ramp_up_weeks": 8,
         "max_city_offset_km": 220
     },
-
     "routes": {
         "max_stops": 5,
         "max_weekly_pieces": 36000,
         "km_per_extra_stop": 15,
         "two_drivers_min_km": 920,
-        "profile_thresholds_km": {"short_max": 300, "medium_max": 800}
-    },
-
-    "vehicles": [
-        {"vehicle_type_id": "NV01", "vehicle_name": "VAN",          "mode": "ROAD", "capacity_pieces": 2500,  "capacity_m3": 8,  "km_per_liter": 9.0, "fuel_type": "DIESEL", "fixed_cost": 350,  "cost_per_km": 2.2},
-        {"vehicle_type_id": "NV02", "vehicle_name": "LIGHT_TRUCK",  "mode": "ROAD", "capacity_pieces": 6000,  "capacity_m3": 20, "km_per_liter": 6.5, "fuel_type": "DIESEL", "fixed_cost": 520,  "cost_per_km": 3.1},
-        {"vehicle_type_id": "NV03", "vehicle_name": "MEDIUM_TRUCK", "mode": "ROAD", "capacity_pieces": 12000, "capacity_m3": 38, "km_per_liter": 4.8, "fuel_type": "DIESEL", "fixed_cost": 780,  "cost_per_km": 4.3},
-        {"vehicle_type_id": "NV04", "vehicle_name": "HEAVY_TRUCK",  "mode": "ROAD", "capacity_pieces": 20000, "capacity_m3": 60, "km_per_liter": 3.6, "fuel_type": "DIESEL", "fixed_cost": 1050, "cost_per_km": 5.6},
-        {"vehicle_type_id": "NV05", "vehicle_name": "SEMI_TRAILER", "mode": "ROAD", "capacity_pieces": 30000, "capacity_m3": 90, "km_per_liter": 2.8, "fuel_type": "DIESEL", "fixed_cost": 1400, "cost_per_km": 7.0},
-        {"vehicle_type_id": "NA01", "vehicle_name": "AIR_CARGO",    "mode": "AIR",  "capacity_pieces": null,  "capacity_m3": null, "km_per_liter": null, "fuel_type": "JET", "fixed_cost": 0, "cost_per_km": 0}
-    ],
-
-    "eligible_vehicles_by_profile": {
-        "SHORT":  ["NV01", "NV02", "NV03"],
-        "MEDIUM": ["NV02", "NV03", "NV04"],
-        "LONG":   ["NV03", "NV04", "NV05"]
-    },
-
-    "carriers": [
-        {"carrier_id": "ATLAS", "carrier_name": "Atlas Logistics (synthetic)", "contract_doc_id": "DOC-014", "on_time_target": 0.95, "on_time_probability": 0.95},
-        {"carrier_id": "NOVA",  "carrier_name": "Nova Freight (synthetic)",    "contract_doc_id": "DOC-015", "on_time_target": 0.95, "on_time_probability": 0.92},
-        {"carrier_id": "ORION", "carrier_name": "Orion Transport (synthetic)", "contract_doc_id": "DOC-016", "on_time_target": 0.95, "on_time_probability": 0.88}
-    ],
-
-    "rates": {
-        "noise_range": [0.95, 1.05],
-        "two_drivers_multiplier": 1.2,
-        "spot_premium": 1.35,
-        "air_rate_per_piece_range": [1.8, 2.6],
-        "adjustments": {
-            "ATLAS": [["2025-03-01", 0.05], ["2026-03-01", 0.06]],
-            "NOVA":  [["2025-05-01", 0.04], ["2026-05-01", 0.07]],
-            "ORION": [["2025-01-01", 0.06], ["2026-01-01", 0.05]]
+        "profile_thresholds_km": {
+            "short_max": 300,
+            "medium_max": 800
         }
     },
-
+    "vehicles": [
+        {
+            "vehicle_type_id": "NV01",
+            "vehicle_name": "VAN",
+            "mode": "ROAD",
+            "capacity_pieces": 2500,
+            "capacity_m3": 8,
+            "km_per_liter": 9.0,
+            "fuel_type": "DIESEL",
+            "fixed_cost": 350,
+            "cost_per_km": 2.2
+        },
+        {
+            "vehicle_type_id": "NV02",
+            "vehicle_name": "LIGHT_TRUCK",
+            "mode": "ROAD",
+            "capacity_pieces": 6000,
+            "capacity_m3": 20,
+            "km_per_liter": 6.5,
+            "fuel_type": "DIESEL",
+            "fixed_cost": 520,
+            "cost_per_km": 3.1
+        },
+        {
+            "vehicle_type_id": "NV03",
+            "vehicle_name": "MEDIUM_TRUCK",
+            "mode": "ROAD",
+            "capacity_pieces": 12000,
+            "capacity_m3": 38,
+            "km_per_liter": 4.8,
+            "fuel_type": "DIESEL",
+            "fixed_cost": 780,
+            "cost_per_km": 4.3
+        },
+        {
+            "vehicle_type_id": "NV04",
+            "vehicle_name": "HEAVY_TRUCK",
+            "mode": "ROAD",
+            "capacity_pieces": 20000,
+            "capacity_m3": 60,
+            "km_per_liter": 3.6,
+            "fuel_type": "DIESEL",
+            "fixed_cost": 1050,
+            "cost_per_km": 5.6
+        },
+        {
+            "vehicle_type_id": "NV05",
+            "vehicle_name": "SEMI_TRAILER",
+            "mode": "ROAD",
+            "capacity_pieces": 30000,
+            "capacity_m3": 90,
+            "km_per_liter": 2.8,
+            "fuel_type": "DIESEL",
+            "fixed_cost": 1400,
+            "cost_per_km": 7.0
+        },
+        {
+            "vehicle_type_id": "NA01",
+            "vehicle_name": "AIR_CARGO",
+            "mode": "AIR",
+            "capacity_pieces": null,
+            "capacity_m3": null,
+            "km_per_liter": null,
+            "fuel_type": "JET",
+            "fixed_cost": 0,
+            "cost_per_km": 0
+        }
+    ],
+    "eligible_vehicles_by_profile": {
+        "SHORT": [
+            "NV01",
+            "NV02",
+            "NV03"
+        ],
+        "MEDIUM": [
+            "NV02",
+            "NV03",
+            "NV04"
+        ],
+        "LONG": [
+            "NV03",
+            "NV04",
+            "NV05"
+        ]
+    },
+    "carriers": [
+        {
+            "carrier_id": "ATLAS",
+            "carrier_name": "Atlas Logistics (synthetic)",
+            "contract_doc_id": "DOC-014",
+            "on_time_target": 0.95,
+            "on_time_probability": 0.95
+        },
+        {
+            "carrier_id": "NOVA",
+            "carrier_name": "Nova Freight (synthetic)",
+            "contract_doc_id": "DOC-015",
+            "on_time_target": 0.95,
+            "on_time_probability": 0.92
+        },
+        {
+            "carrier_id": "ORION",
+            "carrier_name": "Orion Transport (synthetic)",
+            "contract_doc_id": "DOC-016",
+            "on_time_target": 0.95,
+            "on_time_probability": 0.88
+        }
+    ],
+    "rates": {
+        "noise_range": [
+            0.95,
+            1.05
+        ],
+        "two_drivers_multiplier": 1.2,
+        "spot_premium": 1.35,
+        "air_rate_per_piece_range": [
+            1.8,
+            2.6
+        ],
+        "adjustments": {
+            "ATLAS": [
+                [
+                    "2025-03-01",
+                    0.05
+                ],
+                [
+                    "2026-03-01",
+                    0.06
+                ]
+            ],
+            "NOVA": [
+                [
+                    "2025-05-01",
+                    0.04
+                ],
+                [
+                    "2026-05-01",
+                    0.07
+                ]
+            ],
+            "ORION": [
+                [
+                    "2025-01-01",
+                    0.06
+                ],
+                [
+                    "2026-01-01",
+                    0.05
+                ]
+            ]
+        }
+    },
     "anomalies": {
         "zero_rate": 0.007,
         "missing_rate": 0.005,
         "outlier_rate": 0.003,
-        "outlier_multiplier_range": [1.8, 2.5]
+        "outlier_multiplier_range": [
+            1.8,
+            2.5
+        ]
     },
-
     "execution": {
         "first_week": "2025-W01",
         "last_week": "2026-W44",
-        "extra_probability": 0.20,
-        "extra_probability_peak": 0.30,
+        "extra_probability": 0.2,
+        "extra_probability_peak": 0.3,
         "peak_on_time_penalty": 0.05
     },
-
     "forecasts": {
-        "BUDGET_2026": {"year": 2026, "created_at": "2025-10-15", "bias_mean": 0.04, "bias_sd": 0.06, "noise_cv": 0.10},
-        "BUDGET_2027": {"year": 2027, "created_at": "2026-10-15", "bias_mean": 0.03, "bias_sd": 0.06, "noise_cv": 0.10}
+        "BUDGET_2026": {
+            "year": 2026,
+            "created_at": "2025-10-15",
+            "growth_mean": 0.06,
+            "growth_sd": 0.03,
+            "noise_cv": 0.08
+        },
+        "BUDGET_2027": {
+            "year": 2027,
+            "created_at": "2026-10-15",
+            "growth_mean": 0.05,
+            "growth_sd": 0.03,
+            "noise_cv": 0.08
+        }
     }
 }

@@ -19,7 +19,7 @@
 | `tn_rates` | 249 |
 | `tn_demand_history` | 30,610 |
 | `tn_forecast` | 22,733 |
-| `tn_trips_actual` | 5,679 |
+| `tn_trips_actual` | 5,659 |
 | `tn_scenarios` | 2 |
 | `tn_parameters` | 17 |
 | `tn_management_adjustments` | 3 |

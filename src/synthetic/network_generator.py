@@ -22,6 +22,7 @@ import pandas as pd
 CAMINHO_CONFIG = Path("config/synthetic_network.json")
 DIRETORIO_SAIDA = Path("data/synthetic/transportation/network")
 
+SEMANAS_ANO_ANTERIOR = 52
 FERIADOS_FIXOS = [(1, 1), (4, 21), (5, 1), (9, 7), (10, 12), (11, 2), (11, 15), (11, 20), (12, 25)]
 
 
@@ -316,17 +317,30 @@ class GeradorRede:
         return hist[["week_start", "store_id", "brand", "channel", "pieces_shipped"]].reset_index(drop=True)
 
     def gerar_forecasts(self, verdade: pd.DataFrame, calendario: pd.DataFrame) -> pd.DataFrame:
-        """Forecasts de orçamento = demanda verdadeira + viés por loja + ruído."""
+        """Forecasts de orçamento no estilo do time de planejamento.
+
+        Prática comum simulada: mesma semana ISO do ano anterior × premissa de
+        crescimento por loja × ruído. Isso herda deslocamentos de calendário
+        (ex.: Black Friday muda de semana) e o viés otimista da premissa.
+        Lojas sem ano anterior usam uma estimativa do planejador (nível real × viés).
+        """
         anos = calendario.set_index("week_start")["iso_year"]
+        chaves = ["store_id", "brand", "channel"]
+        ano_anterior = verdade[chaves + ["week_idx", "true_pieces"]].copy()
+        ano_anterior["week_idx"] += SEMANAS_ANO_ANTERIOR
+        ano_anterior = ano_anterior.rename(columns={"true_pieces": "ly_pieces"})
         blocos = []
         for versao, cfg in self.config["forecasts"].items():
             sub = verdade[verdade["week_start"].map(anos) == cfg["year"]].copy()
+            sub = sub.merge(ano_anterior, on=chaves + ["week_idx"], how="left")
             lojas = sub["store_id"].unique()
-            vies = dict(zip(lojas, self.rng.normal(cfg["bias_mean"], cfg["bias_sd"], len(lojas))))
+            crescimento = dict(zip(lojas, self.rng.normal(cfg["growth_mean"], cfg["growth_sd"], len(lojas))))
             ruido = self.rng.lognormal(-0.5 * cfg["noise_cv"] ** 2, cfg["noise_cv"], len(sub))
-            sub["forecast_pieces"] = np.round(sub["true_pieces"] * (1 + sub["store_id"].map(vies)) * ruido).astype(int)
+            fator = 1 + sub["store_id"].map(crescimento)
+            base = np.where(sub["ly_pieces"].notna(), sub["ly_pieces"], sub["true_pieces"])
+            sub["forecast_pieces"] = np.round(base * fator * ruido).astype(int)
             sub["forecast_version"] = versao
-            sub["model_name"] = "PLANNING_TEAM_INPUT"
+            sub["model_name"] = np.where(sub["ly_pieces"].notna(), "PLANNING_LY_PLUS_GROWTH", "PLANNING_NEW_STORE_ESTIMATE")
             sub["created_at"] = cfg["created_at"]
             blocos.append(sub)
         fc = pd.concat(blocos, ignore_index=True)
