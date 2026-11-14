@@ -1,0 +1,4 @@
+adjustment_id,scenario_id,scope,adjustment_type,value,reason,requested_by_role,approved_by_role,approved_at,status
+ADJ-2027-001,BUDGET_2027,NETWORK,MULTIPLIER,0.97,Top-down efficiency target: 3% freight savings expected from carrier renegotiation,Board of Directors,CFO,2026-11-05,APPROVED
+ADJ-2027-002,BUDGET_2027,DC:DC03,ABSOLUTE_BRL,180000.0,Contingency for a new regional route launch in Q2,Operations Director,CFO,2026-11-05,APPROVED
+ADJ-2027-003,BUDGET_2027,MONTH:2027-11,MULTIPLIER,1.05,Black Friday contingency (pending review),Transportation Manager,,,PROPOSED

@@ -1,0 +1,4 @@
+dc_id,dc_name,city,uf,weekly_dispatch_capacity_pieces,active_from
+DC01,DC Southeast Hub,SP_C01,SP,420000,2020-01-01
+DC02,DC South Hub,PR_C01,PR,200000,2020-01-01
+DC03,DC Northeast Hub,PE_C01,PE,140000,2021-01-01

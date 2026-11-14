@@ -1,0 +1,18 @@
+scenario_id,parameter_key,scope,value,valid_from,valid_to,source_note
+PLAN_2026,frequency_min.SHORT,NETWORK,3,2026-01-01,2026-12-31,Planning policy: minimum weekly frequency for short routes
+PLAN_2026,frequency_min.MEDIUM,NETWORK,2,2026-01-01,2026-12-31,Planning policy: minimum weekly frequency for medium routes
+PLAN_2026,frequency_min.LONG,NETWORK,1,2026-01-01,2026-12-31,Planning policy: minimum weekly frequency for long routes
+PLAN_2026,frequency_basis,NETWORK,MEAN,2026-01-01,2026-12-31,Monthly fixed frequency = rounded mean of weekly required trips
+PLAN_2026,extras_rate,NETWORK,0.04,2026-01-01,2026-12-31,"Extras (re-delivery, fiscal hold, helpers, waiting) as share of freight"
+PLAN_2026,credit_rate.PIS_COFINS,NETWORK,0.0925,2026-01-01,2026-12-31,Recoverable tax credit on gross freight (synthetic assumption)
+PLAN_2026,utilization_threshold,NETWORK,0.6,2026-01-01,2026-12-31,Below this utilization a route is a consolidation candidate
+BUDGET_2027,frequency_min.SHORT,NETWORK,3,2027-01-01,2027-12-31,Planning policy: minimum weekly frequency for short routes
+BUDGET_2027,frequency_min.MEDIUM,NETWORK,2,2027-01-01,2027-12-31,Planning policy: minimum weekly frequency for medium routes
+BUDGET_2027,frequency_min.LONG,NETWORK,1,2027-01-01,2027-12-31,Planning policy: minimum weekly frequency for long routes
+BUDGET_2027,frequency_basis,NETWORK,MEAN,2027-01-01,2027-12-31,Monthly fixed frequency = rounded mean of weekly required trips
+BUDGET_2027,extras_rate,NETWORK,0.04,2027-01-01,2027-12-31,"Extras (re-delivery, fiscal hold, helpers, waiting) as share of freight"
+BUDGET_2027,credit_rate.PIS_COFINS,NETWORK,0.0925,2027-01-01,2027-12-31,Recoverable tax credit on gross freight (synthetic assumption)
+BUDGET_2027,utilization_threshold,NETWORK,0.6,2027-01-01,2027-12-31,Below this utilization a route is a consolidation candidate
+BUDGET_2027,rate_adjustment,CARRIER:ATLAS,0.06,2027-03-01,2027-12-31,Expected contractual rate adjustment (synthetic)
+BUDGET_2027,rate_adjustment,CARRIER:NOVA,0.07,2027-05-01,2027-12-31,Expected contractual rate adjustment (synthetic)
+BUDGET_2027,rate_adjustment,CARRIER:ORION,0.05,2027-01-01,2027-12-31,Expected contractual rate adjustment (synthetic)

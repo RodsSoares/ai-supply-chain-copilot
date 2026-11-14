@@ -1,0 +1,3 @@
+scenario_id,scenario_name,scenario_type,base_scenario_id,forecast_version,plan_year,description,created_by_role,created_at,locked
+PLAN_2026,Transportation Plan 2026,BUDGET,,BUDGET_2026,2026,Approved 2026 plan built on the BUDGET_2026 forecast.,Transportation Planning,2025-10-31,1
+BUDGET_2027,Transportation Budget 2027,BUDGET,,BUDGET_2027,2027,2027 budget proposal on the BUDGET_2027 forecast.,Transportation Planning,2026-10-31,0

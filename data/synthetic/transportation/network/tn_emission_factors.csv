@@ -1,0 +1,4 @@
+factor_key,unit,value,valid_from,source_note
+DIESEL,kg_co2e_per_liter,2.6,2024-01-01,Illustrative value within the range of public diesel factors (e.g. GHG Protocol / DEFRA tables). Replace with an official source before real use.
+AIR_FREIGHT,kg_co2e_per_tonne_km,0.6,2024-01-01,Illustrative order of magnitude for air freight. Replace with an official source before real use.
+PIECE_WEIGHT,kg_per_piece,0.25,2024-01-01,Synthetic average weight per piece.
