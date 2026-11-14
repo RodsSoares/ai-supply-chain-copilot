@@ -156,8 +156,10 @@ Emission factors are illustrative parameters with a documented public source.
 
 | KPI | Formula |
 |---|---|
-| Safety stock | `z(service_level) × σ_d × √LT` (constant lead time) |
+| Safety stock | `z(service_level) × sqrt(LT × σ_d² + d̄² × σ_LT²)`; with σ_LT = 0 → `z × σ_d × √LT` |
 | Reorder point | `d̄ × LT + safety_stock` |
+| Order-up-to (max) | `reorder_point + d̄ × review_cover_weeks` |
+| Empirical cycle service level | share of lead-time windows (last 52 weeks) with demand ≤ reorder point |
 | Coverage (days) | `on_hand / d̄` |
 
 ## 4. Golden Set expansion

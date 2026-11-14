@@ -40,6 +40,16 @@ This project rebuilds that **problem class** — not any real spreadsheet — as
 6. **Extras were over-budgeted.** The plan assumed 4% of freight; actual extras ran at roughly 2.5%.
 7. **Air is ~30% of emissions** for a small share of volume (illustrative factors).
 
+## 3b. Inventory link (v2.6)
+
+The same "parameters are data, decisions are explainable" approach was applied to inventory. A service-level policy (safety stock with demand and lead-time variability, reorder point, order-up-to) was computed side by side with the static min/max of the ERP dataset:
+
+- about one third of SKUs change recommendation (see [`reports/inventory/inventory_policy_summary.md`](../../reports/inventory/inventory_policy_summary.md));
+- the empirical cycle service level over the last 52 weeks meets each class target (A 98%, B 95%, C 90%);
+- the service-level × capital curve makes the trade-off explicit for a management decision.
+
+Caveat: the synthetic ERP min/max values were not generated from demand, so the size of the capital gap illustrates the method rather than a real saving.
+
 ## 4. Design decisions
 
 - **Rebuild the problem, not the spreadsheet** (clean-room rules in `06_transportation_architecture.md`).

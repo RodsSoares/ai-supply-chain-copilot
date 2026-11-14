@@ -1,0 +1,17 @@
+{
+    "dataset_version": "inventory_demand_v1",
+    "seed": 2026,
+    "history": {"first_week": "2024-11-18", "weeks": 104},
+    "weeks_per_month": 4.345,
+    "days_per_week": 7,
+    "demand_cv_by_abc": {"A": 0.25, "B": 0.45, "C": 0.70},
+    "zero_week_probability_by_abc": {"A": 0.00, "B": 0.05, "C": 0.30},
+    "lead_time_cv": 0.20,
+    "seasonal_amplitude": 0.15,
+    "policy": {
+        "service_level_by_abc": {"A": 0.98, "B": 0.95, "C": 0.90},
+        "stats_window_weeks": 52,
+        "review_cover_weeks": 4,
+        "excess_tolerance": 1.25
+    }
+}

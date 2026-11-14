@@ -723,10 +723,12 @@ The Transportation domain is being extended into a **Network Planning & Budget S
 | v2.3 | Monthly fixed frequency + spot overflow, what-if scenarios, consolidation candidates | ✅ |
 | v2.4 | Budget lines by civil month, explicit management adjustments, exact budget bridge, plan vs. actual | ✅ |
 | v2.5 | GHG estimation, Copilot capabilities, BI data model (`output/network/`) | 🟡 Power BI report pending |
+| v2.6 | Inventory link: SKU demand history, safety stock and reorder point by service level, side by side with static min/max ([summary](reports/inventory/inventory_policy_summary.md)) | ✅ engine · Copilot integration pending |
 
 ```bash
 python scripts/generate_transportation_network.py   # regenerate the synthetic network (seed 42)
 python scripts/run_network_analytics.py             # run the engine, export CSVs and the summary report
+python scripts/run_inventory_policy.py              # v2.6 dynamic inventory policy vs static min/max
 python -m src.etl.network.load_network              # optional: load tn_* tables into SQLite
 ```
 

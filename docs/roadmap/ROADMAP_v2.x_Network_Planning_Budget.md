@@ -1,7 +1,7 @@
 # AI Supply Chain Copilot — Roadmap v2.x: Network Planning & Budget
 
 > **Branch:** `feature/network-planning-budget`
-> **Status:** 🟢 v2.1–v2.4 implemented · v2.5 partially implemented (Power BI pending) · v2.6 not started
+> **Status:** 🟢 v2.1–v2.4 implemented · v2.5 partially implemented (Power BI pending) · v2.6 implemented as a side-by-side engine (Copilot inventory flow unchanged)
 > **Last updated:** 2026-11-14
 > **Related documents:**
 > - [Synthetic Dataset Specification](../specs/transportation_network_dataset_spec.md)
@@ -54,7 +54,7 @@ Portfolio narrative:
 | v2.3.0 | ✅ Implemented |
 | v2.4.0 | ✅ Implemented |
 | v2.5.0 | 🟡 GHG, case study and BI data model done; Power BI report and real-LLM Golden Set run pending |
-| v2.6.0 | ⏳ Not started |
+| v2.6.0 | ✅ Engine + capabilities; integration into the Inventory Copilot flow pending (requires Golden Set update) |
 
 | Release | Theme | Main deliverables | Closes |
 |:-:|---|---|:-:|
@@ -153,6 +153,11 @@ Deliverables:
 - SKU-level demand history for the inventory dataset.
 - Safety stock and reorder point by target service level; cycle-service-level reporting.
 - Inventory recommendations (REPOR / EXCESSO / SEM AÇÃO) using the dynamic reorder point instead of static min/max.
+
+Implementation notes:
+- `src/synthetic/inventory_demand_generator.py` + `config/inventory_policy.json` generate 104 weeks of SKU demand calibrated to the existing ERP dataset (CV and intermittency by ABC class).
+- `src/analytics/inventory_policy/` computes the dynamic policy **side by side** with the static min/max: the current Copilot recommendations and the Inventory Golden Set are untouched.
+- Results: `scripts/run_inventory_policy.py` → `reports/inventory/inventory_policy_summary.md`.
 
 ## 5. Definition of Done (every release)
 
