@@ -549,7 +549,10 @@ class GeradorRede:
                         if rota["route_type"] == "ALTERNATING_WEEK":
                             vol_plano *= 2
                         necessidades.append(math.ceil(vol_plano / cap) if vol_plano > 0 else 0)
-                    freq_mes[(ano, mes)] = max(freq_min[rota["route_profile"]], int(round(np.mean(necessidades))))
+                    freq_mes[(ano, mes)] = (
+                        0 if sum(necessidades) == 0
+                        else max(freq_min[rota["route_profile"]], int(math.floor(np.mean(necessidades) + 0.5)))
+                    )
 
             acumulado = 0
             for ws, semana in semanas.iterrows():
@@ -571,7 +574,9 @@ class GeradorRede:
                     necessarias = math.ceil(vol / cap) if vol > 0 else 0
                     extras_spot = max(0, necessarias - freq)
                     total = freq + extras_spot
-                    base = vol // total if total else 0
+                    if total == 0:
+                        continue
+                    base = vol // total
                     resto = vol - base * total
                     viagens = []
                     for k in range(total):
