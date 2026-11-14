@@ -466,6 +466,32 @@ Status
 
 ✅ Adopted
 
+ADR-022
+
+Date
+
+November 2026
+
+Decision
+
+The bounded Transportation domain is extended into a Network Planning & Budget Simulator (v2.x release line): multi-DC synthetic network, store-level demand history, forecast accuracy, peak-aware frequency policy, scenario-based what-if, budget engine with explicit management adjustments, plan vs. actual and GHG estimation.
+
+The extension stays analytics and decision support. Mathematical optimization remains out of scope.
+
+New data lives in a separate tn_* namespace so the v2.0.0 Transportation tables, endpoints and tests remain unchanged.
+
+Reason
+
+The v2.0.0 Transportation domain proved architectural extensibility but did not demonstrate Supply Chain analytical depth, forecasting competence or measurable business impact.
+
+Making every assumption a versioned parameter, and every top-down adjustment an explicit, justified and approved record, keeps the budget auditable and turns governance into a visible product capability.
+
+Clean-room rules remain mandatory: the problem class is rebuilt with synthetic data and independently designed formulas.
+
+Status
+
+🟡 Proposed — branch feature/network-planning-budget
+
 Decision Guidelines
 
 A new decision should only be added when it significantly affects one or more of the following:
@@ -615,6 +641,12 @@ ADR-021
 Structured Transportation intent routing + deterministic dispatch
 
 ✅
+
+ADR-022
+
+Transportation extended to Network Planning & Budget (v2.x)
+
+🟡
 
 Document Information
 

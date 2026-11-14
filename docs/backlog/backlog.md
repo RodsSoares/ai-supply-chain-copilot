@@ -66,8 +66,8 @@ A evolução conversacional **multi-turn**, com manutenção de contexto entre i
 | 11 | AI-006 | AI Copilot | Conversação multi-turn com memória de contexto | 🟢 P3 | Onda 3 |
 | 12 | ARCH-001 | Infrastructure | Docker | 🟡 P2 | Onda 2 |
 | 13 | ARCH-002 | Infrastructure | Avaliação de migração para PostgreSQL | 🟢 P3 | Onda 3 |
-| 14 | BIZ-001 | Business Analytics | Simulações "What-if" | 🟡 P2 | Onda 3 |
-| 15 | BIZ-002 | Business Analytics | Simulação de impacto financeiro | 🟡 P2 | Onda 3 |
+| 14 | BIZ-001 | Business Analytics | Simulações "What-if" | 🔴 P1 | v2.3.0 ([Roadmap v2.x](../roadmap/ROADMAP_v2.x_Network_Planning_Budget.md)) |
+| 15 | BIZ-002 | Business Analytics | Simulação de impacto financeiro | 🔴 P1 | v2.4.0 ([Roadmap v2.x](../roadmap/ROADMAP_v2.x_Network_Planning_Budget.md)) |
 | 16 | EXP-001 | Portfolio Labs | LinkedIn Content Agent | 🟢 P3 | Projeto derivado |
 | 17 | EXP-002 | Portfolio Labs | Gerador inteligente de documentação | 🟢 P3 | Projeto derivado |
 | 18 | EXP-003 | Portfolio Labs | Assistente inteligente da auditoria | 🟢 P3 | Projeto derivado |
