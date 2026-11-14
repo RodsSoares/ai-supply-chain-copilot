@@ -17,6 +17,11 @@ kit/
 ```
 
 Para regenerar os dados: `python scripts/export_powerbi_kit.py`.
+
+**Atalho (Power BI Project):** `python scripts/build_powerbi_pbip.py` gera
+`reports/powerbi/pbip/AI_Supply_Chain_Copilot_HUD.pbip` com o modelo pronto (tabelas, relacionamentos,
+todas as medidas com formato) e as 3 páginas em 1920 × 1080. Abra no Power BI Desktop, clique em
+**Atualizar** e pule a seção 2. A pasta `pbip/` não vai para o Git porque guarda o caminho local dos dados.
 Para regenerar os fundos: `node reports/powerbi/kit/backgrounds/src/render.js`.
 
 ---

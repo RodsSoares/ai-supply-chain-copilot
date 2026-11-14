@@ -21,3 +21,6 @@ venv/
 # Operating system
 .DS_Store
 Thumbs.db
+# Power BI Project gerado localmente (contém o caminho absoluto da máquina no parâmetro PastaDados).
+# Recrie com: python scripts/build_powerbi_pbip.py
+reports/powerbi/pbip/
