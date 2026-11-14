@@ -1,0 +1,220 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Valor da ação por depósito (R$ Mi), separado em reposição e excesso. Campos: deposito, acao_recomendada + medida Valor Acao",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Segoe UI",
+    "axis": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#263247",
+      "gridDash": [
+        2,
+        4
+      ]
+    },
+    "legend": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "symbolType": "square"
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.acao_recomendada != 'SEM AÇÃO'"
+    },
+    {
+      "calculate": "datum['Valor Acao'] / 1e6",
+      "as": "valor_mi"
+    },
+    {
+      "calculate": "indexof(['REPOR','TRATAR EXCESSO'], datum.acao_recomendada)",
+      "as": "ordem"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "valor_mi",
+          "as": "total_deposito"
+        }
+      ],
+      "groupby": [
+        "deposito"
+      ]
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "deposito",
+      "type": "nominal",
+      "sort": {
+        "field": "total_deposito",
+        "op": "max",
+        "order": "descending"
+      },
+      "axis": {
+        "title": null,
+        "labelColor": "#F1F5F9",
+        "labelFontWeight": "bold",
+        "labelFontSize": 12,
+        "labelPadding": 10
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "height": 44,
+        "stroke": "#0E1628",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x": {
+          "field": "valor_mi",
+          "type": "quantitative",
+          "stack": "zero",
+          "scale": {
+            "nice": false
+          },
+          "axis": {
+            "title": "R$ Mi",
+            "tickCount": 5,
+            "grid": true
+          }
+        },
+        "color": {
+          "field": "acao_recomendada",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "REPOR",
+              "TRATAR EXCESSO"
+            ],
+            "range": [
+              "#19D3FF",
+              "#D946EF"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": null,
+            "labelExpr": "datum.label == 'REPOR' ? 'Repor' : 'Tratar excesso'"
+          }
+        },
+        "order": {
+          "field": "ordem"
+        },
+        "tooltip": [
+          {
+            "field": "deposito",
+            "title": "Depósito"
+          },
+          {
+            "field": "acao_recomendada",
+            "title": "Ação"
+          },
+          {
+            "field": "valor_mi",
+            "title": "Valor (R$ Mi)",
+            "format": ",.2f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "stack": "valor_mi",
+          "groupby": [
+            "deposito"
+          ],
+          "sort": [
+            {
+              "field": "ordem"
+            }
+          ],
+          "as": [
+            "x0",
+            "x1"
+          ]
+        },
+        {
+          "calculate": "(datum.x0 + datum.x1) / 2",
+          "as": "xm"
+        },
+        {
+          "calculate": "replace(format(datum.valor_mi, '.2f'), '.', ',')",
+          "as": "rotulo"
+        },
+        {
+          "filter": "datum.valor_mi >= 0.4"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "color": "#060A16",
+        "fontWeight": "bold",
+        "fontSize": 12
+      },
+      "encoding": {
+        "x": {
+          "field": "xm",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "rotulo"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "sum",
+              "field": "valor_mi",
+              "as": "total"
+            }
+          ],
+          "groupby": [
+            "deposito"
+          ]
+        },
+        {
+          "calculate": "'R$ ' + replace(format(datum.total, '.2f'), '.', ',') + ' Mi'",
+          "as": "rotulo"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 10,
+        "color": "#F1F5F9",
+        "fontWeight": "bold",
+        "fontSize": 13
+      },
+      "encoding": {
+        "x": {
+          "field": "total",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "rotulo"
+        }
+      }
+    }
+  ]
+}

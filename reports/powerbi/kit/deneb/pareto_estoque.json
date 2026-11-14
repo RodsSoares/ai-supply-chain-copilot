@@ -1,0 +1,295 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Curva de Pareto do valor em estoque. Campos: sku, classe_abc (Não resumir) + medida Valor Estoque",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Segoe UI",
+    "axis": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "titleFontWeight": "normal",
+      "titleFontSize": 11,
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#263247",
+      "gridDash": [
+        2,
+        4
+      ]
+    },
+    "legend": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "symbolType": "square"
+    }
+  },
+  "transform": [
+    {
+      "window": [
+        {
+          "op": "row_number",
+          "as": "posicao"
+        },
+        {
+          "op": "sum",
+          "field": "Valor Estoque",
+          "as": "acumulado"
+        }
+      ],
+      "sort": [
+        {
+          "field": "Valor Estoque",
+          "order": "descending"
+        }
+      ],
+      "frame": [
+        null,
+        0
+      ]
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "Valor Estoque",
+          "as": "total"
+        },
+        {
+          "op": "count",
+          "as": "n"
+        }
+      ]
+    },
+    {
+      "calculate": "datum.acumulado / datum.total",
+      "as": "pct_acumulado"
+    },
+    {
+      "calculate": "datum['Valor Estoque'] / 1000",
+      "as": "valor_mil"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "cornerRadiusTopLeft": 1,
+        "cornerRadiusTopRight": 1
+      },
+      "encoding": {
+        "y": {
+          "field": "valor_mil",
+          "type": "quantitative",
+          "axis": {
+            "title": "R$ mil",
+            "tickCount": 4,
+            "grid": true,
+            "labelExpr": "replace(format(datum.value, ',.0f'), ',', '.')"
+          }
+        },
+        "color": {
+          "field": "classe_abc",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "A",
+              "B",
+              "C"
+            ],
+            "range": [
+              "#19D3FF",
+              "#248BFF",
+              "#7557FF"
+            ]
+          },
+          "legend": {
+            "orient": "top",
+            "direction": "horizontal",
+            "title": null,
+            "labelExpr": "'Classe ' + datum.label"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "sku",
+            "title": "SKU"
+          },
+          {
+            "field": "classe_abc",
+            "title": "Classe"
+          },
+          {
+            "field": "valor_mil",
+            "title": "Valor (R$ mil)",
+            "format": ",.1f"
+          },
+          {
+            "field": "pct_acumulado",
+            "title": "% acumulado",
+            "format": ".1%"
+          }
+        ],
+        "x": {
+          "field": "posicao",
+          "type": "ordinal",
+          "scale": {
+            "paddingInner": 0.15
+          },
+          "axis": {
+            "title": "SKUs ordenados por valor em estoque",
+            "labelExpr": "datum.value % 50 == 0 ? datum.value : ''",
+            "labelAngle": 0
+          }
+        }
+      }
+    },
+    {
+      "encoding": {
+        "y": {
+          "field": "pct_acumulado",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              1
+            ]
+          },
+          "axis": {
+            "title": null,
+            "orient": "right",
+            "format": ".0%",
+            "values": [
+              0,
+              0.5,
+              0.8,
+              1
+            ],
+            "grid": false
+          }
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "line",
+            "color": "#D946EF",
+            "strokeWidth": 2.5,
+            "interpolate": "monotone"
+          },
+          "encoding": {
+            "x": {
+              "field": "posicao",
+              "type": "ordinal",
+              "scale": {
+                "paddingInner": 0.15
+              },
+              "axis": {
+                "title": "SKUs ordenados por valor em estoque",
+                "labelExpr": "datum.value % 50 == 0 ? datum.value : ''",
+                "labelAngle": 0
+              }
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#94A3B8",
+            "strokeDash": [
+              4,
+              4
+            ],
+            "opacity": 0.7
+          },
+          "encoding": {
+            "y": {
+              "datum": 0.8
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.pct_acumulado >= 0.8"
+            },
+            {
+              "window": [
+                {
+                  "op": "rank",
+                  "as": "r"
+                }
+              ],
+              "sort": [
+                {
+                  "field": "posicao"
+                }
+              ]
+            },
+            {
+              "filter": "datum.r == 1"
+            },
+            {
+              "calculate": "'80% do valor em ' + datum.posicao + ' SKUs (' + replace(format(datum.posicao / datum.n, '.0%'), '.', ',') + ')'",
+              "as": "rotulo"
+            }
+          ],
+          "layer": [
+            {
+              "mark": {
+                "type": "point",
+                "filled": true,
+                "fill": "#060A16",
+                "stroke": "#D946EF",
+                "strokeWidth": 2,
+                "size": 80
+              }
+            },
+            {
+              "mark": {
+                "type": "text",
+                "align": "left",
+                "dx": 10,
+                "dy": 16,
+                "color": "#F1F5F9",
+                "fontWeight": "bold",
+                "fontSize": 12
+              },
+              "encoding": {
+                "text": {
+                  "field": "rotulo"
+                }
+              }
+            }
+          ],
+          "encoding": {
+            "x": {
+              "field": "posicao",
+              "type": "ordinal",
+              "scale": {
+                "paddingInner": 0.15
+              },
+              "axis": {
+                "title": "SKUs ordenados por valor em estoque",
+                "labelExpr": "datum.value % 50 == 0 ? datum.value : ''",
+                "labelAngle": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
+}

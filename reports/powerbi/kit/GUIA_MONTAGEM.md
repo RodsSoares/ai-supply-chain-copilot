@@ -13,6 +13,7 @@ kit/
 ├── data/          fato_estoque · fato_viagens · fato_demanda · dim_rotas · dim_veiculos · dim_semana · copilot_insights (.csv)
 ├── dax/           medidas.dax
 └── deneb/         rede_transporte.json · custo_semanal.json · acoes_prioridade.json
+                   pareto_estoque.json · acoes_deposito.json · custo_x_utilizacao.json
 ```
 
 Para regenerar os dados: `python scripts/export_powerbi_kit.py`.
@@ -103,10 +104,58 @@ em X 760 · Y 30 · L 640 · A 48. O tema V6 já aplica o estilo (aba ativa em c
 
 ## 4. Páginas **Inventory** e **Transportation**
 
-Os fundos (`bg_inventory.png`, `bg_transportation.png`) e as posições (`backgrounds/layout.json`)
-já estão prontos. Os visuais dessas páginas entram na próxima etapa do kit. Até lá, dá para
-reaproveitar os visuais do `.pbix` atual, encaixando-os nos painéis com a mesma regra:
-**X + 12, Y + 44, largura − 24, altura − 56**. Cartões KPI: **X + 4, Y + 4, largura − 8, altura − 8**.
+Mesmo processo da seção 1 (tela 1920 × 1080, fundo e papel de parede), com `bg_inventory.png` e
+`bg_transportation.png`. As posições abaixo seguem a regra dos painéis de `backgrounds/layout.json`:
+visuais em **X + 12, Y + 44, largura − 24, altura − 56**; cartões KPI em **X + 4, Y + 4, largura − 8, altura − 8**.
+
+Dica: monte primeiro um KPI, depois **copie e cole** e só troque a medida e o X.
+
+### 4.1 Página **Inventory**
+
+| Painel | Visual | X | Y | Largura | Altura | Campos |
+|---|---|---:|---:|---:|---:|---|
+| `kpi_1` | HTML Content | 36 | 108 | 444 | 142 | medida `HTML KPI Estoque` |
+| `kpi_2` | HTML Content | 504 | 108 | 444 | 142 | medida `HTML KPI Reposicao` |
+| `kpi_3` | HTML Content | 972 | 108 | 444 | 142 | medida `HTML KPI Excesso` |
+| `kpi_4` | HTML Content | 1440 | 108 | 444 | 142 | medida `HTML KPI Cobertura` |
+| `pareto` | Deneb · `deneb/pareto_estoque.json` | 44 | 316 | 876 | 344 | fato_estoque: `sku`, `classe_abc` (Não resumir) + medida `Valor Estoque` |
+| `acoes_deposito` | Deneb · `deneb/acoes_deposito.json` | 960 | 316 | 916 | 344 | fato_estoque: `deposito`, `acao_recomendada` + medida `Valor Acao` |
+| `tabela_skus` | Tabela nativa | 44 | 734 | 1832 | 312 | ver abaixo |
+
+**Tabela `tabela_skus`**
+- Colunas (fato_estoque, nesta ordem): `sku`, `produto`, `deposito`, `classe_abc`, `cobertura_meses`,
+  `risco_ruptura`, `acao_recomendada`, `prioridade`, `valor_acao`, `score_prioridade`.
+  Em todas as numéricas: **Não resumir**.
+- **Filtros deste visual → `acao_recomendada` → desmarque "SEM AÇÃO".**
+- Classificação: clique no cabeçalho `score_prioridade` → **decrescente**.
+- Formatação condicional (**Cor da fonte → Valor do campo**):
+  `prioridade` → `Cor Prioridade` · `risco_ruptura` → `Cor Risco` · `acao_recomendada` → `Cor Acao`.
+- Formato: `valor_acao` como moeda R$ sem casas; `cobertura_meses` com 1 casa.
+- Renomeie os cabeçalhos no painel *Visualizações* (duplo clique no campo): SKU, Produto, Depósito, ABC,
+  Cobertura (meses), Risco, Ação, Prioridade, Valor da ação, Score.
+
+### 4.2 Página **Transportation**
+
+| Painel | Visual | X | Y | Largura | Altura | Campos |
+|---|---|---:|---:|---:|---:|---|
+| `kpi_1` | HTML Content | 36 | 108 | 444 | 142 | medida `HTML KPI Custo Transporte` |
+| `kpi_2` | HTML Content | 504 | 108 | 444 | 142 | medida `HTML KPI Utilizacao` |
+| `kpi_3` | HTML Content | 972 | 108 | 444 | 142 | medida `HTML KPI Viagens` |
+| `kpi_4` | HTML Content | 1440 | 108 | 444 | 142 | medida `HTML KPI Custo Unitario` |
+| `rede_transporte` | Deneb · `deneb/rede_transporte.json` | 44 | 316 | 1076 | 444 | mesmos campos do Command Center |
+| `custo_x_utilizacao` | Deneb · `deneb/custo_x_utilizacao.json` | 1160 | 316 | 716 | 444 | dim_rotas: `rota`, `origem`, `destino`, `distancia_km` (Não resumir) + medidas `Custo Planejado`, `Utilizacao`, `Viagens` |
+| `custo_semanal` | Deneb · `deneb/custo_semanal.json` | 44 | 834 | 576 | 212 | mesmos campos do Command Center |
+| `tabela_rotas` | Tabela nativa | 660 | 834 | 1216 | 212 | ver abaixo |
+
+O `rede_transporte` e o `custo_semanal` podem ser **copiados do Command Center** (Ctrl+C / Ctrl+V)
+e só redimensionados: a spec Deneb se ajusta ao tamanho do visual.
+
+**Tabela `tabela_rotas`**
+- Colunas: dim_rotas `rota`, `origem`, `destino`, `distancia_km` (Não resumir) + medidas `Viagens`,
+  `Custo Planejado`, `Custo por Peca`, `Custo por Km`, `Utilizacao`.
+- Classificação: `Custo Planejado` **decrescente**.
+- `Utilizacao` → **Cor da fonte → Valor do campo → `Cor Utilizacao`** (mesmo semáforo dos medidores).
+- Formato: `Custo Planejado` R$ sem casas; `Custo por Peca` e `Custo por Km` R$ com 2 casas; `Utilizacao` % com 1 casa.
 
 ## 5. Publicar e verificar o "Publicar na web"
 
@@ -126,4 +175,9 @@ e gravar um GIF navegando entre as páginas para o README.
 - [ ] Todos os visuais estão sem fundo, sem borda e sem cabeçalho.
 - [ ] KPIs batem com o mockup: R$ 34,59 Mi · R$ 3,28 Mi · R$ 11,65 Mi · R$ 14,93 Mi · R$ 99,6 mil · 76,6%.
 - [ ] Mapa de rede com R012 e R011 em magenta.
+- [ ] Inventory: cobertura 2,1 meses (mediana 1,8) · Classe A = 69% do valor · 19% dos SKUs em risco.
+- [ ] Inventory: Pareto marca "80% do valor em 73 SKUs (24%)"; ações por depósito somam R$ 14,93 Mi (Campinas R$ 5,92 Mi no topo).
+- [ ] Transportation: 192 viagens em 8 sem. · 24 por semana · 2,00 Mi peças · 100% da demanda.
+- [ ] Transportation: R$ 0,39 por peça · R$ 5,29 por km · 147.200 km planejados.
+- [ ] Custo × Utilização: R012 no topo (custo mais alto, utilização < 70%) e R011 à direita da meta.
 - [ ] Navegador de páginas funcionando entre as 3 páginas.

@@ -271,3 +271,109 @@ li b{font-weight:600;color:#F1F5F9}
 & itens &
 "</ul></div></div>
 <div class='inp'>Pergunte ao Copilot sobre estoque, rotas, custos, cenários…<span class='send'><svg width='14' height='14' viewBox='0 0 24 24' fill='#fff'><path d='M3 11 21 3l-8 18-2-8z'/></svg></span></div></div>"
+
+
+// =====================================================================
+// PÁGINA INVENTORY
+// Reaproveita: HTML KPI Estoque, HTML KPI Reposicao, HTML KPI Excesso.
+// =====================================================================
+
+// ---------------------------------------------------------------------
+// 7. ESTOQUE · cobertura, concentração e cores da tabela
+// ---------------------------------------------------------------------
+
+Consumo Mensal Valor =
+SUMX ( fato_estoque, fato_estoque[consumo_medio_mensal] * fato_estoque[custo_unitario] )
+
+// Meses de estoque ponderados pelo valor (estoque total / consumo mensal total)
+Cobertura Ponderada = DIVIDE ( [Valor Estoque], [Consumo Mensal Valor] )
+
+Cobertura Mediana = MEDIAN ( fato_estoque[cobertura_meses] )
+
+% Valor Classe A =
+DIVIDE (
+    CALCULATE ( [Valor Estoque], fato_estoque[classe_abc] = "A" ),
+    CALCULATE ( [Valor Estoque], ALL ( fato_estoque[classe_abc] ) )
+)
+
+% SKUs Risco = DIVIDE ( [SKUs Risco Ruptura], [SKUs] )
+
+// Formatação condicional da tabela "SKUs Prioritários" (Cor da fonte → Valor do campo)
+Cor Prioridade =
+SWITCH (
+    SELECTEDVALUE ( fato_estoque[prioridade] ),
+    "ALTA", "#D946EF",
+    "MÉDIA", "#19D3FF",
+    "BAIXA", "#7557FF",
+    "#64748B"
+)
+
+Cor Risco =
+IF ( SELECTEDVALUE ( fato_estoque[risco_ruptura] ) = "SIM", "#EF4444", "#94A3B8" )
+
+Cor Acao =
+SWITCH (
+    SELECTEDVALUE ( fato_estoque[acao_recomendada] ),
+    "REPOR", "#19D3FF",
+    "TRATAR EXCESSO", "#D946EF",
+    "#64748B"
+)
+
+HTML KPI Cobertura =
+VAR cob = [Cobertura Ponderada]
+VAR c = 2 * PI () * 40
+// anel cheio = 6 meses de cobertura
+VAR preenchido = c * MIN ( cob / 6, 1 )
+RETURN
+[HTML Estilo] &
+"<div class='k' style='flex-direction:row;align-items:center;gap:16px;justify-content:flex-start'>
+<svg width='96' height='96' viewBox='0 0 100 100'>
+<circle cx='50' cy='50' r='40' fill='none' stroke='#263247' stroke-width='9'/>
+<circle class='glow' cx='50' cy='50' r='40' fill='none' stroke='#7557FF' stroke-width='9' stroke-linecap='round'
+ stroke-dasharray='" & SUBSTITUTE ( FORMAT ( preenchido, "0.0" ), ",", "." ) & " " & SUBSTITUTE ( FORMAT ( c, "0.0" ), ",", "." ) & "' transform='rotate(-90 50 50)'/>
+<text x='50' y='50' text-anchor='middle' fill='#F1F5F9' font-size='22' font-weight='700'>" & FORMAT ( cob, "0.0" ) & "</text>
+<text x='50' y='66' text-anchor='middle' fill='#94A3B8' font-size='10'>meses</text></svg>
+<div style='display:flex;flex-direction:column;gap:6px'><div class='lab'>Cobertura de estoque</div>
+<div style='font-size:12px;color:#94A3B8'>Mediana por SKU: " & FORMAT ( [Cobertura Mediana], "0.0" ) & " meses</div>
+<div style='font-size:12px;color:#94A3B8'>Classe A = " & FORMAT ( [% Valor Classe A], "0%" ) & " do valor</div>
+<div class='dn' style='font-size:12px'>▲ " & FORMAT ( [% SKUs Risco], "0%" ) & " dos SKUs em risco</div></div></div>"
+
+
+// =====================================================================
+// PÁGINA TRANSPORTATION
+// Reaproveita: HTML KPI Custo Transporte, HTML KPI Utilizacao.
+// =====================================================================
+
+// ---------------------------------------------------------------------
+// 8. TRANSPORTE · volume, eficiência e demanda
+// ---------------------------------------------------------------------
+
+Semanas = DISTINCTCOUNT ( fato_viagens[semana_inicio] )
+
+Viagens por Semana = DIVIDE ( [Viagens], [Semanas] )
+
+Km Planejados = SUMX ( fato_viagens, RELATED ( dim_rotas[distancia_km] ) )
+
+Custo por Km = DIVIDE ( [Custo Planejado], [Km Planejados] )
+
+Custo por Peca = DIVIDE ( [Custo Planejado], [Pecas Planejadas] )
+
+Pecas Previstas = SUM ( fato_demanda[pecas_previstas] )
+
+Atendimento Demanda = DIVIDE ( [Pecas Planejadas], [Pecas Previstas] )
+
+HTML KPI Viagens =
+VAR a = [Atendimento Demanda]
+RETURN
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Viagens planejadas</div>
+<div class='val'>" & FORMAT ( [Viagens], "#,##0" ) & "<i>em " & [Semanas] & " sem.</i></div>
+<div class='foot'><span>" & FORMAT ( [Viagens por Semana], "0" ) & " por semana · " & FORMAT ( [Pecas Planejadas] / 1e6, "0.00" ) & " Mi peças</span>
+<span class='" & IF ( a >= 1, "up", "dn" ) & "'>" & IF ( a >= 1, "● ", "▼ " ) & FORMAT ( a, "0%" ) & " da demanda</span></div></div>"
+
+HTML KPI Custo Unitario =
+[HTML Estilo] &
+"<div class='k'><div class='lab'>Custo por peça</div>
+<div class='val'>R$ " & FORMAT ( [Custo por Peca], "0.00" ) & "<i>/ peça</i></div>
+<div class='foot'><span>R$ " & FORMAT ( [Custo por Km], "0.00" ) & " por km</span>
+<span>" & FORMAT ( [Km Planejados], "#,##0" ) & " km planejados</span></div></div>"

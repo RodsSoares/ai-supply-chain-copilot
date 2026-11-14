@@ -1,0 +1,223 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Custo planejado × utilização por rota. Tamanho = distância. Campos: rota, origem, destino, distancia_km (Não resumir) + medidas Custo Planejado, Utilizacao, Viagens",
+  "data": {
+    "name": "dataset"
+  },
+  "config": {
+    "background": "transparent",
+    "view": {
+      "stroke": null
+    },
+    "font": "Segoe UI",
+    "axis": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "titleFontWeight": "normal",
+      "titleFontSize": 11,
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#263247",
+      "gridDash": [
+        2,
+        4
+      ]
+    },
+    "legend": {
+      "labelColor": "#94A3B8",
+      "labelFontSize": 11,
+      "titleColor": "#94A3B8",
+      "symbolType": "circle"
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum['Custo Planejado'] / 1000",
+      "as": "custo_mil"
+    },
+    {
+      "calculate": "datum.Utilizacao >= 0.8 ? 'ok' : datum.Utilizacao >= 0.7 ? 'atencao' : 'baixa'",
+      "as": "status"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#22D3A7",
+        "strokeDash": [
+          4,
+          4
+        ],
+        "opacity": 0.6
+      },
+      "encoding": {
+        "x": {
+          "datum": 0.8,
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.55,
+              0.9
+            ],
+            "zero": false
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "text": "META 80%",
+        "color": "#22D3A7",
+        "fontSize": 10,
+        "fontWeight": "bold",
+        "align": "left",
+        "baseline": "top",
+        "dx": 6,
+        "y": 4
+      },
+      "encoding": {
+        "x": {
+          "datum": 0.8,
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.55,
+              0.9
+            ],
+            "zero": false
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "opacity": 0.85,
+        "stroke": "#060A16",
+        "strokeWidth": 1.5
+      },
+      "encoding": {
+        "x": {
+          "field": "Utilizacao",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0.55,
+              0.9
+            ],
+            "zero": false
+          },
+          "axis": {
+            "title": "Utilização (peças / capacidade)",
+            "format": ".0%",
+            "tickCount": 6,
+            "grid": true
+          }
+        },
+        "y": {
+          "field": "custo_mil",
+          "type": "quantitative",
+          "scale": {
+            "zero": true
+          },
+          "axis": {
+            "title": "Custo planejado · R$ mil",
+            "tickCount": 5,
+            "grid": true
+          }
+        },
+        "size": {
+          "field": "distancia_km",
+          "type": "quantitative",
+          "scale": {
+            "range": [
+              120,
+              1400
+            ]
+          },
+          "legend": null
+        },
+        "color": {
+          "field": "status",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "ok",
+              "atencao",
+              "baixa"
+            ],
+            "range": [
+              "#22D3A7",
+              "#F59E0B",
+              "#EF4444"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal",
+            "title": null,
+            "labelExpr": "datum.label == 'ok' ? '≥ 80% ok' : datum.label == 'atencao' ? '70–80% atenção' : '< 70% baixa'"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "rota",
+            "title": "Rota"
+          },
+          {
+            "field": "origem",
+            "title": "Origem"
+          },
+          {
+            "field": "destino",
+            "title": "Destino"
+          },
+          {
+            "field": "distancia_km",
+            "title": "Distância (km)"
+          },
+          {
+            "field": "Viagens",
+            "title": "Viagens"
+          },
+          {
+            "field": "custo_mil",
+            "title": "Custo (R$ mil)",
+            "format": ",.1f"
+          },
+          {
+            "field": "Utilizacao",
+            "title": "Utilização",
+            "format": ".1%"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 14,
+        "color": "#F1F5F9",
+        "fontSize": 11,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "Utilizacao",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "custo_mil",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "rota"
+        }
+      }
+    }
+  ]
+}
