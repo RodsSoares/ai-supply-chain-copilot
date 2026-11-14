@@ -1,0 +1,3 @@
+route_id,route_profile,current_vehicle,current_frequency_min,current_utilization,current_cost,best_vehicle,best_frequency_min,best_utilization,best_cost,annual_saving,service_change,utilization_threshold
+NR009,MEDIUM,NV02,2,0.552636217948718,268898.05799999996,NV03,1,0.552636217948718,180968.931,87929.12699999995,LOWER_MIN_FREQUENCY,0.6
+NR021,LONG,NV03,1,0.29283333333333333,126736.77420000001,NV03,1,0.29283333333333333,126736.77420000001,0.0,NONE,0.6

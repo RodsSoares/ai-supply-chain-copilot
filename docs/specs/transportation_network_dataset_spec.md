@@ -1,7 +1,7 @@
 # Transportation Network — Synthetic Dataset Specification
 
 > **Release:** v2.1.0 — Data Foundation
-> **Status:** 🟡 Draft for implementation
+> **Status:** ✅ Implemented in v2.1 (`src/synthetic/network_generator.py`, `config/synthetic_network.json`)
 > **Last updated:** 2026-11-14
 > **Roadmap:** [ROADMAP v2.x](../roadmap/ROADMAP_v2.x_Network_Planning_Budget.md)
 
@@ -25,11 +25,11 @@ The dataset must:
 | Stores | 120 (≈ 110 active at start + ≈ 10 openings during the horizon) |
 | Brands / business units | 3 (`BRAND_A`, `BRAND_B`, `BRAND_C`) |
 | Channels | 2 (`STORE`, `ECOM_REPLENISHMENT`) |
-| States (UF) | 10–12 |
-| Routes | ≈ 30 (truck) + 3 (air) |
+| States (UF) | 14 (2 served by air) |
+| Routes | 29 (25 road incl. two-driver and alternating-week, 2 air) |
 | Vehicle types | 5 truck types + `AIR` mode |
 | Carriers | 3 (`ATLAS`, `NOVA`, `ORION` — matching the existing synthetic contracts in `data/enterprise_documents`) |
-| Demand history | 2024-W01 → 2025-W52 (104 weeks) |
+| Demand history | 2024-W01 → 2026-W44 (148 weeks — "today" in the synthetic world is 2026-W46) |
 | Forecast horizon | 2026-W01 → 2027-W52 (budget + re-forecast versions) |
 | Actuals | 2025-W01 → 2026-W44 |
 
@@ -72,7 +72,7 @@ Conventions: `snake_case`; dates ISO-8601; money in BRL, 2 decimals; percentages
 
 **`tn_dcs`** — `dc_id` PK, `dc_name`, `city`, `uf`, `weekly_dispatch_capacity_pieces`, `active_from`.
 
-**`tn_stores`** — `store_id` PK, `store_name`, `brand`, `city`, `uf`, `cluster` (`S`, `M`, `L`, `XL`), `opening_date`, `closing_date` (nullable), `status`, `primary_dc_id` FK.
+**`tn_stores`** — `store_id` PK, `store_name`, `brand_set` (pipe-separated brands), `city`, `uf`, `cluster` (`S`, `M`, `L`, `XL`), `opening_date`, `closing_date` (nullable), `status`, `primary_dc_id` FK.
 
 **`tn_carriers`** — `carrier_id` PK, `carrier_name`, `contract_doc_id` (link to RAG documents), `on_time_target`.
 
@@ -111,7 +111,7 @@ Rate generation: base rate = fixed cost per trip + variable cost × distance × 
 
 ### 4.3 Demand
 
-**`tn_demand_history`** — store × week × brand × channel, 2024–2025.
+**`tn_demand_history`** — store × week × brand × channel, 2024-W01 → 2026-W44.
 
 | Column | Type |
 |---|---|
@@ -138,7 +138,7 @@ Deliberate realism:
 
 **`tn_forecast`** — `forecast_version` (`BUDGET_2026`, `BUDGET_2027`, `REFORECAST_2026_Q2`…), `week_start`, `store_id`, `brand`, `channel`, `forecast_pieces`, `model_name`, `created_at`.
 
-In v2.1 the budget forecast is generated as "true demand + controlled bias/noise", so that v2.2 has a measurable accuracy problem. From v2.2 on, forecasts are produced by the forecasting engine.
+Budget versions simulate common planning practice: same ISO week of the previous year × store growth assumption × noise. They inherit calendar shifts (e.g. Black Friday changing week) and an optimistic bias, which gives v2.2 a real accuracy problem. Stores without a previous year use a planner estimate. Model forecasts are produced by `forecasting.gerar_forecast_modelo`.
 
 ### 4.4 Execution
 
@@ -149,7 +149,7 @@ In v2.1 the budget forecast is generated as "true demand + controlled bias/noise
 | trip_id | TEXT PK | |
 | week_start, ship_date | DATE | |
 | route_id, vehicle_type_id, carrier_id | FK | |
-| trip_kind | TEXT | `PLANNED`, `OVERFLOW_SPOT`, `RE_DELIVERY` |
+| trip_kind | TEXT | `PLANNED`, `OVERFLOW_SPOT` (re-deliveries are recorded as extras) |
 | pieces | INT | |
 | freight_cost | DECIMAL | |
 | extra_cost | DECIMAL | |
@@ -191,8 +191,8 @@ Only `APPROVED` adjustments enter the final budget. The engine always keeps mode
 
 ### 4.6 Engine outputs (not generated, computed)
 
-- `tn_planned_trips` — `scenario_id`, `week_start`, `route_id`, `vehicle_type_id`, `planned_trips`, `required_trips`, `overflow_trips`, `planned_pieces`, `planned_capacity`, `planned_cost`, `overflow_cost`, `explanation_json`.
-- `tn_budget_lines` — `scenario_id`, `civil_month`, `dc_id`, `route_id`, `cost_component` (`FREIGHT`, `OVERFLOW`, `EXTRAS`, `TAX`, `TAX_CREDIT`, `ADJUSTMENT`), `amount_brl`, `source` (`MODEL` or `ADJUSTMENT:<id>`).
+- `tn_planned_trips` (`planning.planejar_cenario`) — `scenario_id`, `week_start`, `route_id`, `vehicle_type_id`, `planned_trips`, `required_trips`, `overflow_trips`, `planned_pieces`, `planned_capacity`, `planned_cost`, `overflow_cost`, `explanation_json`.
+- `tn_budget_lines` (`budget.orcamento`) — `scenario_id`, `civil_month`, `dc_id`, `route_id`, `cost_component` (`FREIGHT`, `OVERFLOW`, `EXTRAS`, `TAX`, `TAX_CREDIT`, `ADJUSTMENT`), `amount_brl`, `source` (`MODEL` or `ADJUSTMENT:<id>`).
 
 ## 5. Generator requirements
 
@@ -207,7 +207,7 @@ Only `APPROVED` adjustments enter the final budget. The engine always keeps mode
 |---|---|
 | Reproducibility | Same seed and version → identical file hashes |
 | Referential integrity | All FKs resolve; no orphan stores, routes or rates |
-| Coverage | Every active store-week has demand; every active route-week has a valid rate for each eligible vehicle |
+| Coverage | Every route × eligible vehicle has exactly one valid rate on every week |
 | Route assignment | Each active store belongs to exactly one active route per week |
 | Reconciliation | Σ store demand per route-week = route-level aggregate view |
 | Calendar | 52/53-week years handled; civil-month shares of each week sum to 1 |

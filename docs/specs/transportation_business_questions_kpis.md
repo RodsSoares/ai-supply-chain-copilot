@@ -1,7 +1,7 @@
 # Transportation Network — Business Questions & KPI Dictionary
 
 > **Release line:** v2.1 → v2.6
-> **Status:** 🟡 Draft for implementation
+> **Status:** ✅ Implemented — capabilities in `src/analytics/network/service.py`, exposed through the Transportation router/dispatcher
 > **Last updated:** 2026-11-14
 > **Related:** [Dataset Specification](transportation_network_dataset_spec.md) · [Roadmap](../roadmap/ROADMAP_v2.x_Network_Planning_Budget.md)
 
@@ -20,7 +20,7 @@ This document defines **what the Copilot must answer** and **how every number is
 | Q-PLN-01 | How many trips per week does route X need, and with which vehicle? | `plan_route_week` | Required trips, utilization, cost per piece |
 | Q-PLN-02 | Which route-weeks exceed the planned frequency, and what does the overflow cost? | `analyze_overflow` | Overflow rate, overflow cost |
 | Q-PLN-03 | Which routes run below the utilization threshold, and what happens if we change vehicle or frequency? | `find_consolidation_candidates` | Utilization, cost per piece delta |
-| Q-PLN-04 | What if volume rises 10% in Q4? | `run_what_if` | Trips, cost, overflow, utilization deltas |
+| Q-PLN-04 | What if volume rises 10% in Q4? | `run_what_if` | Trips, cost, overflow, utilization, budget and emissions deltas |
 | Q-PLN-05 | Which DC is closest to its dispatch capacity in peak weeks? | `analyze_dc_load` | DC load factor |
 
 ### 2.2 Demand and forecast (v2.2)
@@ -66,14 +66,14 @@ This document defines **what the Copilot must answer** and **how every number is
 
 ## 3. KPI dictionary
 
-Notation: *V* = pieces; *T* = trips; *C* = cost (BRL); *Cap* = vehicle capacity in pieces; subscripts *b* = baseline / plan / prior year, *a* = actual / new scenario.
+Notation: *V* = pieces; *T* = trips (pieces for air routes, which are priced per piece); *C* = cost (BRL); *Cap* = vehicle capacity in pieces; subscripts *b* = baseline / plan / prior year, *a* = actual / new scenario.
 
 ### 3.1 Capacity and cost
 
 | KPI | Formula | Notes |
 |---|---|---|
 | Required trips (week) | `ceil(V_week / Cap)` | Road routes; air = not trip-based |
-| Planned trips (week) | `max(required_trips_policy, min_frequency(profile, cluster))` | Frequency from `tn_parameters` |
+| Monthly fixed frequency | `max(min_frequency(profile), f(required_trips of the month's weeks))`, f = rounded MEAN, rounded P75 or MAX | 0 when the route has no demand in the month |
 | Overflow trips | `max(0, required_trips_week − planned_frequency_month)` | When the frequency is fixed per month |
 | Overflow rate | `route-weeks with overflow / total route-weeks` | |
 | Overflow cost | `overflow_trips × rate × spot_premium` | |
@@ -116,17 +116,18 @@ Sequential decomposition (sums exactly to `C_a − C_b`):
 | Rate effect | `V_a × (T/V)_a × [(C/T)_a − (C/T)_b]` |
 | Adjustments | `Σ approved management adjustments` (budget only) |
 
-Budget composition per civil month:
+Budget composition per civil month (rates are gross, tax-inclusive):
 
 ```
-freight   = Σ planned_trips × rate (effective-dated) allocated by civil_month_share
-overflow  = Σ overflow_cost
-extras    = (freight + overflow) × extras_rate
-taxes     = Σ tax components over (freight + overflow + extras)
-credits   = recoverable tax components (flagged in tn_parameters)
-model_budget = freight + overflow + extras + taxes − credits
+freight      = Σ planned_trips × rate (effective-dated × scenario adjustments), allocated by civil_month_share
+overflow     = Σ overflow_trips × rate × spot_premium
+extras       = (freight + overflow) × extras_rate
+tax_credit   = −(freight + overflow + extras) × recoverable_credit_rate
+model_budget = freight + overflow + extras + tax_credit
 final_budget = model_budget + Σ approved adjustments
 ```
+
+Adjustments: `MULTIPLIER` adds (value − 1) × model total in scope (non-compounding); `ABSOLUTE_BRL` adds the value, allocated by model weight in scope. Only `APPROVED` adjustments apply.
 
 | KPI | Formula |
 |---|---|

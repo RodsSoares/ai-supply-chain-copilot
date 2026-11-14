@@ -16,8 +16,27 @@ TransportationIntentName = Literal[
     "operational_changes",
     "cost_pressure",
     "executive_summary",
+    # Network Planning & Budget (v2.x)
+    "plan_route_week",
+    "analyze_overflow",
+    "find_consolidation_candidates",
+    "run_what_if",
+    "analyze_dc_load",
+    "forecast_accuracy",
+    "forecast_value_added",
+    "demand_variability",
+    "budget_summary",
+    "budget_bridge",
+    "adjustment_report",
+    "new_store_cost_estimate",
+    "plan_vs_actual",
+    "extras_analysis",
+    "carrier_performance",
+    "emissions_summary",
     "out_of_scope",
 ]
+
+NetworkScenarioName = Literal["PLAN_2026", "BUDGET_2027"]
 
 
 class TransportationIntent(BaseModel):
@@ -32,6 +51,16 @@ class TransportationIntent(BaseModel):
 
     intent: TransportationIntentName
     route_id: str | None = None
+
+    # Campos opcionais das capacidades de rede (v2.x). O LLM apenas extrai
+    # valores explícitos da pergunta; o dispatcher constrói os parâmetros.
+    scenario_id: NetworkScenarioName | None = None
+    forecast_version: Literal["BUDGET_2026", "BUDGET_2027"] | None = None
+    level: Literal["NETWORK", "DC", "ROUTE", "STORE"] | None = None
+    uf: str | None = None
+    weekly_pieces: float | None = None
+    what_if_frequency_basis: Literal["MEAN", "P75", "MAX"] | None = None
+    what_if_volume_change_pct: float | None = None
 
 
 TRANSPORTATION_ROUTER_PROMPT = """
@@ -79,6 +108,26 @@ Capacidades disponíveis:
   Use para perguntas gerais sobre como está a operação da rede,
   desempenho consolidado, situação atual ou evolução executiva.
 
+Capacidades da rede (Network Planning & Budget — cenários PLAN_2026 e BUDGET_2027):
+
+- plan_route_week: viagens por rota, veículo, ocupação e custo por peça no plano.
+- analyze_overflow: semanas em que a frequência planejada não comporta o volume e custo spot.
+- find_consolidation_candidates: rotas com baixa ocupação e alternativas de veículo/frequência.
+- run_what_if: simulação. Preencha what_if_frequency_basis (MEAN, P75, MAX) e/ou
+  what_if_volume_change_pct (ex.: 10 para +10%) somente se a pergunta trouxer esses valores.
+- analyze_dc_load: carga dos centros de distribuição.
+- forecast_accuracy: acurácia (WAPE) e viés de uma versão de forecast; level opcional.
+- forecast_value_added: comparação dos modelos de forecast contra o naïve sazonal.
+- demand_variability: lojas com demanda mais volátil.
+- budget_summary: orçamento por mês e componente.
+- budget_bridge: explicação da variação entre o plano 2026 e o orçamento 2027.
+- adjustment_report: ajustes gerenciais, motivos, aprovação e impacto.
+- new_store_cost_estimate: custo para servir uma loja nova; preencha uf e weekly_pieces.
+- plan_vs_actual: plano vs. realizado e seus direcionadores.
+- extras_analysis: custos extras por motivo.
+- carrier_performance: entregas no prazo por transportadora vs. meta.
+- emissions_summary: emissões estimadas de GEE por rota e por peça.
+
 - out_of_scope:
   pergunta que não pode ser respondida por nenhuma das
   capacidades analíticas disponíveis no módulo Transportation.
@@ -98,6 +147,9 @@ Regras:
 8. Nunca force uma pergunta fora do escopo para uma capacidade
    analítica existente.
 9. Quando intent for out_of_scope, route_id deve ser null.
+10. Para capacidades da rede, preencha scenario_id, forecast_version, level,
+    uf, weekly_pieces e campos what_if_* somente com valores explícitos
+    na pergunta; caso contrário, deixe null.
 """
 
 

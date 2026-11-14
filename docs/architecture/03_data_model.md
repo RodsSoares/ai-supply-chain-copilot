@@ -802,3 +802,16 @@ Active
 Last Updated
 
 2026-09-22
+
+Network Planning & Budget Data Model (v2.x)
+
+The v2.x release line adds a separate tn_* namespace for the synthetic multi-DC network. The v2.0.0 Transportation tables are unchanged.
+
+Full data dictionary, generation rules and validation tests: docs/specs/transportation_network_dataset_spec.md
+
+KPI formulas and business questions: docs/specs/transportation_business_questions_kpis.md
+
+Data lifecycle:
+
+config/synthetic_network.json → src/synthetic/network_generator.py → data/synthetic/transportation/network/*.csv → (optional) SQLite tn_* tables via src/etl/network/load_network.py → src/analytics/network/* (forecast, planning, budget, variance, emissions) → output/network/*.csv (BI) and Copilot capabilities (src/analytics/network/service.py)
+

@@ -1,7 +1,7 @@
 # AI Supply Chain Copilot — Roadmap v2.x: Network Planning & Budget
 
 > **Branch:** `feature/network-planning-budget`
-> **Status:** 🟡 Planned — committed scope for the v2.x release line
+> **Status:** 🟢 v2.1–v2.4 implemented · v2.5 partially implemented (Power BI pending) · v2.6 not started
 > **Last updated:** 2026-11-14
 > **Related documents:**
 > - [Synthetic Dataset Specification](../specs/transportation_network_dataset_spec.md)
@@ -47,6 +47,15 @@ Portfolio narrative:
 
 ## 4. Release plan
 
+| Release | Status |
+|:-:|:-:|
+| v2.1.0 | ✅ Implemented |
+| v2.2.0 | ✅ Implemented |
+| v2.3.0 | ✅ Implemented |
+| v2.4.0 | ✅ Implemented |
+| v2.5.0 | 🟡 GHG, case study and BI data model done; Power BI report and real-LLM Golden Set run pending |
+| v2.6.0 | ⏳ Not started |
+
 | Release | Theme | Main deliverables | Closes |
 |:-:|---|---|:-:|
 | **v2.1.0** | Data Foundation | Seeded synthetic network generator, new schema, ETL, reconciliation tests | base |
@@ -62,10 +71,10 @@ Portfolio narrative:
 
 Deliverables:
 - `scripts/generate_transportation_network.py` — deterministic generator (fixed seed, versioned `dataset_version`).
-- CSVs under `data/synthetic/transportation/network/` and loaders under `src/etl/transportation/`.
+- CSVs under `data/synthetic/transportation/network/` and loaders under `src/etl/network/`.
 - New tables as defined in the dataset specification (`tn_*` namespace, v2.0 tables untouched).
 - Reconciliation and integrity tests (keys, ranges, sums, calendar coverage).
-- Data dictionary appended to `03_data_model.md`.
+- Data dictionary in the dataset specification (linked from `03_data_model.md`).
 
 Acceptance criteria:
 - Same seed → byte-identical CSVs.
@@ -95,7 +104,7 @@ Acceptance criteria:
 
 Deliverables:
 - Frequency policy by route profile and store cluster, read from parameters (replaces the flat value of 2/week).
-- Peak-aware planning: monthly fixed frequency + weekly check of required trips; overflow trips priced at the spot rate.
+- Peak-aware planning: monthly fixed frequency (MEAN / P75 / MAX) + weekly check of required trips; overflow trips priced at the spot rate.
 - Alternating-week routes and air-mode routes as explicit route types.
 - What-if engine (backlog BIZ-001): volume shock, vehicle change, frequency change, rate change — each scenario stored and comparable.
 - Consolidation candidates: routes below the utilization threshold, with the cost impact of switching vehicle or frequency.

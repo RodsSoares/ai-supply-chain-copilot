@@ -1,6 +1,7 @@
 from typing import Any, Callable
 
 from src.ai.transportation_router import TransportationIntent
+from src.analytics.network.service import CAPACIDADES_NETWORK, executar_capacidade
 from src.analytics.transportation.sql_analysis import (
     analisar_concentracao_custo_rede,
     analisar_eficiencia_economica,
@@ -29,6 +30,36 @@ ANALISES_TRANSPORTATION: dict[str, Callable[[], Any]] = {
 }
 
 
+def parametros_capacidade_network(
+    intencao: TransportationIntent,
+) -> dict[str, Any]:
+    """
+    Constrói deterministicamente os parâmetros de uma capacidade de rede
+    a partir dos campos validados da intenção.
+
+    O LLM nunca envia overrides livres: o what-if só aceita os campos
+    tipados do contrato, convertidos aqui em overrides de cenário.
+    """
+
+    parametros: dict[str, Any] = {}
+
+    for campo in ("route_id", "scenario_id", "forecast_version", "level", "uf", "weekly_pieces"):
+        valor = getattr(intencao, campo)
+        if valor is not None:
+            parametros[campo] = valor
+
+    if intencao.intent == "run_what_if":
+        overrides = []
+        if intencao.what_if_frequency_basis:
+            overrides.append({"parameter_key": "frequency_basis", "value": intencao.what_if_frequency_basis})
+        if intencao.what_if_volume_change_pct is not None:
+            overrides.append({"parameter_key": "volume_multiplier", "value": 1 + intencao.what_if_volume_change_pct / 100})
+        parametros["overrides"] = overrides
+        parametros.pop("route_id", None)
+
+    return parametros
+
+
 def executar_intencao_transporte(
     intencao: TransportationIntent,
 ) -> Any:
@@ -43,6 +74,12 @@ def executar_intencao_transporte(
         raise ValueError(
             "A pergunta está fora do escopo analítico "
             "de Transportation."
+        )
+
+    if intencao.intent in CAPACIDADES_NETWORK:
+        return executar_capacidade(
+            intencao.intent,
+            **parametros_capacidade_network(intencao),
         )
 
     funcao_analitica = ANALISES_TRANSPORTATION.get(

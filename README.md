@@ -710,6 +710,28 @@ Cloud Deployment
 End-to-End Validation
 ```
 
+## In Development — v2.x Network Planning & Budget
+
+> Branch `feature/network-planning-budget` · [Roadmap](docs/roadmap/ROADMAP_v2.x_Network_Planning_Budget.md) · [Case study](docs/case_studies/network_planning_budget.md) · [Generated summary](reports/network/network_analytics_summary.md)
+
+The Transportation domain is being extended into a **Network Planning & Budget Simulator** on a 100% synthetic multi-DC network (3 DCs, 120 stores, 29 routes, 148 weeks of store-level shipments):
+
+| Release | Capability | Status |
+|---|---|:-:|
+| v2.1 | Seeded synthetic network generator, `tn_*` schema, ETL, data-quality and reconciliation checks | ✅ |
+| v2.2 | Forecast baselines (seasonal naïve, moving average, Holt-Winters), rolling backtest, WAPE / bias / FVA | ✅ |
+| v2.3 | Monthly fixed frequency + spot overflow, what-if scenarios, consolidation candidates | ✅ |
+| v2.4 | Budget lines by civil month, explicit management adjustments, exact budget bridge, plan vs. actual | ✅ |
+| v2.5 | GHG estimation, Copilot capabilities, BI data model (`output/network/`) | 🟡 Power BI report pending |
+
+```bash
+python scripts/generate_transportation_network.py   # regenerate the synthetic network (seed 42)
+python scripts/run_network_analytics.py             # run the engine, export CSVs and the summary report
+python -m src.etl.network.load_network              # optional: load tn_* tables into SQLite
+```
+
+New Copilot intents (allow-listed, deterministic): `plan_route_week`, `analyze_overflow`, `find_consolidation_candidates`, `run_what_if`, `analyze_dc_load`, `forecast_accuracy`, `forecast_value_added`, `demand_variability`, `budget_summary`, `budget_bridge`, `adjustment_report`, `new_store_cost_estimate`, `plan_vs_actual`, `extras_analysis`, `carrier_performance`, `emissions_summary`.
+
 ## Roadmap & Version History
 
 | Phase                                                            | Planned Release | Status |
@@ -722,6 +744,7 @@ End-to-End Validation
 | Functional AI Copilot                                            | v1.0.0          |   ✅   |
 | Cloud Deployment & Conversational Frontend                       | v1.1.0          |   ✅   |
 | Multi-Domain Architecture: Inventory + Transportation            | v2.0.0          |   ✅   |
+| Network Planning & Budget (synthetic multi-DC network)           | v2.1–v2.6       |   🟡   |
 | Production Hardening / Agentic Execution                         | Future          |   ⏳   |
 
 ### Version History
