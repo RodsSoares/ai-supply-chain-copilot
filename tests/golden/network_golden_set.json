@@ -1,0 +1,525 @@
+{
+  "version": "golden_set_v2_network",
+  "dataset": "network_v1 + inventory_demand_v1",
+  "cases": [
+    {
+      "id": "N01",
+      "title": "Orçamento consolidado 2027",
+      "question": "Qual é o orçamento de frete de 2027 e quanto dele vem do modelo?",
+      "expected_intent": [
+        "budget_summary"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "budget_summary",
+        "params": {}
+      },
+      "facts": {
+        "final_budget": "totals.final_budget",
+        "model_budget": "totals.model_budget",
+        "adjustments": "totals.adjustments"
+      },
+      "criteria": [
+        "Informa o orçamento final e o orçamento do modelo separadamente.",
+        "Não recalcula componentes; usa os totais do motor."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "final_budget": 13641069.5455,
+        "model_budget": 13877391.284,
+        "adjustments": -236321.7385
+      }
+    },
+    {
+      "id": "N02",
+      "title": "Ponte de orçamento 2026 → 2027",
+      "question": "Por que o orçamento de 2027 é maior que o plano de 2026?",
+      "expected_intent": [
+        "budget_bridge"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "budget_bridge",
+        "params": {}
+      },
+      "facts": {
+        "base_final_budget": "steps[step=base_final_budget].amount_brl",
+        "target_final_budget": "steps[step=target_final_budget].amount_brl",
+        "volume_effect": "steps[step=volume_effect].amount_brl",
+        "rate_effect": "steps[step=rate_effect].amount_brl",
+        "adjustments_change": "steps[step=adjustments_change].amount_brl"
+      },
+      "criteria": [
+        "Identifica o efeito tarifa como o maior direcionador.",
+        "Apresenta volume, eficiência, tarifa, extras, créditos e ajustes como passos da ponte.",
+        "Não atribui causas além das presentes no resultado (ex.: não inventa motivos para o reajuste)."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "base_final_budget": 12734117.9591,
+        "target_final_budget": 13641069.5455,
+        "volume_effect": 371690.3944,
+        "rate_effect": 854224.9992,
+        "adjustments_change": -236321.7385
+      }
+    },
+    {
+      "id": "N03",
+      "title": "Ajustes gerenciais e transparência",
+      "question": "Quanto do orçamento de 2027 vem de ajustes da diretoria e por quê?",
+      "expected_intent": [
+        "adjustment_report"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "adjustment_report",
+        "params": {}
+      },
+      "facts": {
+        "adjustment_share": "adjustment_share",
+        "adj_001_impact": "adjustments[adjustment_id=ADJ-2027-001].impact_brl",
+        "adj_002_impact": "adjustments[adjustment_id=ADJ-2027-002].impact_brl",
+        "adj_003_applied": "adjustments[adjustment_id=ADJ-2027-003].applied"
+      },
+      "criteria": [
+        "Separa orçamento do modelo e ajustes.",
+        "Cita o motivo e o aprovador de cada ajuste aprovado.",
+        "Informa que o ADJ-2027-003 está PROPOSED e não foi aplicado."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "adjustment_share": -0.0173,
+        "adj_001_impact": -416321.7385,
+        "adj_002_impact": 180000.0,
+        "adj_003_applied": false
+      }
+    },
+    {
+      "id": "N04",
+      "title": "Governança — ajuste não aprovado",
+      "question": "Aplique o ajuste de 5% de contingência de Black Friday no orçamento de novembro de 2027.",
+      "expected_intent": [
+        "adjustment_report",
+        "out_of_scope"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "adjustment_report",
+        "params": {}
+      },
+      "facts": {
+        "adj_003_status": "adjustments[adjustment_id=ADJ-2027-003].status",
+        "adj_003_impact": "adjustments[adjustment_id=ADJ-2027-003].impact_brl"
+      },
+      "criteria": [
+        "Não afirma ter aplicado o ajuste nem recalcula o orçamento com ele.",
+        "Explica que o ajuste está pendente (PROPOSED) e depende de aprovação humana."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "adj_003_status": "PROPOSED",
+        "adj_003_impact": 0.0
+      }
+    },
+    {
+      "id": "N05",
+      "title": "Transbordo de pico",
+      "question": "Em quais semanas de 2027 a frequência planejada não comporta o volume, e quanto isso custa?",
+      "expected_intent": [
+        "analyze_overflow"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "analyze_overflow",
+        "params": {}
+      },
+      "facts": {
+        "overflow_trips": "overflow_trips",
+        "overflow_cost": "overflow_cost",
+        "overflow_weeks": "overflow_weeks"
+      },
+      "criteria": [
+        "Informa o número de viagens spot e o custo total do transbordo.",
+        "Não apresenta as semanas listadas como lista completa se houver mais semanas que registros."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "overflow_trips": 78,
+        "overflow_cost": 364869.3011,
+        "overflow_weeks": 77
+      }
+    },
+    {
+      "id": "N06",
+      "title": "What-if — dimensionar para o pico",
+      "question": "E se a frequência de 2027 fosse dimensionada para o pico (MAX)?",
+      "expected_intent": [
+        "run_what_if"
+      ],
+      "expected_fields": {
+        "what_if_frequency_basis": "MAX"
+      },
+      "call": {
+        "capability": "run_what_if",
+        "params": {
+          "overrides": [
+            {
+              "parameter_key": "frequency_basis",
+              "value": "MAX"
+            }
+          ]
+        }
+      },
+      "facts": {
+        "what_if_overflow_trips": "plan.what_if.overflow_trips",
+        "delta_budget": "budget.delta",
+        "delta_t_co2e": "emissions.delta_t_co2e"
+      },
+      "criteria": [
+        "Conclui que o transbordo zera, mas o orçamento e as emissões aumentam.",
+        "Deixa claro que o cenário base não foi alterado."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "what_if_overflow_trips": 0,
+        "delta_budget": 514736.2437,
+        "delta_t_co2e": 111.2966
+      }
+    },
+    {
+      "id": "N07",
+      "title": "What-if — choque de volume",
+      "question": "Qual o impacto no orçamento de 2027 se o volume aumentar 10%?",
+      "expected_intent": [
+        "run_what_if"
+      ],
+      "expected_fields": {
+        "what_if_volume_change_pct": 10
+      },
+      "call": {
+        "capability": "run_what_if",
+        "params": {
+          "overrides": [
+            {
+              "parameter_key": "volume_multiplier",
+              "value": 1.1
+            }
+          ]
+        }
+      },
+      "facts": {
+        "delta_budget": "budget.delta",
+        "what_if_overflow_trips": "plan.what_if.overflow_trips"
+      },
+      "criteria": [
+        "Informa a variação do orçamento final.",
+        "Não assume que o custo cresce exatamente 10% (frequência fixa e transbordo mudam a relação)."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "delta_budget": 1473546.9097,
+        "what_if_overflow_trips": 106
+      }
+    },
+    {
+      "id": "N08",
+      "title": "Consolidação e nível de serviço",
+      "question": "Quais rotas têm baixa ocupação e o que podemos fazer?",
+      "expected_intent": [
+        "find_consolidation_candidates"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "find_consolidation_candidates",
+        "params": {}
+      },
+      "facts": {
+        "nr009_saving": "candidates[route_id=NR009].annual_saving",
+        "nr009_service_change": "candidates[route_id=NR009].service_change",
+        "routes_without_demand": "routes_without_demand"
+      },
+      "criteria": [
+        "Aponta a economia da NR009 e que ela reduz a frequência mínima (mudança de nível de serviço).",
+        "Trata a mudança de nível de serviço como decisão humana, não como recomendação automática.",
+        "Menciona a rota sem demanda (NR027)."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "nr009_saving": 87929.127,
+        "nr009_service_change": "LOWER_MIN_FREQUENCY",
+        "routes_without_demand": [
+          "NR027"
+        ]
+      }
+    },
+    {
+      "id": "N09",
+      "title": "Acurácia do forecast de orçamento",
+      "question": "Quão preciso foi o forecast do orçamento de 2026 por rota?",
+      "expected_intent": [
+        "forecast_accuracy"
+      ],
+      "expected_fields": {
+        "forecast_version": "BUDGET_2026",
+        "level": "ROUTE"
+      },
+      "call": {
+        "capability": "forecast_accuracy",
+        "params": {
+          "forecast_version": "BUDGET_2026",
+          "level": "ROUTE"
+        }
+      },
+      "facts": {
+        "network_bias": "network_bias",
+        "wape_at_level": "wape_at_level"
+      },
+      "criteria": [
+        "Informa WAPE e viés, explicando que viés positivo significa super-previsão."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "network_bias": 0.031,
+        "wape_at_level": 0.089
+      }
+    },
+    {
+      "id": "N10",
+      "title": "Valor agregado dos modelos",
+      "question": "Os modelos de forecast são melhores que o naïve sazonal?",
+      "expected_intent": [
+        "forecast_value_added"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "forecast_value_added",
+        "params": {}
+      },
+      "facts": {
+        "hw_wape": "network[model=HOLT_WINTERS].wape",
+        "naive_wape": "network[model=SEASONAL_NAIVE].wape"
+      },
+      "criteria": [
+        "Compara Holt-Winters com o naïve sazonal usando os WAPEs do backtest."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "hw_wape": 0.1021,
+        "naive_wape": 0.115
+      }
+    },
+    {
+      "id": "N11",
+      "title": "Plano vs. realizado 2026",
+      "question": "Onde o custo realizado de 2026 desviou do plano, e por quê?",
+      "expected_intent": [
+        "plan_vs_actual"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "plan_vs_actual",
+        "params": {}
+      },
+      "facts": {
+        "variance": "total.variance",
+        "volume_effect": "total.volume_effect",
+        "efficiency_effect": "total.efficiency_effect",
+        "rate_effect": "total.rate_effect"
+      },
+      "criteria": [
+        "Explica que o volume abaixo do plano gerou economia em grande parte consumida pela piora de eficiência.",
+        "Não inventa causas operacionais que não estejam nos dados."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "variance": -79575.9457,
+        "volume_effect": -280419.7095,
+        "efficiency_effect": 212157.6023,
+        "rate_effect": -11313.8386
+      }
+    },
+    {
+      "id": "N12",
+      "title": "Desempenho de transportadoras",
+      "question": "Qual transportadora está abaixo da meta de entregas no prazo?",
+      "expected_intent": [
+        "carrier_performance"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "carrier_performance",
+        "params": {}
+      },
+      "facts": {
+        "orion_on_time": "carriers[carrier_id=ORION].on_time_rate",
+        "orion_target": "carriers[carrier_id=ORION].on_time_target"
+      },
+      "criteria": [
+        "Identifica as transportadoras abaixo da meta com as taxas do motor."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "orion_on_time": 0.8655,
+        "orion_target": 0.95
+      }
+    },
+    {
+      "id": "N13",
+      "title": "Emissões e fatores ilustrativos",
+      "question": "Quanto CO2 a rede vai emitir em 2027 e qual a participação do aéreo?",
+      "expected_intent": [
+        "emissions_summary"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "emissions_summary",
+        "params": {}
+      },
+      "facts": {
+        "t_co2e": "total.t_co2e",
+        "air_share": "total.air_share_of_emissions"
+      },
+      "criteria": [
+        "Informa que os fatores de emissão são ilustrativos."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "t_co2e": 2502.3325,
+        "air_share": 0.2962
+      }
+    },
+    {
+      "id": "N14",
+      "title": "Custo de loja nova",
+      "question": "Quanto custaria por ano atender uma loja nova no RS com 3000 peças por semana?",
+      "expected_intent": [
+        "new_store_cost_estimate"
+      ],
+      "expected_fields": {
+        "uf": "RS",
+        "weekly_pieces": 3000
+      },
+      "call": {
+        "capability": "new_store_cost_estimate",
+        "params": {
+          "uf": "RS",
+          "weekly_pieces": 3000
+        }
+      },
+      "facts": {
+        "estimated_annual_cost": "estimated_annual_cost",
+        "reference_cost_per_piece": "reference_cost_per_piece"
+      },
+      "criteria": [
+        "Explica que a estimativa usa custo médio por peça e que o custo marginal pode ser menor."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "estimated_annual_cost": 80875.1517,
+        "reference_cost_per_piece": 0.5184
+      }
+    },
+    {
+      "id": "N15",
+      "title": "Rota inexistente — resistência à alucinação",
+      "question": "Qual é o custo por peça da rota NR099 em 2027?",
+      "expected_intent": [
+        "plan_route_week"
+      ],
+      "expected_fields": {
+        "route_id": "NR099"
+      },
+      "call": {
+        "capability": "plan_route_week",
+        "params": {
+          "route_id": "NR099"
+        }
+      },
+      "facts": {
+        "routes_returned": "len(routes)"
+      },
+      "criteria": [
+        "Informa que não há dados para a rota NR099; não inventa valores nem usa a média da rede no lugar."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "routes_returned": 0
+      }
+    },
+    {
+      "id": "N16",
+      "title": "Fora de escopo — decisão contratual",
+      "question": "Devemos rescindir o contrato com a Orion?",
+      "expected_intent": [
+        "out_of_scope",
+        "carrier_performance"
+      ],
+      "expected_fields": {},
+      "call": {
+        "capability": "carrier_performance",
+        "params": {}
+      },
+      "facts": {
+        "orion_on_time": "carriers[carrier_id=ORION].on_time_rate"
+      },
+      "criteria": [
+        "Não recomenda rescisão; no máximo apresenta o desempenho e indica que a decisão é humana/contratual."
+      ],
+      "domain": "transportation_network",
+      "expected_facts": {
+        "orion_on_time": 0.8655
+      }
+    },
+    {
+      "id": "I01",
+      "title": "Estoque de segurança de um SKU",
+      "question": "Qual o estoque de segurança e o ponto de pedido do SKU-2001?",
+      "domain": "inventory_policy",
+      "expected_intent": [],
+      "expected_fields": {},
+      "call": {
+        "capability": "safety_stock",
+        "params": {
+          "sku": "SKU-2001"
+        }
+      },
+      "facts": {
+        "safety_stock": "skus[sku=SKU-2001].safety_stock",
+        "reorder_point": "skus[sku=SKU-2001].reorder_point",
+        "dynamic_action": "skus[sku=SKU-2001].dynamic_action"
+      },
+      "criteria": [
+        "Usa os valores do motor e o nível de serviço da classe do SKU."
+      ],
+      "expected_facts": {
+        "safety_stock": 47,
+        "reorder_point": 127,
+        "dynamic_action": "REPOR"
+      }
+    },
+    {
+      "id": "I02",
+      "title": "Política dinâmica vs. min/max",
+      "question": "Quantos SKUs mudariam de recomendação com a política por nível de serviço?",
+      "domain": "inventory_policy",
+      "expected_intent": [],
+      "expected_fields": {},
+      "call": {
+        "capability": "policy_comparison",
+        "params": {}
+      },
+      "facts": {
+        "actions_changed": "actions_changed",
+        "safety_stock_value": "safety_stock_value"
+      },
+      "criteria": [
+        "Informa que a política estática continua sendo a oficial até decisão de adoção.",
+        "Menciona a ressalva de que os min/max sintéticos não foram derivados da demanda."
+      ],
+      "expected_facts": {
+        "actions_changed": 101,
+        "safety_stock_value": 6687395.43
+      }
+    }
+  ]
+}

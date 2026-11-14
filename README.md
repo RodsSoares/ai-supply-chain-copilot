@@ -732,6 +732,8 @@ python scripts/run_inventory_policy.py              # v2.6 dynamic inventory pol
 python -m src.etl.network.load_network              # optional: load tn_* tables into SQLite
 ```
 
+Golden Set v2 ([questions](tests/golden_test_set_network.md)): 18 cases with expected routing and engine-derived reference values, locked in `tests/golden/network_golden_set.json` and guarded by a drift test. Real-LLM run: `python scripts/run_network_golden_set.py` (`--dry-run` for deterministic checks only).
+
 New Copilot intents (allow-listed, deterministic): `plan_route_week`, `analyze_overflow`, `find_consolidation_candidates`, `run_what_if`, `analyze_dc_load`, `forecast_accuracy`, `forecast_value_added`, `demand_variability`, `budget_summary`, `budget_bridge`, `adjustment_report`, `new_store_cost_estimate`, `plan_vs_actual`, `extras_analysis`, `carrier_performance`, `emissions_summary`.
 
 ## Roadmap & Version History

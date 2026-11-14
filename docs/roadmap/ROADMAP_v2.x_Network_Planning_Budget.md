@@ -53,7 +53,7 @@ Portfolio narrative:
 | v2.2.0 | ✅ Implemented |
 | v2.3.0 | ✅ Implemented |
 | v2.4.0 | ✅ Implemented |
-| v2.5.0 | 🟡 GHG, case study and BI data model done; Power BI report and real-LLM Golden Set run pending |
+| v2.5.0 | 🟡 GHG, case study, BI data model and Golden Set v2 (18 cases + runner) done; Power BI report and the real-LLM run pending |
 | v2.6.0 | ✅ Engine + capabilities; integration into the Inventory Copilot flow pending (requires Golden Set update) |
 
 | Release | Theme | Main deliverables | Closes |

@@ -2,6 +2,7 @@ from src.ai.client import gerar_resposta
 from src.ai.inventory_context import preparar_contexto
 from src.ai.prompts import (
     INVENTORY_PROMPT,
+    NETWORK_PROMPT,
     SYSTEM_PROMPT,
     TRANSPORTATION_PROMPT,
 )
@@ -15,6 +16,7 @@ from src.ai.transportation_dispatcher import (
 from src.ai.transportation_router import (
     rotear_pergunta_transporte,
 )
+from src.analytics.network.service import CAPACIDADES_NETWORK
 
 
 DOMINIOS_SUPORTADOS = {
@@ -106,6 +108,11 @@ def responder_transportation(pergunta: str) -> str:
         + "\n\n"
         + TRANSPORTATION_PROMPT
     )
+
+    # Intenções v2.0 mantêm exatamente as instruções validadas;
+    # capacidades de rede recebem regras adicionais de governança.
+    if intencao.intent in CAPACIDADES_NETWORK:
+        instrucoes += "\n\n" + NETWORK_PROMPT
 
     return gerar_resposta(
         pergunta=pergunta,

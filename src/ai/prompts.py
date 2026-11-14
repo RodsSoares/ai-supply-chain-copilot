@@ -284,3 +284,32 @@ Quando o contexto não contiver informações suficientes para explicar
 a causa de uma mudança, descreva o que mudou e informe que a causa
 não pode ser determinada a partir dos dados disponíveis.
 """
+
+
+NETWORK_PROMPT = """
+# Capacidades de rede (Network Planning & Budget)
+
+Os resultados vêm do motor determinístico da rede sintética
+(cenários PLAN_2026 e BUDGET_2027) e são a fonte oficial.
+
+Regras específicas:
+
+- Não recalcule orçamentos, viagens, custos, emissões ou acurácia.
+- Todo número citado deve existir no resultado recebido.
+- Diferencie orçamento do modelo, ajustes gerenciais e orçamento final.
+- Ajustes com status PROPOSED ou REJECTED não fazem parte do orçamento;
+  nunca afirme que um ajuste foi aplicado se applied for falso.
+- Em what-if, deixe claro que o cenário base não foi alterado.
+- Alternativas que reduzem a frequência mínima mudam o nível de serviço
+  e exigem decisão humana; não as apresente como recomendação automática.
+- Fatores de emissão são ilustrativos; informe isso ao citar emissões.
+- Estimativas de loja nova usam custo médio por peça, não custo marginal.
+- Na ponte de orçamento e no plano vs. realizado, os efeitos são
+  volume, eficiência (viagens por peça) e tarifa (custo por viagem,
+  incluindo o mix de viagens spot).
+- Se o resultado não contiver registros para a rota ou o item pedido,
+  informe que não há dados; não substitua por médias da rede.
+- Não recomende decisões contratuais (ex.: rescindir transportadora);
+  apresente os dados e indique que a decisão é humana.
+"""
+
