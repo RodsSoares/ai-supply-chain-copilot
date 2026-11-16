@@ -11,6 +11,8 @@ kit/
 ├── backgrounds/   bg_command_center.png · bg_inventory.png · bg_transportation.png · layout.json
 ├── theme/         ai_supply_chain_hud_v6.json
 ├── data/          fato_estoque · fato_viagens · fato_demanda · dim_rotas · dim_veiculos · dim_semana · copilot_insights (.csv)
+│                  fato_rede_realizado · fato_rede_extras · fato_rede_pontualidade · fato_rede_acuracia
+│                  fato_rede_variabilidade · dim_rede_rotas (.csv, rede v2.x)
 ├── dax/           medidas.dax
 └── deneb/         rede_transporte.json · custo_semanal.json · acoes_prioridade.json
                    pareto_estoque.json · acoes_deposito.json · custo_x_utilizacao.json
@@ -57,8 +59,30 @@ Relacionamentos (**Exibição de modelo**), todos *muitos para um*, filtro únic
 | `fato_viagens[veiculo]` | `dim_veiculos[veiculo]` |
 | `fato_demanda[rota]` | `dim_rotas[rota]` |
 | `fato_demanda[semana_inicio]` | `dim_semana[semana_inicio]` |
+| `fato_rede_realizado[rota_rede]` | `dim_rede_rotas[rota_rede]` |
 
 `fato_estoque` e `copilot_insights` ficam soltas. Confira se `semana_inicio` está como **Data** nas três tabelas.
+
+### 2.1 Tabelas da rede v2.x
+
+As tabelas `fato_rede_*` e `dim_rede_rotas` saem das consultas de `sql/network/`, uma por pergunta de negócio.
+Os números são os mesmos que os testes reconciliam com o motor do Copilot.
+
+| Tabela | Grão | Pergunta | Consulta |
+|---|---|---|---|
+| `fato_rede_realizado` | rota + semana | Q-PRF-01 (realizado) | `q_prf_01_actual_weekly_by_route.sql` |
+| `fato_rede_extras` | motivo do extra | Q-PRF-02 | `q_prf_02_extras_by_reason.sql` |
+| `fato_rede_pontualidade` | transportadora + mês | Q-PRF-03 | `q_prf_03_carrier_on_time_by_month.sql` |
+| `fato_rede_acuracia` | nível + chave | Q-FCT-01 / Q-FCT-02 | `q_fct_01_forecast_accuracy.sql` |
+| `fato_rede_variabilidade` | loja | Q-FCT-04 | `q_fct_04_demand_variability.sql` |
+
+Só `fato_rede_realizado` se relaciona com `dim_rede_rotas`; as demais ficam soltas.
+`fato_rede_acuracia` traz um bloco por nível (`STORE`, `ROUTE`, `DC`, `NETWORK`): filtre sempre a coluna `nivel`
+no visual, porque o erro absoluto não é somável entre níveis. As medidas `% WAPE Forecast` e `% Bias Forecast`
+ficam em branco quando há mais de um nível no contexto.
+
+As medidas da rede estão na seção 9 de `dax/medidas.dax`. As páginas atuais não usam essas tabelas;
+elas ficam prontas no modelo para uma página de rede.
 
 Depois crie a tabela `_Medidas` (**Inserir dados → OK**) e cole as medidas de `dax/medidas.dax`
 na ordem do arquivo. As medidas HTML dependem das anteriores.

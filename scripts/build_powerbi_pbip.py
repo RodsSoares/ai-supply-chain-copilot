@@ -2,8 +2,9 @@
 Gera o Power BI Project (.pbip) do HUD V6 a partir do kit em reports/powerbi/kit.
 
 Etapa 1 (este script): modelo semântico completo em TMDL
-    - 7 tabelas importadas dos CSVs do kit (parâmetro PastaDados)
-    - 5 relacionamentos do guia de montagem
+    - 13 tabelas importadas dos CSVs do kit (parâmetro PastaDados):
+      7 do HUD V6 e 6 da rede v2.x (fato_rede_* e dim_rede_rotas)
+    - 6 relacionamentos do guia de montagem
     - tabela _Medidas com todas as medidas de kit/dax/medidas.dax
 e um relatório com as 3 páginas vazias em 1920 × 1080.
 
@@ -39,6 +40,13 @@ TABELAS = [
     "dim_veiculos",
     "dim_semana",
     "copilot_insights",
+    # rede v2.x: geradas pelas consultas de sql/network
+    "fato_rede_realizado",
+    "fato_rede_extras",
+    "fato_rede_pontualidade",
+    "fato_rede_acuracia",
+    "fato_rede_variabilidade",
+    "dim_rede_rotas",
 ]
 COLUNAS_DATA = {"semana_inicio", "data_ultima_movimentacao"}
 
@@ -49,6 +57,7 @@ RELACIONAMENTOS = [
     ("fato_viagens", "veiculo", "dim_veiculos", "veiculo"),
     ("fato_demanda", "rota", "dim_rotas", "rota"),
     ("fato_demanda", "semana_inicio", "dim_semana", "semana_inicio"),
+    ("fato_rede_realizado", "rota_rede", "dim_rede_rotas", "rota_rede"),
 ]
 
 PAGINAS = [
@@ -131,7 +140,7 @@ def formato_medida(nome: str) -> str | None:
         return None
     if nome.startswith("%") or nome.startswith("Utilizacao") or nome in {"Var Custo vs S1", "Atendimento Demanda"}:
         return "0.0%"
-    if nome in {"Custo por Peca", "Custo por Km"}:
+    if nome in {"Custo por Peca", "Custo por Km", "Custo por Peca Rede"}:
         return "\\R$ #,0.00"
     if nome.startswith("Valor") or nome.startswith("Custo") and nome != "Custo Mil" or nome == "Consumo Mensal Valor":
         return "\\R$ #,0"

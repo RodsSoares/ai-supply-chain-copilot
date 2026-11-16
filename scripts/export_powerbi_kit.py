@@ -5,14 +5,24 @@ Exporta os dados do Copilot no formato consumido pelo kit Power BI
 Convenção dos CSVs (igual a output/inventory_analysis.csv):
 separador ";", decimal ",", UTF-8 com BOM.
 
+As tabelas da rede (fato_rede_* e dim_rede_rotas) saem das consultas de
+sql/network, executadas sobre a rede sintética gerada a partir da configuração.
+
 Uso:
     python scripts/export_powerbi_kit.py
 """
 
 import os
 import sqlite3
+import sys
+from pathlib import Path
 
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from src.analytics.network import powerbi_export  # noqa: E402
+from src.synthetic.network_generator import carregar_config, gerar_rede  # noqa: E402
 
 
 CAMINHO_DB = "database/supply_chain.db"
@@ -124,6 +134,17 @@ def montar_insights(estoque: pd.DataFrame, viagens: pd.DataFrame) -> pd.DataFram
     )
 
 
+def exportar_rede() -> None:
+    """Tabelas da rede (v2.x), geradas pelas consultas de sql/network."""
+    rede = gerar_rede(carregar_config())
+    conexao = powerbi_export.conexao_em_memoria(rede.tabelas)
+    try:
+        for nome, linhas in powerbi_export.exportar(conexao, PASTA_SAIDA).items():
+            print(f"{os.path.join(PASTA_SAIDA, nome + '.csv')}: {linhas} linhas")
+    finally:
+        conexao.close()
+
+
 def main() -> None:
     os.makedirs(PASTA_SAIDA, exist_ok=True)
 
@@ -157,6 +178,7 @@ def main() -> None:
     salvar(veiculos, "dim_veiculos.csv")
     salvar(montar_dim_semana(transporte["viagens"]), "dim_semana.csv")
     salvar(montar_insights(estoque, transporte["viagens"]), "copilot_insights.csv")
+    exportar_rede()
 
 
 if __name__ == "__main__":

@@ -377,3 +377,63 @@ HTML KPI Custo Unitario =
 <div class='val'>R$ " & FORMAT ( [Custo por Peca], "0.00" ) & "<i>/ peça</i></div>
 <div class='foot'><span>R$ " & FORMAT ( [Custo por Km], "0.00" ) & " por km</span>
 <span>" & FORMAT ( [Km Planejados], "#,##0" ) & " km planejados</span></div></div>"
+
+
+// ---------------------------------------------------------------------
+// 9. REDE v2.x (tabelas fato_rede_* · fonte: consultas de sql/network)
+// ---------------------------------------------------------------------
+// Cada fato sai de uma consulta ligada a uma pergunta de negócio:
+//   fato_rede_realizado     Q-PRF-01 (lado realizado, rota + semana)
+//   fato_rede_extras        Q-PRF-02
+//   fato_rede_pontualidade  Q-PRF-03 (transportadora + mês)
+//   fato_rede_acuracia      Q-FCT-01 / Q-FCT-02 (um bloco por nível)
+// Os percentuais são sempre razão de somas, nunca média de percentuais.
+
+Custo Realizado Rede = SUM ( fato_rede_realizado[custo] )
+
+Custo Extra Rede = SUM ( fato_rede_realizado[custo_extra] )
+
+Volume Realizado Rede = SUM ( fato_rede_realizado[volume] )
+
+Viagens Realizadas Rede = SUM ( fato_rede_realizado[viagens] )
+
+Custo por Peca Rede = DIVIDE ( [Custo Realizado Rede], [Volume Realizado Rede] )
+
+% Extras sobre Frete = DIVIDE ( [Custo Extra Rede], [Custo Realizado Rede] )
+
+% Viagens Overflow =
+DIVIDE ( SUM ( fato_rede_realizado[viagens_overflow] ), [Viagens Realizadas Rede] )
+
+Custo Extra por Motivo = SUM ( fato_rede_extras[custo_extra] )
+
+% OTD =
+DIVIDE ( SUM ( fato_rede_pontualidade[no_prazo] ), SUM ( fato_rede_pontualidade[viagens] ) )
+
+// Meta por transportadora: só faz sentido com uma transportadora no contexto.
+% Meta OTD =
+IF (
+    HASONEVALUE ( fato_rede_pontualidade[transportadora] ),
+    MAX ( fato_rede_pontualidade[meta_no_prazo] )
+)
+
+Meses Abaixo da Meta OTD = SUM ( fato_rede_pontualidade[abaixo_da_meta] )
+
+// O erro absoluto é medido no nível (loja, rota, CD ou rede) e não é somável
+// entre níveis: a medida só responde com um único nível no contexto.
+% WAPE Forecast =
+IF (
+    HASONEVALUE ( fato_rede_acuracia[nivel] ),
+    DIVIDE ( SUM ( fato_rede_acuracia[erro_absoluto] ), SUM ( fato_rede_acuracia[realizado] ) )
+)
+
+% Bias Forecast =
+IF (
+    HASONEVALUE ( fato_rede_acuracia[nivel] ),
+    DIVIDE ( SUM ( fato_rede_acuracia[erro] ), SUM ( fato_rede_acuracia[realizado] ) )
+)
+
+% WAPE Forecast Rede =
+CALCULATE ( [% WAPE Forecast], fato_rede_acuracia[nivel] = "NETWORK" )
+
+% Bias Forecast Rede =
+CALCULATE ( [% Bias Forecast], fato_rede_acuracia[nivel] = "NETWORK" )
